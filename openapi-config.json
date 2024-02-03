@@ -1,0 +1,9 @@
+{
+    "schemaFile": "http://localhost:8080/v3/api-docs",
+    "apiFile": "./state/redux/api/baseApi.ts",
+    "apiImport": "baseSplitApi",
+    "outputFile": "./state/redux/api/wildEventsApi.ts",
+    "exportName": "wildEventsApi",
+    "hooks": true,
+    "tag": true
+}
