@@ -13,7 +13,6 @@ import en from '../i18n/en';
 import { store } from '../state/redux/store';
 import dark from '../theme/dark.json';
 import light from '../theme/light.json';
-import { enGB as enDates, registerTranslation } from 'react-native-paper-dates';
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -21,7 +20,7 @@ export {
 } from 'expo-router';
 
 export const unstable_settings = {
-    initialRouteName: 'home',
+    initialRouteName: 'index',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -60,7 +59,7 @@ i18n
             escapeValue: false
         }
     });
-registerTranslation('en', enDates);
+// registerTranslation('enGB', enGB);
 
 function RootLayoutNav() {
     const colorScheme = useColorScheme();
@@ -74,7 +73,7 @@ function RootLayoutNav() {
                     See https://callstack.github.io/react-native-paper/docs/guides/theming-with-react-navigation */}
                 <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
                     <Stack>
-                        <Stack.Screen name='home' />
+                        <Stack.Screen name='index' />
                         <Stack.Screen name='login' />
                         <Stack.Screen name='register' />
                         <Stack.Screen name='about' />

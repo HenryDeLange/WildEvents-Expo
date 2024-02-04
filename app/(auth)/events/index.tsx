@@ -2,10 +2,11 @@ import CreateEvent from '@/components/event/CreateEvent';
 import LogoutButton from '@/components/user/LogoutButton';
 import { useFindEventsQuery } from '@/state/redux/api/wildEventsApi';
 import { Stack, useRouter } from 'expo-router';
+import Markdown from 'markdown-to-jsx';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import { ActivityIndicator, List, TextInput } from 'react-native-paper';
+import { ActivityIndicator, List, Text, TextInput } from 'react-native-paper';
 
 export default function Safes() {
     // Translation
@@ -16,7 +17,7 @@ export default function Safes() {
     const [search, setSearch] = useState('');
     const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
     // Redux
-    const { data: pagedEvents, isFetching, refetch } = useFindEventsQuery({ page: 1 });
+    const { data: pagedEvents, isFetching, refetch } = useFindEventsQuery({ page: 0 });
     // Actions
     const handleEditDismiss = useCallback(() => setSelectedRecordId(null), [setSelectedRecordId]);
     // Search
@@ -53,11 +54,12 @@ export default function Safes() {
                 {events?.map(event => (
                     <List.Item
                         key={event.id}
-                        title={event.name}
-                        description={event.description}
-                        left={props => <List.Icon {...props} icon='safe-square-outline' />}
+                        title={<Text variant='headlineLarge' style={{ borderBottomWidth: 1, borderBottomColor: '#585'}}>{event.name}</Text>}
+                        description={<Markdown>{event.description ?? ''}</Markdown>}
+                        left={props => <List.Icon {...props} icon='barley' />}
                         // TODO: Make this a callback somehow?
                         onPress={() => router.push(`/events/${event.id}`)}
+                        style={{ borderWidth: 1, borderRadius: 10, borderColor: '#555', margin: 10}}
                     />
                 ))}
             </ScrollView>

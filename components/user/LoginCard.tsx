@@ -5,7 +5,7 @@ import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View, ViewStyle, useWindowDimensions } from 'react-native';
+import { NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View, ViewStyle, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Button, Card, HelperText, TextInput } from 'react-native-paper';
 
 export default memo(function () {
@@ -68,6 +68,8 @@ export default memo(function () {
                     left={<TextInput.Icon icon='key' focusable={false} disabled />}
                     right={<TextInput.Icon icon={showPassword ? 'eye-off' : 'eye'} onPress={toggleShowPassword} />}
                     secureTextEntry={!showPassword}
+                    onKeyPress={useCallback((event: NativeSyntheticEvent<TextInputKeyPressEventData>) =>
+                        (event.nativeEvent.key === 'Enter') && handleLogin(), [handleLogin])}
                 />
                 <View style={styles.buttonWrapper}>
                     <Button mode='contained' style={styles.button} uppercase

@@ -1,11 +1,14 @@
 import { Event, useCreateEventMutation } from '@/state/redux/api/wildEventsApi';
+import { addDays, addMonths, getYear, isAfter, subDays } from 'date-fns';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Card, FAB, HelperText, IconButton, Text, TextInput } from 'react-native-paper';
-import { DatePickerModal } from 'react-native-paper-dates';
+import { DatePickerInput, ca, registerTranslation } from 'react-native-paper-dates';
 import { CalendarDate } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
+
+registerTranslation('ca', ca);
 
 function CreateEvent() {
     // Translation
@@ -13,26 +16,11 @@ function CreateEvent() {
     // State
     const [modalVisible, setModalVisible] = useState(false);
     const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
+    const [description, setDescription] = useState<string | undefined>('');
     const [visibility, setVisibility] = useState<Event['visibility']>('PUBLIC');
     const [startDate, setStartDate] = useState<CalendarDate>();
     const [stopDate, setStopDate] = useState<CalendarDate>();
-    const [closeDate, setCloseDate] = useState('');
-
-    const [open, setOpen] = useState(false);
-
-    const onDismiss = useCallback(() => {
-        setOpen(false);
-    }, [setOpen]);
-
-    const onConfirm = useCallback((params: { startDate: CalendarDate, endDate: CalendarDate }) => {
-            setOpen(false);
-            setStartDate(params.startDate);
-            setStopDate(params.endDate);
-        },
-        [setOpen, setStartDate, setStopDate]
-    );
-
+    const [closeDate, setCloseDate] = useState<CalendarDate>();
     // Redux
     const [doCreate, { isLoading: isCreating, isError, isSuccess }] = useCreateEventMutation();
     // Actions
@@ -40,11 +28,11 @@ function CreateEvent() {
         if (!isCreating) {
             setModalVisible(false);
             setName('');
-            setDescription('');
+            setDescription(undefined);
             setVisibility('PUBLIC');
             setStartDate(undefined);
             setStopDate(undefined);
-            setCloseDate('');
+            setCloseDate(undefined);
         }
     }, [isCreating, setModalVisible, setName, setDescription, setVisibility, setStartDate, setStopDate, setCloseDate]);
     useEffect(() => {
@@ -60,13 +48,13 @@ function CreateEvent() {
                 visibility: visibility,
                 start: startDate?.getDate().toString() ?? '',
                 stop: stopDate?.getDate().toString() ?? '',
-                close: closeDate
+                close: closeDate?.getDate().toString() ?? ''
             }
         });
     }, [doCreate, name, description, visibility, startDate, stopDate, closeDate]);
     const toggleVisibility = useCallback(() => setVisibility(visibility === 'PRIVATE' ? 'PUBLIC' : 'PRIVATE'), [visibility, setVisibility]);
-    const renderVisibilityToggle = useCallback(() =>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+    const renderVisibilityToggle = useCallback(() => (
+        < View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text onPress={toggleVisibility}>
                 {t(`eventVisibility${visibility}`)}
             </Text>
@@ -76,11 +64,21 @@ function CreateEvent() {
                 animated
                 selected={visibility === 'PRIVATE'}
             />
-        </View>, [visibility, toggleVisibility]);
-
+        </View >
+    ), [visibility, toggleVisibility]);
     // Validation
     const nameError = name.length === 0;
+    const dateError = !startDate || !stopDate || !closeDate || !isAfter(stopDate, startDate) || !isAfter(closeDate, stopDate);
+    useEffect(() => {
+        if (startDate && stopDate && !isAfter(stopDate, startDate)) {
+            setStopDate(undefined);
+        }
+        if (closeDate && stopDate && !isAfter(closeDate, stopDate)) {
+            setCloseDate(undefined);
+        }
+    }, [startDate, stopDate, closeDate, setStopDate, setCloseDate]);
     // RENDER
+    const now = new Date();
     return (
         <>
             <FAB icon={isCreating ? 'loading' : 'plus'} style={styles.floatingButton}
@@ -88,7 +86,7 @@ function CreateEvent() {
                 onPress={handleFloatButton}
             />
             <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={hideModal}>
-                <Card.Title title={t('eventCardCreateTitle')} titleVariant='titleMedium' right={renderVisibilityToggle} />
+                <Card.Title title={t('eventCardCreateTitle')} titleVariant='titleLarge' right={renderVisibilityToggle} />
                 <Card.Content style={styles.content}>
                     <TextInput
                         mode='outlined'
@@ -107,31 +105,63 @@ function CreateEvent() {
                         multiline
                         numberOfLines={3}
                     />
-                    <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
-                        <Button onPress={() => setOpen(true)} uppercase={false} mode='outlined'>
-                            TODO: show range and button to edit
-                        </Button>
-                        <DatePickerModal
-                            locale='en' // TODO: Use the active i18next language
-                            mode='range'
-                            visible={open}
-                            onDismiss={onDismiss}
-                            startDate={startDate}
-                            endDate={stopDate}
-                            onConfirm={onConfirm}
-                            // startYear={}
-                            // endYear={}
-                        />
-                    </View>
-                    
-                    <div>
-                        TODO: Close date
-                    </div>
-
+                    <DatePickerInput
+                        locale='ca'
+                        label={t('eventCardStartDate')}
+                        saveLabel={t('confirm')}
+                        left={<TextInput.Icon icon='calendar-arrow-right' focusable={false} disabled />}
+                        value={startDate}
+                        onChange={setStartDate}
+                        inputMode='start'
+                        mode='outlined'
+                        animationType='fade'
+                        validRange={{ startDate: subDays(now, 14), endDate: addMonths(now, 3) }}
+                        startYear={getYear(subDays(now, 14))}
+                        endYear={getYear(addMonths(now, 3))}
+                        // TODO: Because it seems broken in the current version
+                        hideValidationErrors
+                        onValidationError={useCallback(() => setStartDate(undefined), [setStartDate])}
+                    />
+                    <DatePickerInput
+                        locale='ca'
+                        label={t('eventCardStopDate')}
+                        saveLabel={t('confirm')}
+                        left={<TextInput.Icon icon='calendar-arrow-left' focusable={false} disabled />}
+                        value={stopDate}
+                        onChange={setStopDate}
+                        inputMode='start'
+                        mode='outlined'
+                        animationType='fade'
+                        disabled={!startDate}
+                        validRange={{ startDate: addDays(startDate ?? '', 1), endDate: addMonths(startDate ?? '', 6) }}
+                        startYear={getYear(addDays(startDate ?? '', 1))}
+                        endYear={getYear(addMonths(startDate ?? '', 6))}
+                        // TODO: Because it seems broken in the current version
+                        hideValidationErrors
+                        onValidationError={useCallback(() => setStopDate(undefined), [setStopDate])}
+                    />
+                    <DatePickerInput
+                        locale='ca'
+                        label={t('eventCardCloseDate')}
+                        saveLabel={t('confirm')}
+                        left={<TextInput.Icon icon='calendar-edit' focusable={false} disabled />}
+                        value={closeDate}
+                        onChange={setCloseDate}
+                        inputMode='start'
+                        mode='outlined'
+                        animationType='fade'
+                        disabled={!startDate || !stopDate}
+                        validRange={{ startDate: addDays(stopDate ?? '', 1), endDate: addMonths(stopDate ?? '', 2) }}
+                        startYear={getYear(addDays(stopDate ?? '', 1))}
+                        endYear={getYear(addMonths(stopDate ?? '', 2))}
+                        // TODO: Because it seems broken in the current version
+                        hideValidationErrors
+                        onValidationError={useCallback(() => setCloseDate(undefined), [setCloseDate])}
+                    />
                     <View style={styles.buttonWrapper}>
                         <Button mode='contained' style={styles.button} uppercase
                             icon={isCreating ? undefined : 'check'}
-                            disabled={isCreating || nameError}
+                            disabled={isCreating || nameError || dateError}
                             onPress={handleCreate}
                         >
                             {isCreating ? <ActivityIndicator animating={true} /> : t('confirm')}

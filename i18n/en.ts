@@ -38,13 +38,16 @@ export default {
         loginCardFailed: 'Failed to login!',
         logoutButton: 'Logout',
         eventsNavTitle: 'Events',
-        eventVisibilityPUBLIC: 'Public Access',
-        eventVisibilityPRIVATE: 'Private Access',
+        eventVisibilityPUBLIC: 'Public Event',
+        eventVisibilityPRIVATE: 'Private Event',
         eventCardCreateTitle: 'New Event',
         eventCardCreateFailed: 'Failed to create the event!',
-        eventCardName: 'Event Name',
+        eventCardName: 'Name',
         eventCardDescription: 'Description',
-        
+        eventCardStartDate: 'Start Date',
+        eventCardStopDate: 'Stop Date',
+        eventCardCloseDate: 'Close Date',
+
 
     }
 }

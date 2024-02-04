@@ -13,3 +13,6 @@ Create an `.env.local` file in the root folder containing the following informat
 ```properties
 EXPO_PUBLIC_API_BASE_URL=
 ```
+
+### Theme
+[React Native Paper's Theme Tool](https://callstack.github.io/react-native-paper/docs/guides/theming/#creating-dynamic-theme-colors)
