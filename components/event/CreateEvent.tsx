@@ -46,9 +46,9 @@ function CreateEvent() {
                 name: name,
                 description: description,
                 visibility: visibility,
-                start: startDate?.getDate().toString() ?? '',
-                stop: stopDate?.getDate().toString() ?? '',
-                close: closeDate?.getDate().toString() ?? ''
+                start: startDate?.toISOString() ?? '',
+                stop: stopDate?.toISOString() ?? '',
+                close: closeDate?.toISOString() ?? ''
             }
         });
     }, [doCreate, name, description, visibility, startDate, stopDate, closeDate]);
