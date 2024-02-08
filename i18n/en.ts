@@ -48,6 +48,11 @@ export default {
         eventCardStartDate: 'Start Date',
         eventCardStopDate: 'Stop Date',
         eventCardCloseDate: 'Close Date',
+        eventAdmins: 'Event Administrators',
+        eventParticipants: 'Event Participants',
+        eventActivities: 'Event Activities',
+
+
         welcomeTitle: 'Welcome to Wild Events!',
         welcomeSubTitle: 'Here you can take part in fun events that centers around exploring nature through the use of the iNaturalist website.',
         welcomeAction: 'View and join existing events below, or create your own!',

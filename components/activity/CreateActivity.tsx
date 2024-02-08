@@ -64,6 +64,23 @@ function CreateActivity({ eventId }: Props) {
             <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={hideModal}>
                 <Card.Title title={t('activityCardCreateTitle')} titleVariant='titleLarge' />
                 <Card.Content style={styles.content}>
+                    <TextInput
+                        mode='outlined'
+                        label={t('activityCardName')}
+                        value={name}
+                        onChangeText={setName}
+                        left={<TextInput.Icon icon='tag' focusable={false} disabled />}
+                        autoFocus
+                    />
+                    <TextInput
+                        mode='outlined'
+                        label={t('activityCardDescription')}
+                        value={description}
+                        onChangeText={setDescription}
+                        left={<TextInput.Icon icon='information' focusable={false} disabled />}
+                        multiline
+                        numberOfLines={3}
+                    />
                     <SegmentedButtons
                         value={type}
                         onValueChange={setType as any}
@@ -85,23 +102,6 @@ function CreateActivity({ eventId }: Props) {
                                 label: t('activityTypeEXPLORE')
                             }
                         ]}
-                    />
-                    <TextInput
-                        mode='outlined'
-                        label={t('activityCardName')}
-                        value={name}
-                        onChangeText={setName}
-                        left={<TextInput.Icon icon='tag' focusable={false} disabled />}
-                        autoFocus
-                    />
-                    <TextInput
-                        mode='outlined'
-                        label={t('activityCardDescription')}
-                        value={description}
-                        onChangeText={setDescription}
-                        left={<TextInput.Icon icon='information' focusable={false} disabled />}
-                        multiline
-                        numberOfLines={3}
                     />
                     <SegmentedButtons
                         value={type}

@@ -7,7 +7,7 @@ import Markdown from 'markdown-to-jsx';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Divider, Icon, List, Text, TextInput, Tooltip } from 'react-native-paper';
+import { ActivityIndicator, Chip, Divider, Icon, List, Text, TextInput, Tooltip } from 'react-native-paper';
 
 function Event() {
     // Translation
@@ -18,7 +18,7 @@ function Event() {
     // State
 
     // Redux
-    const { data: event, isFetching: isEventFetching } = useFindEventQuery({ id: eventId });
+    const { data: event, isLoading: isEventLoading, isFetching: isEventFetching } = useFindEventQuery({ id: eventId });
     const { data: pagedActivities, isFetching: isActivitiesFetching, refetch } = useFindActivitiesQuery({ eventId });
     // Actions
 
@@ -30,58 +30,78 @@ function Event() {
         </View>
     ), []);
     // RENDER
+    if (!event || isEventLoading || isEventFetching) {
+        return (
+            <ActivityIndicator animating={true} />
+        );
+    }
     return (
         <SafeAreaView style={styles.container}>
             <Stack.Screen options={{
                 title: (isEventFetching || isActivitiesFetching) ? t('loading') : event?.name,
                 headerRight: navBarActions
             }} />
-            <Text variant='titleLarge'>
-                {event?.name}
+            <Text variant='headlineLarge'>
+                {event.name}
             </Text>
-            <Markdown>
-                {event?.description ?? ''}
-            </Markdown>
-            <Divider />
-            <View style={{ gap: 5 }}>
-                <Tooltip title={t('eventCardStartDate')}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Icon source='calendar-arrow-right' size={20} />
-                        <Text> {format(event?.start ?? 0, 'yyyy-MM-dd')}</Text>
-                    </View>
-                </Tooltip>
-                <Tooltip title={t('eventCardStopDate')}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Icon source='calendar-arrow-left' size={20} />
-                        <Text> {format(event?.stop ?? 0, 'yyyy-MM-dd')}</Text>
-                    </View>
-                </Tooltip>
-                <Tooltip title={t('eventCardCloseDate')}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Icon source='calendar-edit' size={20} />
-                        <Text> {format(event?.close ?? 0, 'yyyy-MM-dd')}</Text>
-                    </View>
-                </Tooltip>
+            <Divider style={{ height: 2, width: '80%', marginBottom: 15 }} />
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 35 }}>
+                <View style={{ flexDirection: 'row' }}>
+                    <Icon source='calendar-arrow-right' size={24} />
+                    <Text variant='bodyLarge' style={{ fontWeight: 'bold', marginLeft: 5, marginRight: 10 }}>
+                        {t('eventCardStartDate')}
+                    </Text>
+                    <Text variant='bodyLarge'>
+                        {format(event.start, 'yyyy-MM-dd')}
+                    </Text>
+                </View>
+                <View style={{ flexDirection: 'row' }}>
+                    <Icon source='calendar-arrow-left' size={24} />
+                    <Text variant='bodyLarge' style={{ fontWeight: 'bold', marginLeft: 5, marginRight: 10 }}>
+                        {t('eventCardStopDate')}
+                    </Text>
+                    <Text variant='bodyLarge'>
+                        {format(event.stop, 'yyyy-MM-dd')}
+                    </Text>
+                </View>
+                <View style={{ flexDirection: 'row' }}>
+                    <Icon source='calendar-edit' size={24} />
+                    <Text variant='bodyLarge' style={{ fontWeight: 'bold', marginLeft: 5, marginRight: 10 }}>
+                        {t('eventCardCloseDate')}
+                    </Text>
+                    <Text variant='bodyLarge'>
+                        {format(event.close, 'yyyy-MM-dd')}
+                    </Text>
+                </View>
             </View>
+            <Divider style={{ height: 2, width: '70%', marginVertical: 15 }} />
+            <View style={{ borderWidth: 1, borderRadius: 10, borderColor: '#555', width: '65%' }}>
+                <Markdown>
+                    {event.description ?? ''}
+                </Markdown>
+            </View>
+            <Divider style={{ height: 2, width: '50%', marginVertical: 15 }} />
             <View>
                 <Text variant='headlineMedium'>
-                    Admins
+                    {t('eventAdmins')}
                 </Text>
-                <Text>
-                    {event?.admins}
-                </Text>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+                    {event.admins.map(admin => <Chip key={admin} mode='outlined'>{admin}</Chip>)}
+                </View>
             </View>
+            <Divider style={{ height: 2, width: '50%', marginVertical: 15 }} />
             <View>
                 <Text variant='headlineMedium'>
-                    Participants
+                    {t('eventParticipants')}
                 </Text>
-                <Text>
-                    {event?.participants}
-                </Text>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+                    {event.participants?.map(participant => <Chip key={participant} mode='outlined'>{participant}</Chip>)}
+                </View>
             </View>
+            <Divider style={{ height: 2, width: '70%', marginVertical: 15 }} />
             <View>
                 <Text variant='headlineMedium'>
-                    Activities
+                    {t('eventActivities')}
                 </Text>
                 <ScrollView style={styles.list}
                     refreshControl={
