@@ -81,10 +81,12 @@ function CreateEvent() {
     const now = new Date();
     return (
         <>
-            <FAB icon={isCreating ? 'loading' : 'plus'} style={styles.floatingButton}
-                disabled={isCreating}
+            <Button mode='contained-tonal' style={styles.addButton} uppercase 
+                icon={isCreating ? 'loading' : 'plus'}
                 onPress={handleFloatButton}
-            />
+            >
+                {isCreating ? <ActivityIndicator animating={true} /> : t('eventCardCreateTitle')}
+            </Button>
             <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={hideModal}>
                 <Card.Title title={t('eventCardCreateTitle')} titleVariant='titleLarge' right={renderVisibilityToggle} />
                 <Card.Content style={styles.content}>
@@ -181,11 +183,8 @@ function CreateEvent() {
 export default memo(CreateEvent);
 
 const styles = StyleSheet.create({
-    floatingButton: {
-        position: 'absolute',
-        margin: 16,
-        right: 16,
-        top: 62
+    addButton: {
+
     },
     content: {
         gap: 15

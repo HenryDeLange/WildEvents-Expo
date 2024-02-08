@@ -1,12 +1,13 @@
 {
     "cSpell.words": [
         "codegen",
+        "iNat",
+        "iNaturalist",
         "MyWild",
         "OpenAPI",
         "Reauth",
         "ReduxJS",
-        "WildEvents",
-        "iNat",
-        "iNaturalist"
+        "Searchbar",
+        "WildEvents"
     ]
 }

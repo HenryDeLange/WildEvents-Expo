@@ -1,15 +1,15 @@
-import CreateEvent from '@/components/event/CreateEvent';
+import EventsWelcome from '@/components/event/EventsWelcome';
 import LogoutButton from '@/components/user/LogoutButton';
 import { Event, useFindEventsQuery } from '@/state/redux/api/wildEventsApi';
 import { format } from 'date-fns';
 import { Stack, useRouter } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
-import { useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ListRenderItemInfo, RefreshControl, SafeAreaView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Icon, List, Text, TextInput, Tooltip } from 'react-native-paper';
+import { ActivityIndicator, Icon, List, Searchbar, Text, Tooltip } from 'react-native-paper';
 
-export default function Safes() {
+function Events() {
     // Translation
     const { t } = useTranslation();
     // Router
@@ -40,14 +40,18 @@ export default function Safes() {
             return newFetchedEvents;
         });
     }, [data, setFetchedEvents]);
-    // console.log('fetchedEvents = ', fetchedEvents)
     // Search
     // TODO: Search on backend, not frontend
     const events = !search ? fetchedEvents : fetchedEvents.filter(event =>
         event.name.toLowerCase().includes(search.toLowerCase())
         || event.description?.toLowerCase().includes(search.toLowerCase()));
     // NavBar
-    const navBarActions = useCallback(() => <LogoutButton />, []);
+    const navBarActions = useCallback(() => (
+        <View style={styles.navBar}>
+            <LogoutButton />
+            <Searchbar value={search} onChangeText={setSearch} placeholder={t('search')} />
+        </View>
+    ), []);
     // RENDER
     return (
         <SafeAreaView style={styles.container}>
@@ -55,13 +59,7 @@ export default function Safes() {
                 title: (isLoading || isFetching) ? t('loading') : t('eventsNavTitle'),
                 headerRight: navBarActions
             }} />
-            <TextInput
-                style={styles.search}
-                mode='flat'
-                value={search}
-                onChangeText={setSearch}
-                left={<TextInput.Icon icon='magnify' />}
-            />
+            <EventsWelcome />
             {(isLoading || isFetching) &&
                 <ActivityIndicator size='large' animating={true} style={styles.loading} />
             }
@@ -124,12 +122,19 @@ export default function Safes() {
                     />
                 ), [router])}
             />
-            <CreateEvent />
         </SafeAreaView >
     );
 }
 
+export default memo(Events);
+
 const styles = StyleSheet.create({
+    navBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 25,
+        marginHorizontal: 4
+    },
     search: {
         width: '100%'
     },
