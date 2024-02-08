@@ -2,7 +2,7 @@ import { ActivityCreate, useCreateActivityMutation } from '@/state/redux/api/wil
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Card, FAB, HelperText, SegmentedButtons, TextInput } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, HelperText, SegmentedButtons, TextInput, Text } from 'react-native-paper';
 import { ca, registerTranslation } from 'react-native-paper-dates';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
 
@@ -20,6 +20,7 @@ function CreateActivity({ eventId }: Props) {
     const [name, setName] = useState('');
     const [description, setDescription] = useState<string | undefined>('');
     const [type, setType] = useState<ActivityCreate['type']>('RACE');
+    const [step, setStep] = useState('1');
     const [criteria, setCriteria] = useState<ActivityCreate['criteria']>();
     // Redux
     const [doCreate, { isLoading: isCreating, isError, isSuccess }] = useCreateActivityMutation();
@@ -49,18 +50,24 @@ function CreateActivity({ eventId }: Props) {
             }
         });
     }, [doCreate, eventId, name, description, type, criteria]);
-
+    // Effects
+    useEffect(() => {
+        if (type === 'RACE')
+            setStep('1');
+    }, [type, setStep]);
     // Validation
     const nameError = name.length === 0;
 
     // RENDER
-    const now = new Date();
     return (
         <>
-            <FAB icon={isCreating ? 'loading' : 'plus'} style={styles.floatingButton}
+            <Button mode='contained-tonal' style={styles.addButton} uppercase
+                icon={isCreating ? 'loading' : 'plus'}
                 disabled={isCreating}
                 onPress={handleFloatButton}
-            />
+            >
+                {isCreating ? <ActivityIndicator animating={true} /> : t('activityCardCreateTitle')}
+            </Button>
             <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={hideModal}>
                 <Card.Title title={t('activityCardCreateTitle')} titleVariant='titleLarge' />
                 <Card.Content style={styles.content}>
@@ -103,31 +110,40 @@ function CreateActivity({ eventId }: Props) {
                             }
                         ]}
                     />
+                    <Text variant='bodyMedium' style={{ alignSelf: 'center'}}>
+                        description of the type
+                    </Text>
                     <SegmentedButtons
-                        value={type}
-                        onValueChange={setType as any}
+                        value={step}
+                        onValueChange={setStep as any}
                         buttons={[
                             {
                                 value: '1',
-                                label: `${t('activityCardCriteriaStep')} 1`
+                                label: `${t('activityCardCriteriaStep')} 1`,
+                                disabled: false
                             },
                             {
                                 value: '2',
-                                label: `${t('activityCardCriteriaStep')} 2`
+                                label: `${t('activityCardCriteriaStep')} 2`,
+                                disabled: type === 'RACE'
                             },
                             {
                                 value: '3',
-                                label: `${t('activityCardCriteriaStep')} 3`
+                                label: `${t('activityCardCriteriaStep')} 3`,
+                                disabled: type === 'RACE'
                             },
                             {
                                 value: '4',
-                                label: `${t('activityCardCriteriaStep')} 4`
+                                label: `${t('activityCardCriteriaStep')} 4`,
+                                disabled: type === 'RACE'
                             },
                             {
                                 value: '5',
-                                label: `${t('activityCardCriteriaStep')} 5`
+                                label: `${t('activityCardCriteriaStep')} 5`,
+                                disabled: type === 'RACE'
                             }
                         ]}
+                        
                     />
                     <View>
                         <View style={{ flexDirection: 'row', gap: 10 }}>
@@ -170,11 +186,8 @@ function CreateActivity({ eventId }: Props) {
 export default memo(CreateActivity);
 
 const styles = StyleSheet.create({
-    floatingButton: {
-        position: 'absolute',
-        margin: 16,
-        right: 16,
-        top: 62
+    addButton: {
+
     },
     content: {
         gap: 15

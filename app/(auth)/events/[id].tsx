@@ -7,9 +7,11 @@ import Markdown from 'markdown-to-jsx';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Chip, Divider, Icon, List, Text, TextInput, Tooltip } from 'react-native-paper';
+import { ActivityIndicator, Chip, Divider, Icon, List, Text, TextInput, Tooltip, useTheme } from 'react-native-paper';
 
 function Event() {
+    // Theme
+    const theme = useTheme();
     // Translation
     const { t } = useTranslation();
     // Router
@@ -75,7 +77,7 @@ function Event() {
                 </View>
             </View>
             <Divider style={{ height: 2, width: '70%', marginVertical: 15 }} />
-            <View style={{ borderWidth: 1, borderRadius: 10, borderColor: '#555', width: '65%' }}>
+            <View style={{ borderWidth: 1, borderRadius: 10, borderColor: '#575', width: '65%', backgroundColor: '#454', paddingHorizontal: 12, paddingVertical: 4 }}>
                 <Markdown>
                     {event.description ?? ''}
                 </Markdown>
@@ -85,8 +87,15 @@ function Event() {
                 <Text variant='headlineMedium'>
                     {t('eventAdmins')}
                 </Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
-                    {event.admins.map(admin => <Chip key={admin} mode='outlined'>{admin}</Chip>)}
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, marginTop: 8 }}>
+                    {event.admins.map(admin =>
+                        <Chip key={admin} mode='outlined' onClose={event.admins.length > 1 ? () => console.log('delete') : undefined}>
+                            {admin}
+                        </Chip>
+                    )}
+                    <Chip key='add' mode='outlined' onPress={() => console.log('add')}>
+                        <Icon source='plus' size={18} color={theme.colors.primary} />
+                    </Chip>
                 </View>
             </View>
             <Divider style={{ height: 2, width: '50%', marginVertical: 15 }} />
@@ -94,15 +103,27 @@ function Event() {
                 <Text variant='headlineMedium'>
                     {t('eventParticipants')}
                 </Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
-                    {event.participants?.map(participant => <Chip key={participant} mode='outlined'>{participant}</Chip>)}
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, marginTop: 8 }}>
+                    {event.participants?.map(participant =>
+                        <Chip key={participant} mode='outlined' onClose={() => console.log('delete')}>
+                            {participant}
+                        </Chip>
+                    )}
+                    <Chip key='add' mode='outlined' onPress={() => console.log('add')}>
+                        <Icon source='plus' size={18} color={theme.colors.primary} />
+                    </Chip>
                 </View>
             </View>
             <Divider style={{ height: 2, width: '70%', marginVertical: 15 }} />
             <View>
-                <Text variant='headlineMedium'>
-                    {t('eventActivities')}
-                </Text>
+                <View style={{ flexDirection: 'row', gap: 15 }}>
+                    <Text variant='headlineMedium'>
+                        {t('eventActivities')}
+                    </Text>
+                    <View>
+                        <CreateActivity eventId={eventId} />
+                    </View>
+                </View>
                 <ScrollView style={styles.list}
                     refreshControl={
                         <RefreshControl
@@ -122,7 +143,6 @@ function Event() {
                     ))}
                 </ScrollView>
             </View>
-            <CreateActivity eventId={eventId} />
         </SafeAreaView>
     );
 }

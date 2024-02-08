@@ -81,7 +81,7 @@ function CreateEvent() {
     const now = new Date();
     return (
         <>
-            <Button mode='contained-tonal' style={styles.addButton} uppercase 
+            <Button mode='contained-tonal' style={styles.addButton} uppercase
                 icon={isCreating ? 'loading' : 'plus'}
                 onPress={handleFloatButton}
             >
