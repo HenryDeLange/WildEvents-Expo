@@ -4,10 +4,14 @@
         "iNat",
         "iNaturalist",
         "MyWild",
+        "nelat",
+        "nelng",
         "OpenAPI",
         "Reauth",
         "ReduxJS",
         "Searchbar",
+        "swlat",
+        "swlng",
         "WildEvents"
     ]
 }

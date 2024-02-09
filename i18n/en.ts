@@ -49,7 +49,21 @@ export default {
         eventCardStopDate: 'Stop Date',
         eventCardCloseDate: 'Close Date',
         eventAdmins: 'Event Administrators',
+        eventAdminLeaveTitle: 'Remove Administrator',
+        eventAdminLeaveMessage: 'Are you sure you want to remove \'{{admin}}\' as an administrator?',
+        eventAdminLeaveError: 'Failed to remove the administrator from the event!',
+        eventAdminJoinTitle: 'Add Administrator',
+        eventAdminJoinMessage: 'Please specify the username of the WildEvents user to add as an administrator to this event.',
+        eventAdminJoinInput: 'Administrator Name',
+        eventAdminJoinError: 'Failed to add the administrator to the event!',
         eventParticipants: 'Event Participants',
+        eventParticipantLeaveTitle: 'Remove Participant',
+        eventParticipantLeaveMessage: 'Are you sure you want to remove \'{{participant}}\' as a participant?',
+        eventParticipantLeaveError: 'Failed to remove the participant from the event!',
+        eventParticipantJoinTitle: 'Add Participant',
+        eventParticipantJoinMessage: 'Please specify the username of the iNaturalist user to add as a participant to this event.',
+        eventParticipantJoinInput: 'Participant Name',
+        eventParticipantJoinError: 'Failed to add the participant to the event!',
         eventActivities: 'Event Activities',
 
 
@@ -62,6 +76,10 @@ export default {
         activityTypeHUNT: 'Treasure Hunt',
         activityTypeQUIZ: 'Quiz',
         activityTypeEXPLORE: 'Exploration',
+        activityTypeRaceDetails: 'A race to observe the specified taxa before other participants.',
+        activityTypeHuntDetails: 'A treasure hunt to solve the steps, by making observations, in order to find the final treasure.',
+        activityTypeQuizDetails: 'A quiz that is answered by making the correct observation.',
+        activityTypeExploreDetails: 'Explore an area by making observations in a grid.',
         activityCardCreateTitle: 'New Activity',
         activityCardCreateFailed: 'Failed to create the activity!',
         activityCardName: 'Name',
@@ -69,6 +87,7 @@ export default {
         activityCardType: 'Type',
         activityCardCriteria: 'Criteria',
         activityCardCriteriaStep: 'Step',
+        
         
 
     }

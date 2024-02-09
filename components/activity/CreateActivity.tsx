@@ -21,7 +21,7 @@ function CreateActivity({ eventId }: Props) {
     const [description, setDescription] = useState<string | undefined>('');
     const [type, setType] = useState<ActivityCreate['type']>('RACE');
     const [step, setStep] = useState('1');
-    const [criteria, setCriteria] = useState<ActivityCreate['criteria']>();
+    const [criteria, setCriteria] = useState<ActivityCreate['criteria']>([]);
     // Redux
     const [doCreate, { isLoading: isCreating, isError, isSuccess }] = useCreateActivityMutation();
     // Actions
@@ -52,12 +52,38 @@ function CreateActivity({ eventId }: Props) {
     }, [doCreate, eventId, name, description, type, criteria]);
     // Effects
     useEffect(() => {
-        if (type === 'RACE')
-            setStep('1');
+        setStep('1');
+        switch (type) {
+            case 'RACE':
+                setCriteria([{
+                    'taxon_id': ''
+                }]);
+                break;
+            case 'HUNT':
+                setCriteria([{
+                    'taxon_id': '',
+                    'lat': '',
+                    'lng': '',
+                    'radius': ''
+                }]);
+                break;
+            case 'QUIZ':
+                setCriteria([{
+                    'taxon_id': ''
+                }]);
+                break;
+            case 'EXPLORE':
+                setCriteria([{
+                    'nelat': '',
+                    'nelng': '',
+                    'swlat': '',
+                    'swlng': ''
+                }]);
+                break;
+        }
     }, [type, setStep]);
     // Validation
     const nameError = name.length === 0;
-
     // RENDER
     return (
         <>
@@ -110,8 +136,11 @@ function CreateActivity({ eventId }: Props) {
                             }
                         ]}
                     />
-                    <Text variant='bodyMedium' style={{ alignSelf: 'center'}}>
-                        description of the type
+                    <Text variant='bodyMedium' style={{ alignSelf: 'center' }}>
+                        {type === 'RACE' && t('activityTypeRaceDetails')}
+                        {type === 'HUNT' && t('activityTypeHuntDetails')}
+                        {type === 'QUIZ' && t('activityTypeQuizDetails')}
+                        {type === 'EXPLORE' && t('activityTypeExploreDetails')}
                     </Text>
                     <SegmentedButtons
                         value={step}
@@ -143,25 +172,43 @@ function CreateActivity({ eventId }: Props) {
                                 disabled: type === 'RACE'
                             }
                         ]}
-                        
+
                     />
                     <View>
-                        <View style={{ flexDirection: 'row', gap: 10 }}>
-                            <TextInput
-                                style={{ flex: 1 }}
-                                mode='outlined'
-                                label={'Key'}
-                                value={name}
-                                onChangeText={setName}
-                            />
-                            <TextInput
-                                style={{ flex: 2 }}
-                                mode='outlined'
-                                label={'Value'}
-                                value={description}
-                                onChangeText={setDescription}
-                            />
-                        </View>
+                        {criteria && criteria.map(criterion =>
+                            Object.keys(criterion).map((key, index) => (
+                                <View key={`step${step}Criterion${type}Entry${index}`} style={{ flexDirection: 'row', gap: 10 }}>
+                                    <TextInput
+                                        key={`step${step}Criterion${type}Entry${index}Key`}
+                                        style={{ flex: 1 }}
+                                        mode='outlined'
+                                        label={'Key'}
+                                        value={key}
+                                        onChangeText={text => {
+                                            const newCriteria = [...criteria];
+                                            newCriteria[index] = {
+                                                [text]: newCriteria[index][key]
+                                            }
+                                            setCriteria(newCriteria);
+                                        }}
+                                    />
+                                    <TextInput
+                                        key={`step${step}Criterion${type}Entry${index}Value`}
+                                        style={{ flex: 2 }}
+                                        mode='outlined'
+                                        label={'Value'}
+                                        value={criterion[key]}
+                                        onChangeText={text => {
+                                            const newCriteria = [...criteria];
+                                            newCriteria[index] = {
+                                                [key]: text
+                                            }
+                                            setCriteria(newCriteria);
+                                        }}
+                                    />
+                                </View>
+                            ))
+                        )}
                     </View>
                     <View style={styles.buttonWrapper}>
                         <Button mode='contained' style={styles.button} uppercase

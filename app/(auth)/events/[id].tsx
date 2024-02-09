@@ -1,13 +1,15 @@
 import CreateActivity from '@/components/activity/CreateActivity';
+import EventAdmins from '@/components/event/EventAdmins';
+import EventParticipants from '@/components/event/EventParticipants';
 import LogoutButton from '@/components/user/LogoutButton';
 import { useFindActivitiesQuery, useFindEventQuery } from '@/state/redux/api/wildEventsApi';
 import { format } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Chip, Divider, Icon, List, Text, TextInput, Tooltip, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Chip, Divider, Icon, List, Text, useTheme } from 'react-native-paper';
 
 function Event() {
     // Theme
@@ -34,7 +36,7 @@ function Event() {
     // RENDER
     if (!event || isEventLoading || isEventFetching) {
         return (
-            <ActivityIndicator animating={true} />
+            <ActivityIndicator animating={true} size='large' style={{ margin: 20 }} />
         );
     }
     return (
@@ -77,43 +79,15 @@ function Event() {
                 </View>
             </View>
             <Divider style={{ height: 2, width: '70%', marginVertical: 15 }} />
-            <View style={{ borderWidth: 1, borderRadius: 10, borderColor: '#575', width: '65%', backgroundColor: '#454', paddingHorizontal: 12, paddingVertical: 4 }}>
+            <View style={{ borderWidth: 1, borderRadius: 10, borderColor: '#575', width: '65%', backgroundColor: '#454', paddingHorizontal: 12, paddingVertical: 4, opacity: 0.7 }}>
                 <Markdown>
                     {event.description ?? ''}
                 </Markdown>
             </View>
             <Divider style={{ height: 2, width: '50%', marginVertical: 15 }} />
-            <View>
-                <Text variant='headlineMedium'>
-                    {t('eventAdmins')}
-                </Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, marginTop: 8 }}>
-                    {event.admins.map(admin =>
-                        <Chip key={admin} mode='outlined' onClose={event.admins.length > 1 ? () => console.log('delete') : undefined}>
-                            {admin}
-                        </Chip>
-                    )}
-                    <Chip key='add' mode='outlined' onPress={() => console.log('add')}>
-                        <Icon source='plus' size={18} color={theme.colors.primary} />
-                    </Chip>
-                </View>
-            </View>
+            <EventAdmins eventId={eventId} admins={event.admins} />
             <Divider style={{ height: 2, width: '50%', marginVertical: 15 }} />
-            <View>
-                <Text variant='headlineMedium'>
-                    {t('eventParticipants')}
-                </Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, marginTop: 8 }}>
-                    {event.participants?.map(participant =>
-                        <Chip key={participant} mode='outlined' onClose={() => console.log('delete')}>
-                            {participant}
-                        </Chip>
-                    )}
-                    <Chip key='add' mode='outlined' onPress={() => console.log('add')}>
-                        <Icon source='plus' size={18} color={theme.colors.primary} />
-                    </Chip>
-                </View>
-            </View>
+            <EventParticipants eventId={eventId} participants={event.participants} />
             <Divider style={{ height: 2, width: '70%', marginVertical: 15 }} />
             <View>
                 <View style={{ flexDirection: 'row', gap: 15 }}>
