@@ -1,19 +1,20 @@
 import CreateActivity from '@/components/activity/CreateActivity';
+import CreateEvent from '@/components/event/CreateEvent';
 import EventAdmins from '@/components/event/EventAdmins';
 import EventParticipants from '@/components/event/EventParticipants';
 import LogoutButton from '@/components/user/LogoutButton';
 import { useFindActivitiesQuery, useFindEventQuery } from '@/state/redux/api/wildEventsApi';
+import { selectAuthUsername } from '@/state/redux/auth/authSlice';
 import { format } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Chip, Divider, Icon, List, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Divider, Icon, List, Text } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 function Event() {
-    // Theme
-    const theme = useTheme();
     // Translation
     const { t } = useTranslation();
     // Router
@@ -24,15 +25,20 @@ function Event() {
     // Redux
     const { data: event, isLoading: isEventLoading, isFetching: isEventFetching } = useFindEventQuery({ id: eventId });
     const { data: pagedActivities, isFetching: isActivitiesFetching, refetch } = useFindActivitiesQuery({ eventId });
+    // Permissions
+    const username = useSelector(selectAuthUsername);
+    const isAdmin = !!event && event.admins.indexOf(username ?? '') >= 0;
     // Actions
 
     // NavBar
     const navBarActions = useCallback(() => (
         <View style={styles.actions}>
-            {/* <EditSafeButton safeId={eventId} /> */}
+            {isAdmin &&
+                <CreateEvent eventId={eventId} />
+            }
             <LogoutButton />
         </View>
-    ), []);
+    ), [isAdmin, eventId]);
     // RENDER
     if (!event || isEventLoading || isEventFetching) {
         return (
@@ -79,15 +85,15 @@ function Event() {
                 </View>
             </View>
             <Divider style={{ height: 2, width: '70%', marginVertical: 15 }} />
-            <View style={{ borderWidth: 1, borderRadius: 10, borderColor: '#575', width: '65%', backgroundColor: '#454', paddingHorizontal: 12, paddingVertical: 4, opacity: 0.7 }}>
+            <View style={{ borderWidth: 1, borderRadius: 10, borderColor: '#ABA', width: '65%', backgroundColor: '#CDC', paddingHorizontal: 12, paddingVertical: 4, opacity: 0.7 }}>
                 <Markdown>
                     {event.description ?? ''}
                 </Markdown>
             </View>
             <Divider style={{ height: 2, width: '50%', marginVertical: 15 }} />
-            <EventAdmins eventId={eventId} admins={event.admins} />
+            <EventAdmins eventId={eventId} isAdmin={isAdmin} admins={event.admins} />
             <Divider style={{ height: 2, width: '50%', marginVertical: 15 }} />
-            <EventParticipants eventId={eventId} participants={event.participants} />
+            <EventParticipants eventId={eventId} isAdmin={isAdmin} participants={event.participants} />
             <Divider style={{ height: 2, width: '70%', marginVertical: 15 }} />
             <View>
                 <View style={{ flexDirection: 'row', gap: 15 }}>

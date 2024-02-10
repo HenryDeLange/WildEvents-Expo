@@ -93,7 +93,7 @@ function Events() {
                         key={item.id}
                         title={<Text variant='headlineLarge' style={{ borderBottomWidth: 1, borderBottomColor: '#585' }}>{item.name}</Text>}
                         description={<Markdown>{item.description ?? ''}</Markdown>}
-                        left={props => <List.Icon {...props} icon='barley' />}
+                        // left={props => <List.Icon {...props} icon='barley' />}
                         right={() => (
                             <View style={{ gap: 5 }}>
                                 <Tooltip title={t('eventCardStartDate')}>

@@ -7,7 +7,7 @@ export default memo(function () {
     const { t } = useTranslation();
     return (
         <Link href='/about' asChild>
-            <Button icon='information-outline'>
+            <Button icon='information-outline' uppercase>
                 {t('aboutButton')}
             </Button>
         </Link>

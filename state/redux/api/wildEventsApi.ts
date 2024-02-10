@@ -290,36 +290,43 @@ export type EventBase = {
   close: string;
   visibility: "PUBLIC" | "PRIVATE";
 };
+export type ActivityStep = {
+  description: string;
+  criteria?: {
+    [key: string]: string;
+  };
+};
 export type ActivityCalculation = {
   score?: number;
   observations?: number[];
+};
+export type ActivityStepResult = {
+  criteria?: {
+    [key: string]: ActivityCalculation;
+  };
 };
 export type Activity = {
   name: string;
   description?: string;
   status?: "PENDING" | "CALCULATING" | "CALCULATED" | "ERROR";
   disableReason?: "FAILED_TO_CALCULATE" | "TOO_MANY_RESULTS" | "ADMIN_DISABLED";
-  criteria?: {
-    [key: string]: string;
-  }[];
+  steps?: ActivityStep[];
   eventId: string;
   type: "RACE" | "HUNT" | "QUIZ" | "EXPLORE";
   id: string;
   calculated?: string;
-  results?: {
-    [key: string]: ActivityCalculation;
-  }[];
+  results?: ActivityStepResult[];
 };
 export type ActivityBase = {
   name: string;
   description?: string;
   status?: "PENDING" | "CALCULATING" | "CALCULATED" | "ERROR";
   disableReason?: "FAILED_TO_CALCULATE" | "TOO_MANY_RESULTS" | "ADMIN_DISABLED";
-  criteria?: {
-    [key: string]: string;
-  }[];
+  steps?: ActivityStep[];
 };
 export type Tokens = {
+  username: string;
+  inaturalist: string;
   accessToken: string;
   refreshToken: string;
 };
@@ -355,9 +362,7 @@ export type ActivityCreate = {
   description?: string;
   status?: "PENDING" | "CALCULATING" | "CALCULATED" | "ERROR";
   disableReason?: "FAILED_TO_CALCULATE" | "TOO_MANY_RESULTS" | "ADMIN_DISABLED";
-  criteria?: {
-    [key: string]: string;
-  }[];
+  steps?: ActivityStep[];
   eventId: string;
   type: "RACE" | "HUNT" | "QUIZ" | "EXPLORE";
 };

@@ -47,11 +47,14 @@ export default function RootLayout() {
 
 // Set the supported languages
 const defaultLang = 'en';
+const currentLanguage = (Localization.getLocales() && Localization.getLocales().length >= 1)
+    ? (Localization.getLocales()[0].languageCode ?? defaultLang)
+    : defaultLang;
 i18n
     .use(initReactI18next) // Passes i18n down to react-i18next
     .init({
         resources: { en },
-        lng: (Localization.getLocales() && Localization.getLocales().length >= 1) ? (Localization.getLocales()[0].languageCode ?? defaultLang) : defaultLang,
+        lng: currentLanguage,
         // lng: Localization.locale,
         fallbackLng: defaultLang,
         interpolation: {

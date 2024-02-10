@@ -7,7 +7,7 @@ export default memo(function () {
     const { t } = useTranslation();
     return (
         <Link href='/register' asChild>
-            <Button mode='text' icon='account-plus'>
+            <Button mode='text' icon='account-plus' uppercase>
                 {t('registerButton')}
             </Button>
         </Link>

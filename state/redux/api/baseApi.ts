@@ -1,9 +1,9 @@
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError, createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 import { Mutex } from 'async-mutex';
-import * as Localization from 'expo-localization';
-import { setAccessToken, setRefreshToken } from '../auth/authSlice';
+import { doLogout, doRefresh, replaceAccessToken } from '../auth/authSlice';
 import { RootState } from '../store';
 import { Tokens } from './wildEventsApi';
+import i18next from 'i18next';
 
 // Add the token and language to the request header
 const rawBaseQuery = fetchBaseQuery({
@@ -15,7 +15,7 @@ const rawBaseQuery = fetchBaseQuery({
             headers.set('Authorization', `Bearer ${token}`);
         }
         // Set the language
-        headers.set('Accept-Language', Localization.locale);
+        headers.set('Accept-Language', i18next.language);
         return headers;
     }
 });
@@ -61,20 +61,21 @@ const baseQueryWithReauth: BaseQueryFn<
             const release = await mutex.acquire();
             // Try to get a new token
             try {
-                api.dispatch(setAccessToken((api.getState() as RootState).auth.refreshToken));
+                api.dispatch(replaceAccessToken((api.getState() as RootState).auth.refreshToken));
                 const refreshResult = await dynamicUrlBaseQuery({ url: '/users/refresh', method: 'post' }, api, extraOptions);
                 const tokens = refreshResult.data as Tokens;
                 if (tokens) {
                     // Store the new token
-                    api.dispatch(setAccessToken(tokens.accessToken));
-                    api.dispatch(setRefreshToken(tokens.refreshToken));
+                    api.dispatch(doRefresh({
+                        accessToken: tokens.accessToken,
+                        refreshToken: tokens.refreshToken
+                    }));
                     // Retry the initial query
                     result = await dynamicUrlBaseQuery(args, api, extraOptions);
                 }
                 else {
                     // Logout (clear the tokens)
-                    api.dispatch(setAccessToken(null));
-                    api.dispatch(setRefreshToken(null));
+                    api.dispatch(doLogout());
                 }
             }
             finally {

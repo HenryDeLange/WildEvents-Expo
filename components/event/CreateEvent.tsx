@@ -3,14 +3,18 @@ import { addDays, addMonths, getYear, isAfter, subDays } from 'date-fns';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Card, FAB, HelperText, IconButton, Text, TextInput } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, HelperText, IconButton, Text, TextInput } from 'react-native-paper';
 import { DatePickerInput, ca, registerTranslation } from 'react-native-paper-dates';
 import { CalendarDate } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
 
 registerTranslation('ca', ca);
 
-function CreateEvent() {
+type Props = {
+    eventId?: string;
+}
+
+function CreateEvent({ eventId }: Props) {
     // Translation
     const { t } = useTranslation();
     // State
@@ -81,11 +85,12 @@ function CreateEvent() {
     const now = new Date();
     return (
         <>
-            <Button mode='contained-tonal' style={styles.addButton} uppercase
-                icon={isCreating ? 'loading' : 'plus'}
+            <Button mode={eventId ? 'text' : 'contained-tonal'} style={styles.addButton} uppercase
+                icon={isCreating ? 'loading' : eventId ? 'pencil' : 'plus'}
                 onPress={handleFloatButton}
             >
-                {isCreating ? <ActivityIndicator animating={true} /> : t('eventCardCreateTitle')}
+                {isCreating ? <ActivityIndicator animating={true} /> :
+                    eventId ? t('eventCardEditTitle') : t('eventCardCreateTitle')}
             </Button>
             <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={hideModal}>
                 <Card.Title title={t('eventCardCreateTitle')} titleVariant='titleLarge' right={renderVisibilityToggle} />

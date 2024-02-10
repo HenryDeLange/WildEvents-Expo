@@ -1,5 +1,5 @@
 import { useRegisterMutation } from '@/state/redux/api/wildEventsApi';
-import { setAccessToken, setRefreshToken } from '@/state/redux/auth/authSlice';
+import { doLogin } from '@/state/redux/auth/authSlice';
 import { useAppDispatch } from '@/state/redux/hooks';
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
@@ -35,8 +35,12 @@ export default memo(function () {
             await register({ user: { inaturalist, username, password: digest } })
                 .unwrap()
                 .then((value) => {
-                    dispatch(setAccessToken(value.accessToken ?? null));
-                    dispatch(setRefreshToken(value.refreshToken ?? null));
+                    dispatch(doLogin({
+                        username: value.username,
+                        inaturalist: value.inaturalist,
+                        accessToken: value.accessToken,
+                        refreshToken: value.refreshToken
+                    }));
                     router.replace('/(auth)/events');
                 });
         }
@@ -56,23 +60,12 @@ export default memo(function () {
             <Card.Content>
                 <TextInput
                     mode='outlined'
-                    label={t('registerCardINatName')}
-                    placeholder={t('registerCardINatName')}
-                    value={inaturalist}
-                    onChangeText={setInaturalist}
-                    left={<TextInput.Icon icon='account-eye' focusable={false} disabled />}
-                    autoFocus
-                />
-                <HelperText type='error' visible={inaturalist.length > 0 && inatNameError} >
-                    {t('registerCardINatNameError')}
-                </HelperText>
-                <TextInput
-                    mode='outlined'
                     label={t('registerCardUsername')}
                     placeholder={t('registerCardUsernameHelp')}
                     value={username}
                     onChangeText={setUsername}
                     left={<TextInput.Icon icon='account-circle' focusable={false} disabled />}
+                    autoFocus
                 />
                 <HelperText type='error' visible={username.length > 0 && usernameError} >
                     {t('registerCardUsernameError')}
@@ -102,6 +95,17 @@ export default memo(function () {
                 />
                 <HelperText type='error' visible={confirmPassword.length > 0 && confirmPasswordError} >
                     {t('registerCardConfirmPasswordError')}
+                </HelperText>
+                <TextInput
+                    mode='outlined'
+                    label={t('registerCardINatName')}
+                    placeholder={t('registerCardINatNameHelp')}
+                    value={inaturalist}
+                    onChangeText={setInaturalist}
+                    left={<TextInput.Icon icon='account-eye' focusable={false} disabled />}
+                />
+                <HelperText type='error' visible={inaturalist.length > 0 && inatNameError} >
+                    {t('registerCardINatNameError')}
                 </HelperText>
                 <View style={styles.buttonWrapper}>
                     <Button mode='contained' style={styles.button} uppercase

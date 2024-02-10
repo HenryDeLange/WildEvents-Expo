@@ -7,10 +7,11 @@ import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
 
 type Props = {
     eventId: string;
+    isAdmin: boolean;
     admins: string[];
 }
 
-function EventAdmins({ eventId, admins }: Readonly<Props>) {
+function EventAdmins({ eventId, isAdmin, admins }: Readonly<Props>) {
     const { t } = useTranslation();
     const theme = useTheme();
 
@@ -46,12 +47,17 @@ function EventAdmins({ eventId, admins }: Readonly<Props>) {
         if (!isJoining)
             setShowJoinDialog(false);
     }, [isJoining]);
+    const handleJoinButton = useCallback(() => setShowJoinDialog(true), []);
     const handleJoin = useCallback(() => {
         doJoin({
             id: eventId,
             adminId: adminName
         });
     }, [adminName]);
+    const handleJoinEnterKey = useCallback((event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+        if (event.nativeEvent.key === 'Enter')
+            handleJoin();
+    }, [handleJoin]);
     useEffect(() => {
         if (isJoined && !isJoinError)
             setShowJoinDialog(false);
@@ -67,16 +73,18 @@ function EventAdmins({ eventId, admins }: Readonly<Props>) {
             <View style={styles.chipWrapper}>
                 {admins.map(admin =>
                     <Chip key={admin} mode='outlined'
-                        onClose={admins.length > 1 ? handleShowLeaveDialog(admin) : undefined}
+                        onClose={(isAdmin && admins.length > 1) ? handleShowLeaveDialog(admin) : undefined}
                     >
                         {admin}
                     </Chip>
                 )}
-                <Chip key='add' mode='outlined'
-                    onPress={useCallback(() => setShowJoinDialog(true), [])}
-                >
-                    <Icon source='plus' size={18} color={theme.colors.primary} />
-                </Chip>
+                {isAdmin &&
+                    <Chip key='add' mode='outlined'
+                        onPress={handleJoinButton}
+                    >
+                        <Icon source='plus' size={18} color={theme.colors.primary} />
+                    </Chip>
+                }
             </View>
             {/* Leave Dialog */}
             <ResponsiveCardWrapper modalVisible={showLeaveDialog} hideModal={handleHideLeaveDialog}>
@@ -115,8 +123,7 @@ function EventAdmins({ eventId, admins }: Readonly<Props>) {
                         value={adminName}
                         onChangeText={setAdminName}
                         autoFocus
-                        onKeyPress={useCallback((event: NativeSyntheticEvent<TextInputKeyPressEventData>) =>
-                            (event.nativeEvent.key === 'Enter') && handleJoin(), [handleJoin])}
+                        onKeyPress={handleJoinEnterKey}
                     />
                     <View style={styles.buttonWrapper}>
                         <Button mode='contained' style={styles.button} uppercase

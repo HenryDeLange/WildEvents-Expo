@@ -4,18 +4,23 @@ import { useTranslation } from 'react-i18next';
 import { NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View } from 'react-native';
 import { ActivityIndicator, Button, Chip, Dialog, HelperText, Icon, Text, TextInput, useTheme } from 'react-native-paper';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
+import { useSelector } from 'react-redux';
+import { selectAuthINaturalist } from '@/state/redux/auth/authSlice';
 
 type Props = {
     eventId: string;
+    isAdmin: boolean;
     participants?: string[];
 }
 
-function EventParticipants({ eventId, participants }: Readonly<Props>) {
+function EventParticipants({ eventId, isAdmin, participants }: Readonly<Props>) {
     const { t } = useTranslation();
     const theme = useTheme();
 
-    // Current participant iNaturalist username
-    const [participantName, setParticipantName] = useState('');
+    // User's participant iNaturalist username
+    const inaturalistName = useSelector(selectAuthINaturalist) ?? '';
+    // New participant iNaturalist username
+    const [participantName, setParticipantName] = useState(isAdmin ? '' : inaturalistName);
 
     // Leave
     const [doLeave, { isLoading: isLeaving, isError: isLeaveError, isSuccess: isLeft }] = useParticipantLeaveEventMutation();
@@ -46,12 +51,17 @@ function EventParticipants({ eventId, participants }: Readonly<Props>) {
         if (!isJoining)
             setShowJoinDialog(false);
     }, [isJoining]);
+    const handleJoinButton = useCallback(() => setShowJoinDialog(true), []);
     const handleJoin = useCallback(() => {
         doJoin({
             id: eventId,
             iNatId: participantName
         });
     }, [participantName]);
+    const handleJoinEnterKey = useCallback((event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+        if (event.nativeEvent.key === 'Enter')
+            handleJoin();
+    }, [handleJoin]);
     useEffect(() => {
         if (isJoined && !isJoinError)
             setShowJoinDialog(false);
@@ -67,16 +77,18 @@ function EventParticipants({ eventId, participants }: Readonly<Props>) {
             <View style={styles.chipWrapper}>
                 {participants?.map(participant =>
                     <Chip key={participant} mode='outlined'
-                        onClose={handleShowLeaveDialog(participant)}
+                        onClose={(isAdmin || participant === inaturalistName) ? handleShowLeaveDialog(participant) : undefined}
                     >
                         {participant}
                     </Chip>
                 )}
-                <Chip key='add' mode='outlined'
-                    onPress={useCallback(() => setShowJoinDialog(true), [])}
-                >
-                    <Icon source='plus' size={18} color={theme.colors.primary} />
-                </Chip>
+                {(isAdmin || (participants && participants.indexOf(inaturalistName) < 0)) &&
+                    <Chip key='add' mode='outlined'
+                        onPress={handleJoinButton}
+                    >
+                        <Icon source='plus' size={18} color={theme.colors.primary} />
+                    </Chip>
+                }
             </View>
             {/* Leave Dialog */}
             <ResponsiveCardWrapper modalVisible={showLeaveDialog} hideModal={handleHideLeaveDialog}>
@@ -115,8 +127,8 @@ function EventParticipants({ eventId, participants }: Readonly<Props>) {
                         value={participantName}
                         onChangeText={setParticipantName}
                         autoFocus
-                        onKeyPress={useCallback((event: NativeSyntheticEvent<TextInputKeyPressEventData>) =>
-                            (event.nativeEvent.key === 'Enter') && handleJoin(), [handleJoin])}
+                        onKeyPress={handleJoinEnterKey}
+                        disabled={!isAdmin}
                     />
                     <View style={styles.buttonWrapper}>
                         <Button mode='contained' style={styles.button} uppercase

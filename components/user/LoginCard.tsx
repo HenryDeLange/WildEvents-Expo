@@ -1,5 +1,5 @@
 import { useLoginMutation } from '@/state/redux/api/wildEventsApi';
-import { setAccessToken, setRefreshToken } from '@/state/redux/auth/authSlice';
+import { doLogin } from '@/state/redux/auth/authSlice';
 import { useAppDispatch } from '@/state/redux/hooks';
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
@@ -33,8 +33,12 @@ export default memo(function () {
             await login({ userLogin: { username, password: digest } })
                 .unwrap()
                 .then((value) => {
-                    dispatch(setAccessToken(value.accessToken ?? null));
-                    dispatch(setRefreshToken(value.refreshToken ?? null));
+                    dispatch(doLogin({
+                        username: value.username,
+                        inaturalist: value.inaturalist,
+                        accessToken: value.accessToken,
+                        refreshToken: value.refreshToken
+                    }));
                     router.replace('/(auth)/events');
                 });
         }
