@@ -21,7 +21,7 @@ function CreateActivity({ eventId }: Props) {
     const [description, setDescription] = useState<string | undefined>('');
     const [type, setType] = useState<ActivityCreate['type']>('RACE');
     const [step, setStep] = useState('1');
-    const [criteria, setCriteria] = useState<ActivityCreate['criteria']>([]);
+    const [steps, setSteps] = useState<ActivityCreate['steps']>([]);
     // Redux
     const [doCreate, { isLoading: isCreating, isError, isSuccess }] = useCreateActivityMutation();
     // Actions
@@ -31,9 +31,9 @@ function CreateActivity({ eventId }: Props) {
             setName('');
             setDescription(undefined);
             setType('RACE');
-            setCriteria(undefined);
+            setSteps(undefined);
         }
-    }, [isCreating, setModalVisible, setName, setDescription, setType, setCriteria]);
+    }, [isCreating, setModalVisible, setName, setDescription, setType, setSteps]);
     useEffect(() => {
         if (isSuccess)
             hideModal();
@@ -46,40 +46,40 @@ function CreateActivity({ eventId }: Props) {
                 name: name,
                 description: description,
                 type: type,
-                criteria: criteria
+                steps: steps
             }
         });
-    }, [doCreate, eventId, name, description, type, criteria]);
+    }, [doCreate, eventId, name, description, type, steps]);
     // Effects
     useEffect(() => {
         setStep('1');
         switch (type) {
-            case 'RACE':
-                setCriteria([{
-                    'taxon_id': ''
-                }]);
-                break;
-            case 'HUNT':
-                setCriteria([{
-                    'taxon_id': '',
-                    'lat': '',
-                    'lng': '',
-                    'radius': ''
-                }]);
-                break;
-            case 'QUIZ':
-                setCriteria([{
-                    'taxon_id': ''
-                }]);
-                break;
-            case 'EXPLORE':
-                setCriteria([{
-                    'nelat': '',
-                    'nelng': '',
-                    'swlat': '',
-                    'swlng': ''
-                }]);
-                break;
+            // case 'RACE':
+            //     setSteps([{
+            //         'taxon_id': ''
+            //     }]);
+            //     break;
+            // case 'HUNT':
+            //     setSteps([{
+            //         'taxon_id': '',
+            //         'lat': '',
+            //         'lng': '',
+            //         'radius': ''
+            //     }]);
+            //     break;
+            // case 'QUIZ':
+            //     setCriteria([{
+            //         'taxon_id': ''
+            //     }]);
+            //     break;
+            // case 'EXPLORE':
+            //     setCriteria([{
+            //         'nelat': '',
+            //         'nelng': '',
+            //         'swlat': '',
+            //         'swlng': ''
+            //     }]);
+            //     break;
         }
     }, [type, setStep]);
     // Validation
@@ -175,7 +175,7 @@ function CreateActivity({ eventId }: Props) {
 
                     />
                     <View>
-                        {criteria && criteria.map(criterion =>
+                        {steps && steps.map(criterion =>
                             Object.keys(criterion).map((key, index) => (
                                 <View key={`step${step}Criterion${type}Entry${index}`} style={{ flexDirection: 'row', gap: 10 }}>
                                     <TextInput
@@ -184,27 +184,27 @@ function CreateActivity({ eventId }: Props) {
                                         mode='outlined'
                                         label={'Key'}
                                         value={key}
-                                        onChangeText={text => {
-                                            const newCriteria = [...criteria];
-                                            newCriteria[index] = {
-                                                [text]: newCriteria[index][key]
-                                            }
-                                            setCriteria(newCriteria);
-                                        }}
+                                        // onChangeText={text => {
+                                        //     const newCriteria = [...criteria];
+                                        //     newCriteria[index] = {
+                                        //         [text]: newCriteria[index][key]
+                                        //     }
+                                        //     setCriteria(newCriteria);
+                                        // }}
                                     />
                                     <TextInput
                                         key={`step${step}Criterion${type}Entry${index}Value`}
                                         style={{ flex: 2 }}
                                         mode='outlined'
                                         label={'Value'}
-                                        value={criterion[key]}
-                                        onChangeText={text => {
-                                            const newCriteria = [...criteria];
-                                            newCriteria[index] = {
-                                                [key]: text
-                                            }
-                                            setCriteria(newCriteria);
-                                        }}
+                                        // value={criterion[key]}
+                                        // onChangeText={text => {
+                                        //     const newCriteria = [...criteria];
+                                        //     newCriteria[index] = {
+                                        //         [key]: text
+                                        //     }
+                                        //     setCriteria(newCriteria);
+                                        // }}
                                     />
                                 </View>
                             ))

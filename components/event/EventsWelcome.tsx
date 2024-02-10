@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Divider, Text } from 'react-native-paper';
-import CreateEvent from './CreateEvent';
+import ModifyEvent from './ModifyEvent';
 
 function EventsWelcome() {
     const { t } = useTranslation();
@@ -21,7 +21,7 @@ function EventsWelcome() {
                         {t('welcomeAction')}
                     </Text>
                     <View style={styles.createWrapper}>
-                        <CreateEvent />
+                        <ModifyEvent />
                     </View>
                 </View>
             </View>

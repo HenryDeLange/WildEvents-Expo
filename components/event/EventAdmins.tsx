@@ -31,7 +31,7 @@ function EventAdmins({ eventId, isAdmin, admins }: Readonly<Props>) {
     }, []);
     const handleLeave = useCallback(() => {
         doLeave({
-            id: eventId,
+            eventId: eventId,
             adminId: adminName
         });
     }, [adminName]);
@@ -50,7 +50,7 @@ function EventAdmins({ eventId, isAdmin, admins }: Readonly<Props>) {
     const handleJoinButton = useCallback(() => setShowJoinDialog(true), []);
     const handleJoin = useCallback(() => {
         doJoin({
-            id: eventId,
+            eventId: eventId,
             adminId: adminName
         });
     }, [adminName]);

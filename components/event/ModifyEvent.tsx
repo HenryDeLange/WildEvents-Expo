@@ -1,4 +1,4 @@
-import { Event, useCreateEventMutation } from '@/state/redux/api/wildEventsApi';
+import { Event, useCreateEventMutation, useUpdateEventMutation } from '@/state/redux/api/wildEventsApi';
 import { addDays, addMonths, getYear, isAfter, subDays } from 'date-fns';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,52 +11,58 @@ import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
 registerTranslation('ca', ca);
 
 type Props = {
-    eventId?: string;
+    event?: Event;
 }
 
-function CreateEvent({ eventId }: Props) {
+function ModifyEvent({ event }: Readonly<Props>) {
     // Translation
     const { t } = useTranslation();
     // State
     const [modalVisible, setModalVisible] = useState(false);
     const [name, setName] = useState('');
-    const [description, setDescription] = useState<string | undefined>('');
+    const [description, setDescription] = useState<string | undefined>(undefined);
     const [visibility, setVisibility] = useState<Event['visibility']>('PUBLIC');
-    const [startDate, setStartDate] = useState<CalendarDate>();
-    const [stopDate, setStopDate] = useState<CalendarDate>();
-    const [closeDate, setCloseDate] = useState<CalendarDate>();
+    const [startDate, setStartDate] = useState<CalendarDate>(undefined);
+    const [stopDate, setStopDate] = useState<CalendarDate>(undefined);
+    const [closeDate, setCloseDate] = useState<CalendarDate>(undefined);
+    useEffect(() => {
+        setName(event ? event.name : '');
+        setDescription(event ? event.description : undefined);
+        setVisibility(event ? event.visibility : 'PUBLIC');
+        setStartDate(event ? new Date(event.start) : undefined);
+        setStopDate(event ? new Date(event.stop) : undefined);
+        setCloseDate(event ? new Date(event.close) : undefined);
+    }, [event]);
     // Redux
-    const [doCreate, { isLoading: isCreating, isError, isSuccess }] = useCreateEventMutation();
+    const [doCreate, { isLoading: isCreating, isError: isErrorCreate, isSuccess: isSuccessCreate }] = useCreateEventMutation();
+    const [doUpdate, { isLoading: isUpdating, isError: isErrorUpdate, isSuccess: isSuccessUpdate }] = useUpdateEventMutation();
     // Actions
     const hideModal = useCallback(() => {
-        if (!isCreating) {
+        if (!isCreating && !isUpdating)
             setModalVisible(false);
-            setName('');
-            setDescription(undefined);
-            setVisibility('PUBLIC');
-            setStartDate(undefined);
-            setStopDate(undefined);
-            setCloseDate(undefined);
-        }
-    }, [isCreating, setModalVisible, setName, setDescription, setVisibility, setStartDate, setStopDate, setCloseDate]);
+    }, [isCreating, isUpdating]);
     useEffect(() => {
-        if (isSuccess)
+        if (isSuccessCreate || isSuccessUpdate)
             hideModal();
-    }, [isSuccess, hideModal]);
-    const handleFloatButton = useCallback(() => setModalVisible(true), [setModalVisible]);
-    const handleCreate = useCallback(() => {
-        doCreate({
-            eventBase: {
-                name: name,
-                description: description,
-                visibility: visibility,
-                start: startDate?.toISOString() ?? '',
-                stop: stopDate?.toISOString() ?? '',
-                close: closeDate?.toISOString() ?? ''
-            }
-        });
-    }, [doCreate, name, description, visibility, startDate, stopDate, closeDate]);
-    const toggleVisibility = useCallback(() => setVisibility(visibility === 'PRIVATE' ? 'PUBLIC' : 'PRIVATE'), [visibility, setVisibility]);
+    }, [isSuccessCreate, isSuccessUpdate]);
+    const handleShowButton = useCallback(() => setModalVisible(true), []);
+    const handleConfirm = useCallback(() => {
+        const eventBase = {
+            name: name,
+            description: description,
+            visibility: visibility,
+            start: startDate?.toISOString() ?? '',
+            stop: stopDate?.toISOString() ?? '',
+            close: closeDate?.toISOString() ?? ''
+        };
+        if (event)
+            doUpdate({ eventId: event.id, eventBase })
+        else
+            doCreate({ eventBase });
+    }, [doCreate, doUpdate, name, description, visibility, startDate, stopDate, closeDate, event]);
+    const toggleVisibility = useCallback(() => {
+        setVisibility(visibility === 'PRIVATE' ? 'PUBLIC' : 'PRIVATE');
+    }, [visibility]);
     const renderVisibilityToggle = useCallback(() => (
         < View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text onPress={toggleVisibility}>
@@ -69,7 +75,7 @@ function CreateEvent({ eventId }: Props) {
                 selected={visibility === 'PRIVATE'}
             />
         </View >
-    ), [visibility, toggleVisibility]);
+    ), [visibility]);
     // Validation
     const nameError = name.length === 0;
     const dateError = !startDate || !stopDate || !closeDate || !isAfter(stopDate, startDate) || !isAfter(closeDate, stopDate);
@@ -80,20 +86,22 @@ function CreateEvent({ eventId }: Props) {
         if (closeDate && stopDate && !isAfter(closeDate, stopDate)) {
             setCloseDate(undefined);
         }
-    }, [startDate, stopDate, closeDate, setStopDate, setCloseDate]);
+    }, [startDate, stopDate, closeDate]);
     // RENDER
     const now = new Date();
     return (
         <>
-            <Button mode={eventId ? 'text' : 'contained-tonal'} style={styles.addButton} uppercase
-                icon={isCreating ? 'loading' : eventId ? 'pencil' : 'plus'}
-                onPress={handleFloatButton}
+            <Button mode={event ? 'text' : 'contained-tonal'} style={styles.addButton} uppercase
+                icon={(isCreating || isUpdating) ? 'loading' : event ? 'pencil' : 'plus'}
+                onPress={handleShowButton}
             >
-                {isCreating ? <ActivityIndicator animating={true} /> :
-                    eventId ? t('eventCardEditTitle') : t('eventCardCreateTitle')}
+                {(isCreating || isUpdating) ? <ActivityIndicator animating={true} /> :
+                    event ? t('eventCardEditTitle') : t('eventCardCreateTitle')}
             </Button>
             <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={hideModal}>
-                <Card.Title title={t('eventCardCreateTitle')} titleVariant='titleLarge' right={renderVisibilityToggle} />
+                <Card.Title titleVariant='titleLarge' right={renderVisibilityToggle}
+                    title={event ? t('eventCardEditTitle') : t('eventCardCreateTitle')}
+                />
                 <Card.Content style={styles.content}>
                     <TextInput
                         mode='outlined'
@@ -167,14 +175,14 @@ function CreateEvent({ eventId }: Props) {
                     />
                     <View style={styles.buttonWrapper}>
                         <Button mode='contained' style={styles.button} uppercase
-                            icon={isCreating ? undefined : 'check'}
-                            disabled={isCreating || nameError || dateError}
-                            onPress={handleCreate}
+                            icon={(isCreating || isUpdating) ? undefined : 'check'}
+                            disabled={isCreating || isUpdating || nameError || dateError}
+                            onPress={handleConfirm}
                         >
                             {isCreating ? <ActivityIndicator animating={true} /> : t('confirm')}
                         </Button>
-                        {isError &&
-                            <HelperText type='error' visible={isError} >
+                        {(isErrorCreate || isErrorUpdate) &&
+                            <HelperText type='error' visible={isErrorCreate || isErrorUpdate} >
                                 {t('eventCardCreateFailed')}
                             </HelperText>
                         }
@@ -185,7 +193,7 @@ function CreateEvent({ eventId }: Props) {
     );
 }
 
-export default memo(CreateEvent);
+export default memo(ModifyEvent);
 
 const styles = StyleSheet.create({
     addButton: {

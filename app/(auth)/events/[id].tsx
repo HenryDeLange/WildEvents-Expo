@@ -1,7 +1,7 @@
 import CreateActivity from '@/components/activity/CreateActivity';
-import CreateEvent from '@/components/event/CreateEvent';
 import EventAdmins from '@/components/event/EventAdmins';
 import EventParticipants from '@/components/event/EventParticipants';
+import ModifyEvent from '@/components/event/ModifyEvent';
 import LogoutButton from '@/components/user/LogoutButton';
 import { useFindActivitiesQuery, useFindEventQuery } from '@/state/redux/api/wildEventsApi';
 import { selectAuthUsername } from '@/state/redux/auth/authSlice';
@@ -23,7 +23,7 @@ function Event() {
     // State
 
     // Redux
-    const { data: event, isLoading: isEventLoading, isFetching: isEventFetching } = useFindEventQuery({ id: eventId });
+    const { data: event, isLoading: isEventLoading, isFetching: isEventFetching } = useFindEventQuery({ eventId });
     const { data: pagedActivities, isFetching: isActivitiesFetching, refetch } = useFindActivitiesQuery({ eventId });
     // Permissions
     const username = useSelector(selectAuthUsername);
@@ -34,11 +34,11 @@ function Event() {
     const navBarActions = useCallback(() => (
         <View style={styles.actions}>
             {isAdmin &&
-                <CreateEvent eventId={eventId} />
+                <ModifyEvent event={event} />
             }
             <LogoutButton />
         </View>
-    ), [isAdmin, eventId]);
+    ), [isAdmin, event]);
     // RENDER
     if (!event || isEventLoading || isEventFetching) {
         return (

@@ -12,12 +12,12 @@ const injectedRtkApi = api
   .injectEndpoints({
     endpoints: (build) => ({
       findEvent: build.query<FindEventApiResponse, FindEventApiArg>({
-        query: (queryArg) => ({ url: `/events/${queryArg.id}` }),
+        query: (queryArg) => ({ url: `/events/${queryArg.eventId}` }),
         providesTags: ["Events"],
       }),
       updateEvent: build.mutation<UpdateEventApiResponse, UpdateEventApiArg>({
         query: (queryArg) => ({
-          url: `/events/${queryArg.id}`,
+          url: `/events/${queryArg.eventId}`,
           method: "PUT",
           body: queryArg.eventBase,
         }),
@@ -25,7 +25,7 @@ const injectedRtkApi = api
       }),
       deleteEvent: build.mutation<DeleteEventApiResponse, DeleteEventApiArg>({
         query: (queryArg) => ({
-          url: `/events/${queryArg.id}`,
+          url: `/events/${queryArg.eventId}`,
           method: "DELETE",
         }),
         invalidatesTags: ["Events"],
@@ -98,7 +98,7 @@ const injectedRtkApi = api
         ParticipantJoinEventApiArg
       >({
         query: (queryArg) => ({
-          url: `/events/${queryArg.id}/participants/${queryArg.iNatId}`,
+          url: `/events/${queryArg.eventId}/participants/${queryArg.iNatId}`,
           method: "POST",
         }),
         invalidatesTags: ["Events"],
@@ -108,7 +108,7 @@ const injectedRtkApi = api
         ParticipantLeaveEventApiArg
       >({
         query: (queryArg) => ({
-          url: `/events/${queryArg.id}/participants/${queryArg.iNatId}`,
+          url: `/events/${queryArg.eventId}/participants/${queryArg.iNatId}`,
           method: "DELETE",
         }),
         invalidatesTags: ["Events"],
@@ -118,7 +118,7 @@ const injectedRtkApi = api
         CalculateEventApiArg
       >({
         query: (queryArg) => ({
-          url: `/events/${queryArg.id}/calculate`,
+          url: `/events/${queryArg.eventId}/calculate`,
           method: "POST",
         }),
         invalidatesTags: ["Events"],
@@ -128,7 +128,7 @@ const injectedRtkApi = api
         AdminJoinEventApiArg
       >({
         query: (queryArg) => ({
-          url: `/events/${queryArg.id}/admins/${queryArg.adminId}`,
+          url: `/events/${queryArg.eventId}/admins/${queryArg.adminId}`,
           method: "POST",
         }),
         invalidatesTags: ["Events"],
@@ -138,7 +138,7 @@ const injectedRtkApi = api
         AdminLeaveEventApiArg
       >({
         query: (queryArg) => ({
-          url: `/events/${queryArg.id}/admins/${queryArg.adminId}`,
+          url: `/events/${queryArg.eventId}/admins/${queryArg.adminId}`,
           method: "DELETE",
         }),
         invalidatesTags: ["Events"],
@@ -188,16 +188,16 @@ const injectedRtkApi = api
 export { injectedRtkApi as wildEventsApi };
 export type FindEventApiResponse = /** status 200 OK */ Event;
 export type FindEventApiArg = {
-  id: string;
+  eventId: string;
 };
 export type UpdateEventApiResponse = /** status 200 OK */ Event;
 export type UpdateEventApiArg = {
-  id: string;
+  eventId: string;
   eventBase: EventBase;
 };
 export type DeleteEventApiResponse = unknown;
 export type DeleteEventApiArg = {
-  id: string;
+  eventId: string;
 };
 export type FindActivityApiResponse = /** status 200 OK */ Activity;
 export type FindActivityApiArg = {
@@ -233,26 +233,26 @@ export type CreateEventApiArg = {
 };
 export type ParticipantJoinEventApiResponse = /** status 200 OK */ Event;
 export type ParticipantJoinEventApiArg = {
-  id: string;
+  eventId: string;
   iNatId: string;
 };
 export type ParticipantLeaveEventApiResponse = /** status 200 OK */ Event;
 export type ParticipantLeaveEventApiArg = {
-  id: string;
+  eventId: string;
   iNatId: string;
 };
 export type CalculateEventApiResponse = unknown;
 export type CalculateEventApiArg = {
-  id: string;
+  eventId: string;
 };
 export type AdminJoinEventApiResponse = /** status 200 OK */ Event;
 export type AdminJoinEventApiArg = {
-  id: string;
+  eventId: string;
   adminId: string;
 };
 export type AdminLeaveEventApiResponse = /** status 200 OK */ Event;
 export type AdminLeaveEventApiArg = {
-  id: string;
+  eventId: string;
   adminId: string;
 };
 export type FindActivitiesApiResponse = /** status 200 OK */ PagedActivity;
