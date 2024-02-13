@@ -66,6 +66,7 @@ export default {
         eventParticipantJoinInput: 'Participant Name',
         eventParticipantJoinError: 'Failed to add the participant to the event!',
         eventActivities: 'Event Activities',
+        eventCalculate: 'Calculate',
 
 
         welcomeTitle: 'Welcome to Wild Events!',
@@ -86,10 +87,23 @@ export default {
         activityCardName: 'Name',
         activityCardDescription: 'Description',
         activityCardType: 'Type',
-        activityCardCriteria: 'Criteria',
-        activityCardCriteriaStep: 'Step',
-        
-        
+        activityCardStepDescription: 'Step Description',
+        activityCardStepCount: 'Step {{step}}',
+        activityCardStepAdd: 'Add',
+        activityCriteriaKey: 'Field',
+        activityCriteriaValue: 'Value',
+        activityCriteria_taxon_id: 'Taxon ID (comma separated list of iNaturalist taxon numbers)',
+        activityCriteria_lat: 'Latitude',
+        activityCriteria_lng: 'Longitude',
+        activityCriteria_radius: 'Radius (km)',
+        activityCriteria_nelat: 'North-East Latitude',
+        activityCriteria_nelng: 'North-East Longitude',
+        activityCriteria_swlat: 'South-West Latitude',
+        activityCriteria_swlng: 'South-West Longitude',
+        activityCriteria_custom: 'Custom parameter as specified in the iNaturalist API',
+
+
+
 
     }
 }

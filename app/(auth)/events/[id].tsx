@@ -1,9 +1,9 @@
-import CreateActivity from '@/components/activity/CreateActivity';
+import ModifyActivity from '@/components/activity/ModifyActivity';
 import EventAdmins from '@/components/event/EventAdmins';
 import EventParticipants from '@/components/event/EventParticipants';
 import ModifyEvent from '@/components/event/ModifyEvent';
 import LogoutButton from '@/components/user/LogoutButton';
-import { useFindActivitiesQuery, useFindEventQuery } from '@/state/redux/api/wildEventsApi';
+import { useCalculateEventMutation, useFindActivitiesQuery, useFindEventQuery } from '@/state/redux/api/wildEventsApi';
 import { selectAuthUsername } from '@/state/redux/auth/authSlice';
 import { format } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
@@ -11,7 +11,7 @@ import Markdown from 'markdown-to-jsx';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Divider, Icon, List, Text } from 'react-native-paper';
+import { ActivityIndicator, Button, Divider, Icon, IconButton, List, Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 function Event() {
@@ -25,16 +25,25 @@ function Event() {
     // Redux
     const { data: event, isLoading: isEventLoading, isFetching: isEventFetching } = useFindEventQuery({ eventId });
     const { data: pagedActivities, isFetching: isActivitiesFetching, refetch } = useFindActivitiesQuery({ eventId });
+    const [doCalculate, { isLoading: isCalculating }] = useCalculateEventMutation();
     // Permissions
     const username = useSelector(selectAuthUsername);
     const isAdmin = !!event && event.admins.indexOf(username ?? '') >= 0;
     // Actions
-
+    const handleCalculate = useCallback(() => doCalculate({ eventId }), [eventId]);
     // NavBar
     const navBarActions = useCallback(() => (
         <View style={styles.actions}>
             {isAdmin &&
-                <ModifyEvent event={event} />
+                <>
+                    <Button mode='text' icon='calculator-variant-outline' uppercase
+                        onPress={handleCalculate}
+                        loading={isCalculating}
+                    >
+                        {t('eventCalculate')}
+                    </Button>
+                    <ModifyEvent event={event} />
+                </>
             }
             <LogoutButton />
         </View>
@@ -101,7 +110,7 @@ function Event() {
                         {t('eventActivities')}
                     </Text>
                     <View>
-                        <CreateActivity eventId={eventId} />
+                        <ModifyActivity eventId={eventId} />
                     </View>
                 </View>
                 <ScrollView style={styles.list}
