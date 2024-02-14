@@ -90,6 +90,7 @@ export default {
         activityCardStepDescription: 'Step Description',
         activityCardStepCount: 'Step {{step}}',
         activityCardStepAdd: 'Add',
+        activityCardStepRemove: 'Remove step',
         activityCriteriaKey: 'Field',
         activityCriteriaValue: 'Value',
         activityCriteria_taxon_id: 'Taxon ID (comma separated list of iNaturalist taxon numbers)',

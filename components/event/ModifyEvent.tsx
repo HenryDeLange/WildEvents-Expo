@@ -79,7 +79,6 @@ function ModifyEvent({ event }: Readonly<Props>) {
     // Validation
     const nameError = name.length === 0;
     const dateError = !startDate || !stopDate || !closeDate || !isAfter(stopDate, startDate) || !isAfter(closeDate, stopDate);
-    console.log('dateError', dateError, 'closeDate', closeDate)
     useEffect(() => {
         if (startDate && stopDate && !isAfter(stopDate, startDate)) {
             setStopDate(undefined);

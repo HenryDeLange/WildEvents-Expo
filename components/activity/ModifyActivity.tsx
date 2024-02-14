@@ -2,7 +2,7 @@ import { ActivityCreate, ActivityStep, useCreateActivityMutation } from '@/state
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Card, HelperText, Icon, SegmentedButtons, SegmentedButtonsProps, Text, TextInput, Tooltip, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, HelperText, IconButton, SegmentedButtons, SegmentedButtonsProps, Text, TextInput, Tooltip } from 'react-native-paper';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
 
 const MAX_STEPS = 5;
@@ -13,8 +13,6 @@ type Props = {
 }
 
 function ModifyActivity({ eventId }: Props) {
-    // Theme
-    const theme = useTheme();
     // Translation
     const { t } = useTranslation();
     // State
@@ -23,7 +21,10 @@ function ModifyActivity({ eventId }: Props) {
     const [description, setDescription] = useState<string | undefined>('');
     const [type, setType] = useState<ActivityCreate['type']>('RACE');
     const [step, setStep] = useState('1');
-    const [steps, setSteps] = useState<ActivityCreate['steps']>([]);
+    const [steps, setSteps] = useState<ActivityCreate['steps']>([{
+        description: '',
+        criteria: { 'taxon_id': '' }
+    }]);
     const [addedSteps, setAddedSteps] = useState(1);
     // Redux
     const [doCreate, { isLoading: isCreating, isError, isSuccess }] = useCreateActivityMutation();
@@ -82,6 +83,18 @@ function ModifyActivity({ eventId }: Props) {
                 ...steps.slice(stepIndex + 1)
             ];
             setSteps(newSteps);
+        }
+    }, [steps, step]);
+    const handleStepRemove = useCallback(() => {
+        if (steps && step) {
+            const stepIndex = Number(step) - 1;
+            const newSteps: ActivityStep[] = [
+                ...steps.slice(0, stepIndex),
+                ...steps.slice(stepIndex + 1)
+            ];
+            setSteps(newSteps);
+            setAddedSteps(addedSteps - 1);
+            setStep(String(Math.max(1, Number(step) - 1)));
         }
     }, [steps, step]);
     // Effects
@@ -239,38 +252,51 @@ function ModifyActivity({ eventId }: Props) {
                     />
                     <View>
                         {activeStep &&
-                            <View style={{ gap: 10 }}>
-                                <TextInput
-                                    mode='outlined'
-                                    label={t('activityCardStepDescription')}
-                                    value={activeStep.description}
-                                    onChangeText={handleStepDescription}
-                                    left={<TextInput.Icon icon='information' focusable={false} disabled />}
-                                    multiline
-                                    numberOfLines={3}
-                                />
-                                {Object.keys(activeStep.criteria ?? {}).map((key, index) => (
-                                    <View key={`step${step}Criterion${type}Entry${index}`} style={{ flexDirection: 'row', gap: 10 }}>
-                                        <Tooltip title={t(`activityCriteria_${key}`, { defaultValue: t('activityCriteria_custom') })}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flex: 1, gap: 10 }}>
+                                    <TextInput
+                                        mode='outlined'
+                                        label={t('activityCardStepDescription')}
+                                        value={activeStep.description}
+                                        onChangeText={handleStepDescription}
+                                        left={<TextInput.Icon icon='information' focusable={false} disabled />}
+                                        multiline
+                                        numberOfLines={3}
+                                        style={{ display: 'flex', flex: 1 }}
+                                    />
+                                    {Object.keys(activeStep.criteria ?? {}).map((key, index) => (
+                                        <View key={`step${step}Criterion${type}Entry${index}`} style={{ flexDirection: 'row', gap: 10 }}>
+                                            <Tooltip title={t(`activityCriteria_${key}`, { defaultValue: t('activityCriteria_custom') })}>
+                                                <TextInput
+                                                    key={`step${step}Criterion${type}Entry${index}Key`}
+                                                    style={{ flex: 1 }}
+                                                    mode='outlined'
+                                                    label={t('activityCriteriaKey')}
+                                                    value={key}
+                                                    readOnly
+                                                />
+                                            </Tooltip>
                                             <TextInput
-                                                key={`step${step}Criterion${type}Entry${index}Key`}
-                                                style={{ flex: 1 }}
+                                                key={`step${step}Criterion${type}Entry${index}Value`}
+                                                style={{ flex: 2 }}
                                                 mode='outlined'
-                                                label={t('activityCriteriaKey')}
-                                                value={key}
-                                                readOnly
+                                                label={t('activityCriteriaValue')}
+                                                value={activeStep.criteria && activeStep.criteria[key]}
+                                                onChangeText={handleStepCriteriaValue(key)}
                                             />
-                                        </Tooltip>
-                                        <TextInput
-                                            key={`step${step}Criterion${type}Entry${index}Value`}
-                                            style={{ flex: 2 }}
-                                            mode='outlined'
-                                            label={t('activityCriteriaValue')}
-                                            value={activeStep.criteria && activeStep.criteria[key]}
-                                            onChangeText={handleStepCriteriaValue(key)}
+                                        </View>
+                                    ))}
+                                </View>
+                                <View>
+                                    <Tooltip title={t('activityCardStepRemove')}>
+                                        <IconButton
+                                            icon='trash-can-outline'
+                                            disabled={addedSteps <= 1}
+                                            animated
+                                            onPress={handleStepRemove}
                                         />
-                                    </View>
-                                ))}
+                                    </Tooltip>
+                                </View>
                             </View>
                         }
                     </View>
