@@ -39,6 +39,7 @@ function Event() {
                     <Button mode='text' icon='calculator-variant-outline' uppercase
                         onPress={handleCalculate}
                         loading={isCalculating}
+                        disabled={isCalculating}
                     >
                         {t('eventCalculate')}
                     </Button>
@@ -47,7 +48,7 @@ function Event() {
             }
             <LogoutButton />
         </View>
-    ), [isAdmin, event]);
+    ), [isAdmin, event, isCalculating]);
     // RENDER
     if (!event || isEventLoading || isEventFetching) {
         return (
@@ -115,11 +116,42 @@ function Event() {
                             <ModifyActivity eventId={eventId} />
                         </View>
                     </View>
+                    {isActivitiesFetching &&
+                        <ActivityIndicator size='small' />
+                    }
                     {pagedActivities?.data?.map(activity => (
                         <List.Item
                             key={activity.id}
                             title={activity.name}
-                            description={<Markdown>{activity.description ?? ''}</Markdown>}
+                            description={
+                                <View style={{ gap: 4, width: '100%' }}>
+                                    <Markdown>{activity.description ?? ''}</Markdown>
+                                    <Divider style={{ width: '90%' }} />
+                                    {activity.results?.map((stepResult, index) => (
+                                        <View key={index}>
+                                            <Text variant='bodyLarge'>
+                                                {t('activityCardStepCount', { step: index })}
+                                            </Text>
+                                            <View>
+                                                {stepResult.participantScores &&
+                                                    // TODO: Sort top score first
+                                                    Object.keys(stepResult.participantScores).map(participant => (
+                                                        <View style={{ flexDirection: 'row', gap: 6, marginLeft: 20 }}>
+                                                            <Text>
+                                                                {stepResult.participantScores![participant].score}
+                                                            </Text>
+                                                            <Text>
+                                                                {participant}
+                                                            </Text>
+                                                        </View>
+                                                    ))
+                                                }
+                                            </View>
+                                        </View>
+                                    )
+                                    )}
+                                </View>
+                            }
                             onPress={() => console.log('x')}
                             style={{ borderWidth: 1, borderRadius: 10, borderColor: '#555', margin: 10 }}
                         />

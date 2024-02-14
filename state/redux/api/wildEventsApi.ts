@@ -301,7 +301,7 @@ export type ActivityCalculation = {
   observations?: number[];
 };
 export type ActivityStepResult = {
-  criteria?: {
+  participantScores?: {
     [key: string]: ActivityCalculation;
   };
 };
