@@ -3,7 +3,7 @@ import EventAdmins from '@/components/event/EventAdmins';
 import EventParticipants from '@/components/event/EventParticipants';
 import ModifyEvent from '@/components/event/ModifyEvent';
 import LogoutButton from '@/components/user/LogoutButton';
-import { useCalculateEventMutation, useFindActivitiesQuery, useFindEventQuery } from '@/state/redux/api/wildEventsApi';
+import { Activity, useCalculateActivityMutation, useCalculateEventMutation, useFindActivitiesQuery, useFindEventQuery } from '@/state/redux/api/wildEventsApi';
 import { selectAuthUsername } from '@/state/redux/auth/authSlice';
 import { format } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
@@ -11,10 +11,12 @@ import Markdown from 'markdown-to-jsx';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Divider, Icon, IconButton, List, Text } from 'react-native-paper';
+import { ActivityIndicator, Button, Divider, Icon, IconButton, List, Text, useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 function Event() {
+    // Theme
+    const theme = useTheme();
     // Translation
     const { t } = useTranslation();
     // Router
@@ -25,19 +27,21 @@ function Event() {
     // Redux
     const { data: event, isLoading: isEventLoading, isFetching: isEventFetching } = useFindEventQuery({ eventId });
     const { data: pagedActivities, isFetching: isActivitiesFetching, refetch } = useFindActivitiesQuery({ eventId });
-    const [doCalculate, { isLoading: isCalculating }] = useCalculateEventMutation();
+    const [doCalculateEvent, { isLoading: isCalculating }] = useCalculateEventMutation();
+    const [doCalculateActivity] = useCalculateActivityMutation();
     // Permissions
     const username = useSelector(selectAuthUsername);
     const isAdmin = !!event && event.admins.indexOf(username ?? '') >= 0;
     // Actions
-    const handleCalculate = useCallback(() => doCalculate({ eventId }), [eventId]);
+    const handleCalculateEvent = useCallback(() => doCalculateEvent({ eventId }), [eventId]);
+    const handleCalculate = useCallback((activity: Activity) => () => doCalculateActivity({ id: activity.id }), []);
     // NavBar
     const navBarActions = useCallback(() => (
         <View style={styles.actions}>
             {isAdmin &&
                 <>
                     <Button mode='text' icon='calculator-variant-outline' uppercase
-                        onPress={handleCalculate}
+                        onPress={handleCalculateEvent}
                         loading={isCalculating}
                         disabled={isCalculating}
                     >
@@ -125,8 +129,29 @@ function Event() {
                             title={activity.name}
                             description={
                                 <View style={{ gap: 4, width: '100%' }}>
-                                    <Markdown>{activity.description ?? ''}</Markdown>
-                                    <Divider style={{ width: '90%' }} />
+                                    <Markdown>
+                                        {activity.description ?? ''}
+                                    </Markdown>
+                                    <Divider style={{ width: '100%' }} />
+                                    <View style={{ flexDirection: 'row', gap: 15 }}>
+                                        <Text>
+                                            {activity.status}
+                                        </Text>
+                                        {activity.calculated &&
+                                            <Text>
+                                                {format(activity.calculated, 'yyyy-MM-dd HH:mm')}
+                                            </Text>
+                                        }
+                                    </View>
+                                    <Divider style={{ width: '100%' }} />
+                                    {activity.disableReason &&
+                                        <>
+                                            <Text style={{ color: theme.colors.error }}>
+                                                {activity.disableReason}
+                                            </Text>
+                                            <Divider style={{ width: '100%' }} />
+                                        </>
+                                    }
                                     {activity.results?.map((stepResult, index) => (
                                         <View key={index}>
                                             <Text variant='bodyLarge'>
@@ -154,6 +179,15 @@ function Event() {
                             }
                             onPress={() => console.log('x')}
                             style={{ borderWidth: 1, borderRadius: 10, borderColor: '#555', margin: 10 }}
+                            right={() => (
+                                <Button mode='text' icon='calculator-variant-outline' uppercase
+                                    onPress={handleCalculate(activity)}
+                                    loading={isCalculating}
+                                    disabled={isCalculating}
+                                >
+                                    {t('eventCalculate')}
+                                </Button>
+                            )}
                         />
                     ))}
                 </View>
