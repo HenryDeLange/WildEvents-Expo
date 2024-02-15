@@ -4,6 +4,7 @@ import { doLogout, doRefresh, replaceAccessToken } from '../auth/authSlice';
 import { RootState } from '../store';
 import { Tokens } from './wildEventsApi';
 import i18next from 'i18next';
+import { REFRESH_TOKEN, saveData } from '../auth/authStorage';
 
 // Add the token and language to the request header
 const rawBaseQuery = fetchBaseQuery({
@@ -70,12 +71,14 @@ const baseQueryWithReauth: BaseQueryFn<
                         accessToken: tokens.accessToken,
                         refreshToken: tokens.refreshToken
                     }));
+                    saveData(REFRESH_TOKEN, tokens.refreshToken);
                     // Retry the initial query
                     result = await dynamicUrlBaseQuery(args, api, extraOptions);
                 }
                 else {
                     // Logout (clear the tokens)
                     api.dispatch(doLogout());
+                    saveData(REFRESH_TOKEN, '');
                 }
             }
             finally {

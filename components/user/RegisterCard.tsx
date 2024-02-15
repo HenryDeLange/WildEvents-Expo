@@ -1,5 +1,6 @@
 import { useRegisterMutation } from '@/state/redux/api/wildEventsApi';
 import { doLogin } from '@/state/redux/auth/authSlice';
+import { REFRESH_TOKEN, saveData } from '@/state/redux/auth/authStorage';
 import { useAppDispatch } from '@/state/redux/hooks';
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
@@ -34,13 +35,14 @@ export default memo(function () {
             const digest = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA512, password);
             await register({ user: { inaturalist, username, password: digest } })
                 .unwrap()
-                .then((value) => {
+                .then((login) => {
                     dispatch(doLogin({
-                        username: value.username,
-                        inaturalist: value.inaturalist,
-                        accessToken: value.accessToken,
-                        refreshToken: value.refreshToken
+                        username: login.username,
+                        inaturalist: login.inaturalist,
+                        accessToken: login.accessToken,
+                        refreshToken: login.refreshToken
                     }));
+                    saveData(REFRESH_TOKEN, login.refreshToken);
                     router.replace('/(auth)/events');
                 });
         }

@@ -35,11 +35,20 @@ const authSlice = createSlice({
         doLogout: () => initialState,
         replaceAccessToken: (state, action: PayloadAction<string | null>) => {
             state.accessToken = action.payload;
+        },
+        setRefreshToken: (state, action: PayloadAction<string | null>) => {
+            state.refreshToken = action.payload;
         }
     }
 });
 
-export const { doLogin, doRefresh, doLogout, replaceAccessToken } = authSlice.actions;
+export const {
+    doLogin,
+    doRefresh,
+    doLogout,
+    replaceAccessToken,
+    setRefreshToken
+} = authSlice.actions;
 
 export const selectAuth = (state: RootState) => state.auth;
 export const selectAuthUsername = (state: RootState) => state.auth.username;
