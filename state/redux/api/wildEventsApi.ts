@@ -149,11 +149,7 @@ const injectedRtkApi = api
       >({
         query: (queryArg) => ({
           url: `/activities`,
-          params: {
-            eventId: queryArg.eventId,
-            page: queryArg.page,
-            requestContinuation: queryArg.requestContinuation,
-          },
+          params: { eventId: queryArg.eventId },
         }),
         providesTags: ["Activities"],
       }),
@@ -255,11 +251,9 @@ export type AdminLeaveEventApiArg = {
   eventId: string;
   adminId: string;
 };
-export type FindActivitiesApiResponse = /** status 200 OK */ PagedActivity;
+export type FindActivitiesApiResponse = /** status 200 OK */ Activity[];
 export type FindActivitiesApiArg = {
   eventId: string;
-  page?: number;
-  requestContinuation?: string;
 };
 export type CreateActivityApiResponse = /** status 200 OK */ Activity;
 export type CreateActivityApiArg = {
@@ -344,15 +338,6 @@ export type PagedEvent = {
   pageSize?: number;
   totalRecords?: number;
   data?: Event[];
-  firstPage?: boolean;
-  lastPage?: boolean;
-  requestContinuation?: string;
-};
-export type PagedActivity = {
-  pageNumber?: number;
-  pageSize?: number;
-  totalRecords?: number;
-  data?: Activity[];
   firstPage?: boolean;
   lastPage?: boolean;
   requestContinuation?: string;

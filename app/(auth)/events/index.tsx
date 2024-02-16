@@ -22,7 +22,7 @@ function Events() {
     // Redux
     const { data, isLoading, isFetching } = useFindEventsQuery({ page });
     useEffect(() => {
-        console.log('processing fetched events...', 'page:', page, 'data length:', data?.data?.length, 'events in list:', fetchedEvents.length)
+        // console.log('processing fetched events...', 'page:', page, 'data length:', data?.data?.length, 'events in list:', fetchedEvents.length)
         setFetchedEvents((prevFetchedEvents) => {
             const newFetchedEvents = [...prevFetchedEvents];
             for (let newEvent of (data?.data ?? [])) {
@@ -48,8 +48,8 @@ function Events() {
     // NavBar
     const navBarActions = useCallback(() => (
         <View style={styles.navBar}>
-            <LogoutButton />
             <Searchbar value={search} onChangeText={setSearch} placeholder={t('search')} />
+            <LogoutButton />
         </View>
     ), []);
     // RENDER
@@ -74,16 +74,16 @@ function Events() {
                 onEndReached={useCallback(() => {
                     if (!isFetching && !isLoading) {
                         if (!data?.lastPage && (data && (data.pageSize ?? 0) * page < (data.totalRecords ?? 0))) {
-                            console.log('page:', page, 'next:', (page + 1), 'last:', data?.lastPage, 'total:', data.totalRecords)
+                            // console.log('page:', page, 'next:', (page + 1), 'last:', data?.lastPage, 'total:', data.totalRecords)
                             setPage(page + 1);
                         }
-                        else {
-                            console.log('all pages fetched:', page, 'total fetched:', fetchedEvents.length, 'last:', data?.lastPage, 'total:', data?.totalRecords)
-                        }
+                        // else {
+                        //     console.log('all pages fetched:', page, 'total fetched:', fetchedEvents.length, 'last:', data?.lastPage, 'total:', data?.totalRecords)
+                        // }
                     }
-                    else {
-                        console.log('already loading new pages')
-                    }
+                    // else {
+                    //     console.log('already loading new pages')
+                    // }
                 }, [page, setPage, isFetching, isLoading, data?.totalRecords])}
                 // getItemCount={() => pagedEvents?.totalRecords ?? 0}
                 data={events}

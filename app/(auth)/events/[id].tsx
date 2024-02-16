@@ -1,6 +1,8 @@
 import ModifyActivity from '@/components/activity/ModifyActivity';
 import EventAdmins from '@/components/event/EventAdmins';
+import EventDates from '@/components/event/EventDates';
 import EventParticipants from '@/components/event/EventParticipants';
+import EventTotalScore from '@/components/event/EventTotalScore';
 import ModifyEvent from '@/components/event/ModifyEvent';
 import LogoutButton from '@/components/user/LogoutButton';
 import { Activity, useCalculateActivityMutation, useCalculateEventMutation, useFindActivitiesQuery, useFindEventQuery } from '@/state/redux/api/wildEventsApi';
@@ -8,10 +10,10 @@ import { selectAuthUsername } from '@/state/redux/auth/authSlice';
 import { format } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Divider, Icon, IconButton, List, Text, useTheme } from 'react-native-paper';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Button, Divider, List, Text, useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 function Event() {
@@ -26,7 +28,7 @@ function Event() {
 
     // Redux
     const { data: event, isLoading: isEventLoading, isFetching: isEventFetching } = useFindEventQuery({ eventId });
-    const { data: pagedActivities, isFetching: isActivitiesFetching, refetch } = useFindActivitiesQuery({ eventId });
+    const { data: activities, isFetching: isActivitiesFetching, refetch } = useFindActivitiesQuery({ eventId });
     const [doCalculateEvent, { isLoading: isCalculating }] = useCalculateEventMutation();
     const [doCalculateActivity] = useCalculateActivityMutation();
     // Permissions
@@ -53,6 +55,10 @@ function Event() {
             <LogoutButton />
         </View>
     ), [isAdmin, event, isCalculating]);
+    const navBar = useMemo(() => ({
+        title: (isEventFetching || isActivitiesFetching) ? t('loading') : event?.name,
+        headerRight: navBarActions
+    }), [isEventFetching, isActivitiesFetching, event?.name, navBarActions]);
     // RENDER
     if (!event || isEventLoading || isEventFetching) {
         return (
@@ -60,57 +66,29 @@ function Event() {
         );
     }
     return (
-        <ScrollView style={{ width: '100%' }}>
+        <ScrollView style={styles.scrollView}>
             <SafeAreaView style={styles.container}>
-                <Stack.Screen options={{
-                    title: (isEventFetching || isActivitiesFetching) ? t('loading') : event?.name,
-                    headerRight: navBarActions
-                }} />
+                <Stack.Screen options={navBar} />
                 <Text variant='headlineLarge'>
                     {event.name}
                 </Text>
-
-                <Divider style={{ height: 2, width: '80%', marginBottom: 15 }} />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 35 }}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Icon source='calendar-arrow-right' size={24} />
-                        <Text variant='bodyLarge' style={{ fontWeight: 'bold', marginLeft: 5, marginRight: 10 }}>
-                            {t('eventCardStartDate')}
-                        </Text>
-                        <Text variant='bodyLarge'>
-                            {format(event.start, 'yyyy-MM-dd')}
-                        </Text>
-                    </View>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Icon source='calendar-arrow-left' size={24} />
-                        <Text variant='bodyLarge' style={{ fontWeight: 'bold', marginLeft: 5, marginRight: 10 }}>
-                            {t('eventCardStopDate')}
-                        </Text>
-                        <Text variant='bodyLarge'>
-                            {format(event.stop, 'yyyy-MM-dd')}
-                        </Text>
-                    </View>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Icon source='calendar-edit' size={24} />
-                        <Text variant='bodyLarge' style={{ fontWeight: 'bold', marginLeft: 5, marginRight: 10 }}>
-                            {t('eventCardCloseDate')}
-                        </Text>
-                        <Text variant='bodyLarge'>
-                            {format(event.close, 'yyyy-MM-dd')}
-                        </Text>
-                    </View>
+                <Divider style={styles.divider} />
+                <EventDates event={event} />
+                <Divider style={styles.divider} />
+                <View style={styles.descriptionRow}>
+                    <ScrollView style={styles.description}>
+                        <Markdown>
+                            {event.description ?? ''}
+                        </Markdown>
+                    </ScrollView>
+                    <EventTotalScore eventId={eventId} />
                 </View>
-                <Divider style={{ height: 2, width: '70%', marginVertical: 15 }} />
-                <View style={{ borderWidth: 1, borderRadius: 10, borderColor: '#ABA', width: '65%', backgroundColor: '#CDC', paddingHorizontal: 12, paddingVertical: 4, opacity: 0.7 }}>
-                    <Markdown>
-                        {event.description ?? ''}
-                    </Markdown>
+                <Divider style={styles.divider} />
+                <View style={styles.chipsRow}>
+                    <EventParticipants eventId={eventId} isAdmin={isAdmin} participants={event.participants} />
+                    <EventAdmins eventId={eventId} isAdmin={isAdmin} admins={event.admins} />
                 </View>
-                <Divider style={{ height: 2, width: '50%', marginVertical: 15 }} />
-                <EventAdmins eventId={eventId} isAdmin={isAdmin} admins={event.admins} />
-                <Divider style={{ height: 2, width: '50%', marginVertical: 15 }} />
-                <EventParticipants eventId={eventId} isAdmin={isAdmin} participants={event.participants} />
-                <Divider style={{ height: 2, width: '70%', marginVertical: 15 }} />
+                <Divider style={styles.divider} />
                 <View>
                     <View style={{ flexDirection: 'row', gap: 15 }}>
                         <Text variant='headlineMedium'>
@@ -123,7 +101,7 @@ function Event() {
                     {isActivitiesFetching &&
                         <ActivityIndicator size='small' />
                     }
-                    {pagedActivities?.data?.map(activity => (
+                    {activities?.map(activity => (
                         <List.Item
                             key={activity.id}
                             title={activity.name}
@@ -173,8 +151,7 @@ function Event() {
                                                 }
                                             </View>
                                         </View>
-                                    )
-                                    )}
+                                    ))}
                                 </View>
                             }
                             onPress={() => console.log('x')}
@@ -206,10 +183,46 @@ const styles = StyleSheet.create({
     loading: {
         margin: 30
     },
+    scrollView: {
+        width: '100%',
+        padding: 8
+    },
     container: {
         flexGrow: 1,
         height: '100%',
         alignItems: 'center'
+    },
+    divider: {
+        height: 2,
+        width: '80%',
+        marginVertical: 8
+    },
+    description: {
+        borderWidth: 1,
+        borderRadius: 8,
+        borderColor: '#ABA',
+        backgroundColor: '#EFD8',
+        paddingHorizontal: 12,
+        paddingTop: 0,
+        paddingBottom: 4,
+        flex: 1,
+        minWidth: '50%',
+        height: '100%'
+    },
+    descriptionRow: {
+        flex: 1,
+        flexDirection: 'row',
+        gap: 15,
+        width: '75%',
+        flexWrap: 'wrap',
+        minHeight: 200,
+    },
+    chipsRow: {
+        flex: 1,
+        flexDirection: 'row',
+        gap: 15,
+        width: '75%',
+        flexWrap: 'wrap'
     },
     list: {
         width: '100%'

@@ -41,6 +41,7 @@ export default memo(function () {
                         refreshToken: login.refreshToken
                     }));
                     saveData(REFRESH_TOKEN, login.refreshToken);
+                    // TODO: Only navigate to events if not already on the All Events / Single Event pages
                     router.replace('/(auth)/events');
                 });
         }

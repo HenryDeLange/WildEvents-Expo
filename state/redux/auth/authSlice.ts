@@ -1,12 +1,9 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
-type AuthTokenState = {
+type AuthFullState = {
     accessToken: string | null;
     refreshToken: string | null;
-};
-
-type AuthFullState = AuthTokenState & {
     username: string | null;
     inaturalist: string | null;
 };
@@ -28,7 +25,9 @@ const authSlice = createSlice({
             state.accessToken = action.payload.accessToken;
             state.refreshToken = action.payload.refreshToken;
         },
-        doRefresh: (state, action: PayloadAction<AuthTokenState>) => {
+        doRefresh: (state, action: PayloadAction<AuthFullState>) => {
+            state.username = action.payload.username;
+            state.inaturalist = action.payload.inaturalist;
             state.accessToken = action.payload.accessToken;
             state.refreshToken = action.payload.refreshToken;
         },

@@ -67,7 +67,7 @@ function EventAdmins({ eventId, isAdmin, admins }: Readonly<Props>) {
     return (
         <View style={styles.wrapper}>
             {/* Admin Chips */}
-            <Text variant='headlineSmall'>
+            <Text variant='titleMedium' style={styles.title}>
                 {t('eventAdmins')}
             </Text>
             <View style={styles.chipWrapper}>
@@ -147,6 +147,7 @@ function EventAdmins({ eventId, isAdmin, admins }: Readonly<Props>) {
 
 const styles = StyleSheet.create({
     wrapper: {
+        flex: 1,
         alignItems: 'center'
     },
     chipWrapper: {
@@ -166,6 +167,9 @@ const styles = StyleSheet.create({
     },
     adminName: {
         marginTop: 15
+    },
+    title: {
+        fontWeight: 'bold'
     }
 });
 

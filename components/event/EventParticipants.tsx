@@ -66,12 +66,11 @@ function EventParticipants({ eventId, isAdmin, participants }: Readonly<Props>) 
         if (isJoined && !isJoinError)
             setShowJoinDialog(false);
     }, [isJoined, isJoinError]);
-
     // RENDER
     return (
         <View style={styles.wrapper}>
             {/* Participant Chips */}
-            <Text variant='headlineSmall'>
+            <Text variant='titleMedium' style={styles.title}>
                 {t('eventParticipants')}
             </Text>
             <View style={styles.chipWrapper}>
@@ -152,6 +151,7 @@ function EventParticipants({ eventId, isAdmin, participants }: Readonly<Props>) 
 
 const styles = StyleSheet.create({
     wrapper: {
+        flex: 1,
         alignItems: 'center'
     },
     chipWrapper: {
@@ -171,6 +171,9 @@ const styles = StyleSheet.create({
     },
     participantName: {
         marginTop: 15
+    },
+    title: {
+        fontWeight: 'bold'
     }
 });
 

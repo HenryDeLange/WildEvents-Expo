@@ -68,6 +68,8 @@ const baseQueryWithReauth: BaseQueryFn<
                 if (tokens) {
                     // Store the new token
                     api.dispatch(doRefresh({
+                        username: tokens.username,
+                        inaturalist: tokens.inaturalist,
                         accessToken: tokens.accessToken,
                         refreshToken: tokens.refreshToken
                     }));
