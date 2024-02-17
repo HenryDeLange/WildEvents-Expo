@@ -1,4 +1,5 @@
 import { ActivityCreate, ActivityStep, useCreateActivityMutation } from '@/state/redux/api/wildEventsApi';
+import * as Crypto from 'expo-crypto';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -22,6 +23,7 @@ function ModifyActivity({ eventId }: Props) {
     const [type, setType] = useState<ActivityCreate['type']>('RACE');
     const [step, setStep] = useState('1');
     const [steps, setSteps] = useState<ActivityCreate['steps']>([{
+        id: '',
         description: '',
         criteria: { 'taxon_id': '' }
     }]);
@@ -60,8 +62,8 @@ function ModifyActivity({ eventId }: Props) {
             const newSteps: ActivityStep[] = [
                 ...steps.slice(0, stepIndex),
                 {
-                    description: text,
-                    criteria: steps[stepIndex].criteria
+                    ...steps[stepIndex],
+                    description: text
                 },
                 ...steps.slice(stepIndex + 1)
             ];
@@ -74,6 +76,7 @@ function ModifyActivity({ eventId }: Props) {
             const newSteps: ActivityStep[] = [
                 ...steps.slice(0, stepIndex),
                 {
+                    ...steps[stepIndex],
                     description: steps[stepIndex].description,
                     criteria: {
                         ...steps[stepIndex].criteria,
@@ -104,24 +107,28 @@ function ModifyActivity({ eventId }: Props) {
         switch (type) {
             case 'RACE':
                 setSteps([{
+                    id: Crypto.randomUUID(),
                     description: '',
                     criteria: { 'taxon_id': '' }
                 }]);
                 break;
             case 'HUNT':
                 setSteps([{
+                    id: Crypto.randomUUID(),
                     description: '',
                     criteria: { 'taxon_id': '', 'lat': '', 'lng': '', 'radius': '' }
                 }]);
                 break;
             case 'QUIZ':
                 setSteps([{
+                    id: Crypto.randomUUID(),
                     description: '',
                     criteria: { 'taxon_id': '' }
                 }]);
                 break;
             case 'EXPLORE':
                 setSteps([{
+                    id: Crypto.randomUUID(),
                     description: '',
                     criteria: { 'nelat': '', 'nelng': '', 'swlat': '', 'swlng': '' }
                 }]);
@@ -135,24 +142,28 @@ function ModifyActivity({ eventId }: Props) {
             switch (type) {
                 case 'RACE':
                     setSteps([...steps!, {
+                        id: Crypto.randomUUID(),
                         description: '',
                         criteria: { 'taxon_id': '' }
                     }]);
                     break;
                 case 'HUNT':
                     setSteps([...steps!, {
+                        id: Crypto.randomUUID(),
                         description: '',
                         criteria: { 'taxon_id': '', 'lat': '', 'lng': '', 'radius': '' }
                     }]);
                     break;
                 case 'QUIZ':
                     setSteps([...steps!, {
+                        id: Crypto.randomUUID(),
                         description: '',
                         criteria: { 'taxon_id': '' }
                     }]);
                     break;
                 case 'EXPLORE':
                     setSteps([...steps!, {
+                        id: Crypto.randomUUID(),
                         description: '',
                         criteria: { 'nelat': '', 'nelng': '', 'swlat': '', 'swlng': '' }
                     }]);

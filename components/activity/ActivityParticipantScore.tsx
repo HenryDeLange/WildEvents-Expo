@@ -10,12 +10,18 @@ export type ParticipantScore = ActivityCalculation & {
 
 type Props = {
     participant: ParticipantScore;
+    rank?: number;
 }
 
-function ActivityParticipantScore({ participant }: Props) {
+function ActivityParticipantScore({ participant, rank }: Props) {
     return (
         <View key={participant.name} style={styles.row}>
-            <Text style={styles.score}>
+            {rank &&
+                <Text variant={rank ? 'bodyLarge' : 'bodyMedium'} style={styles.rank}>
+                    {`${rank})`}
+                </Text>
+            }
+            <Text variant={rank ? 'bodyLarge' : 'bodyMedium'} style={styles.score}>
                 {participant.score}
             </Text>
             {(participant.observations && participant.observations.length > 0)
@@ -23,11 +29,11 @@ function ActivityParticipantScore({ participant }: Props) {
                     key={participant.name}
                     href={`https://www.inaturalist.org/observations?id=${participant.observations?.toString()}`}
                 >
-                    <Text>
+                    <Text variant={rank ? 'bodyLarge' : 'bodyMedium'}>
                         {participant.name}
                     </Text>
                 </ExternalLink>
-                : <Text key={participant.name}>
+                : <Text variant={rank ? 'bodyLarge' : 'bodyMedium'} key={participant.name}>
                     {participant.name}
                 </Text>
             }
@@ -40,12 +46,16 @@ export default memo(ActivityParticipantScore);
 const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
-        gap: 12,
+        gap: 4,
         marginVertical: 2,
         marginHorizontal: 12
     },
+    rank: {
+        marginRight: -8
+    },
     score: {
         textAlign: 'right',
-        width: 30
+        marginHorizontal: 2,
+        width: 20
     }
 });

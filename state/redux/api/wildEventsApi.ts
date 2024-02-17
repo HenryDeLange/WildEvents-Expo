@@ -285,6 +285,7 @@ export type EventBase = {
   visibility: "PUBLIC" | "PRIVATE";
 };
 export type ActivityStep = {
+  id: string;
   description: string;
   criteria?: {
     [key: string]: string;
@@ -295,6 +296,7 @@ export type ActivityCalculation = {
   observations?: number[];
 };
 export type ActivityStepResult = {
+  stepId: string;
   participantScores?: {
     [key: string]: ActivityCalculation;
   };

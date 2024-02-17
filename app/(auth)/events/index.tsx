@@ -165,7 +165,9 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: '#555',
         margin: 10,
-        padding: 12
+        padding: 12,
+        alignItems: 'center',
+        gap: 6
     },
     description: {
         borderWidth: 1,

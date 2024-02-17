@@ -3,14 +3,14 @@ import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import { generateScoreList, generateScoreMap } from '.';
+import { generateScoreList, generateScoreMap } from './utils';
 import ActivityParticipantScore, { ParticipantScore } from './ActivityParticipantScore';
 
 type Props = {
     eventId: string;
 }
 
-function ActivityTotals({ eventId }: Readonly<Props>) {
+function ActivityEventTotals({ eventId }: Readonly<Props>) {
     const { t } = useTranslation();
     const { data, isFetching, refetch } = useFindActivitiesQuery({ eventId });
     const totalScores = useMemo<ParticipantScore[]>(() => {
@@ -38,7 +38,7 @@ function ActivityTotals({ eventId }: Readonly<Props>) {
     );
 }
 
-export default memo(ActivityTotals);
+export default memo(ActivityEventTotals);
 
 const styles = StyleSheet.create({
     wrapper: {

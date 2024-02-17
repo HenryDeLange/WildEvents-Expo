@@ -1,5 +1,5 @@
 import ActivityGrid from '@/components/activity/ActivityGrid';
-import ActivityTotals from '@/components/activity/ActivityTotals';
+import ActivityEventTotals from '@/components/activity/ActivityEventTotals';
 import EventAdmins from '@/components/event/EventAdmins';
 import EventDates from '@/components/event/EventDates';
 import EventParticipants from '@/components/event/EventParticipants';
@@ -74,7 +74,7 @@ function Event() {
                             {event.description ?? ''}
                         </Markdown>
                     </ScrollView>
-                    <ActivityTotals eventId={eventId} />
+                    <ActivityEventTotals eventId={eventId} />
                 </View>
                 <Divider style={styles.divider} />
                 <View style={styles.chipsRow}>

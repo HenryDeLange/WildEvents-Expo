@@ -1,13 +1,12 @@
-import { Activity, ActivityCalculation, ActivityStepResult, useFindActivitiesQuery } from '@/state/redux/api/wildEventsApi';
+import { Activity, useFindActivitiesQuery } from '@/state/redux/api/wildEventsApi';
 import { format } from 'date-fns';
 import { useRouter } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Card, Divider, Text, useTheme } from 'react-native-paper';
-import { generateScoreList, generateScoreMap } from '.';
-import ActivityParticipantScore, { ParticipantScore } from './ActivityParticipantScore';
+import ActivityStepScoreboard from './ActivityStepScoreboard';
 import ModifyActivity from './ModifyActivity';
 
 type Props = {
@@ -56,13 +55,6 @@ function ActivityGrid({ eventId }: Props) {
                                         </Text>
                                     }
                                 </View>
-                                <Divider style={styles.divider} />
-                                <ScrollView style={styles.description}>
-                                    <Markdown>
-                                        {activity.description ?? ''}
-                                    </Markdown>
-                                </ScrollView>
-                                <Divider style={styles.divider} />
                                 {activity.disableReason &&
                                     <>
                                         <Text style={{ color: theme.colors.error }}>
@@ -71,7 +63,14 @@ function ActivityGrid({ eventId }: Props) {
                                         <Divider style={styles.divider} />
                                     </>
                                 }
-                                <StepScores results={activity.results} />
+                                <Divider style={styles.divider} />
+                                <ScrollView style={styles.description}>
+                                    <Markdown>
+                                        {activity.description ?? ''}
+                                    </Markdown>
+                                </ScrollView>
+                                <Divider style={styles.divider} />
+                                <ActivityStepScoreboard results={activity.results} />
                             </View>
                             {/* TODO: Align the button to the bottom of the card */}
                             <View style={styles.buttonRow}>
@@ -98,32 +97,6 @@ function ActivityGrid({ eventId }: Props) {
 }
 
 export default memo(ActivityGrid);
-
-type StepScoresProps = {
-    results?: ActivityStepResult[];
-}
-
-function StepScores({ results }: StepScoresProps) {
-    const { t } = useTranslation();
-    const totalScores = useMemo<ParticipantScore[]>(() => {
-        const scoreMap = new Map<string, ActivityCalculation>();
-        generateScoreMap(scoreMap, results)
-        return generateScoreList(scoreMap);
-    }, [results]);
-    return results?.map((stepResult, index) => (
-        <View key={index}>
-            <Text variant='bodyLarge'>
-                {t('activityCardStepCount', { step: index + 1 })}
-            </Text>
-            <ScrollView>
-                {(totalScores && totalScores.length > 0)
-                    ? totalScores.slice(0, 3).map(participant => <ActivityParticipantScore key={participant.name} participant={participant} />)
-                    : <Text> {t('eventTotalCalculateScores')}</Text>
-                }
-            </ScrollView>
-        </View>
-    ));
-}
 
 const styles = StyleSheet.create({
     container: {

@@ -1,5 +1,5 @@
 import { ActivityCalculation, ActivityStepResult } from "@/state/redux/api/wildEventsApi";
-import { ParticipantScore } from "./ActivityParticipantScore";
+import { ParticipantScore } from "../ActivityParticipantScore";
 
 export function generateScoreMap(map: Map<string, ActivityCalculation>, results?: ActivityStepResult[]) {
     for (let result of results ?? []) {
@@ -28,6 +28,19 @@ export function generateScoreMap(map: Map<string, ActivityCalculation>, results?
 export function generateScoreList(map: Map<string, ActivityCalculation>) {
     const finalTotals: ParticipantScore[] = [];
     for (let entry of map) {
+        finalTotals.push({
+            name: entry[0],
+            score: entry[1].score,
+            observations: entry[1].observations
+        });
+    }
+    finalTotals.sort((a, b) => (b.score! - a.score!));
+    return finalTotals;
+}
+
+export function generateStepScoreList(stepResults: ActivityStepResult) {
+    const finalTotals: ParticipantScore[] = [];
+    for (let entry of Object.entries(stepResults.participantScores ?? {})) {
         finalTotals.push({
             name: entry[0],
             score: entry[1].score,

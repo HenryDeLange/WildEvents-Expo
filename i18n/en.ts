@@ -71,7 +71,6 @@ export default {
         eventTotalTitle: 'Scoreboard',
         eventTotalCalculateScores: 'No scores have been calculated yet...',
 
-
         welcomeTitle: 'Welcome to Wild Events!',
         welcomeSubTitle: 'Here you can take part in fun events that centers around exploring nature through the use of the iNaturalist website.',
         welcomeAction: 'View and join existing events below, or create your own!',
@@ -111,7 +110,8 @@ export default {
         activityStatusCALCULATING: 'Calculating',
         activityStatusCALCULATED: 'Calculated',
         activityStatusERROR: 'Error',
-
+        activityTotalScores: 'Total Scores',
+        activitySteps: 'Steps',
 
 
     }
