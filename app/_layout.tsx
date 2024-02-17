@@ -85,6 +85,7 @@ function RootLayoutNav() {
                             <Stack.Screen name='about' />
                             <Stack.Screen name='(auth)/events/index' />
                             <Stack.Screen name='(auth)/events/[id]' />
+                            <Stack.Screen name='(auth)/activities/[id]' />
                         </Stack>
                     </ThemeProvider>
                 </PaperProvider>

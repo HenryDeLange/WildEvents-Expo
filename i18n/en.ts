@@ -5,6 +5,7 @@ export default {
         loading: 'Loading...',
         confirm: 'Confirm',
         search: 'Search...',
+        view: 'View',
         aboutButton: 'About',
         aboutNavTitle: 'WildEvents Information',
         aboutTitle: 'About',
@@ -80,7 +81,7 @@ export default {
         activityTypeHUNT: 'Treasure Hunt',
         activityTypeQUIZ: 'Quiz',
         activityTypeEXPLORE: 'Exploration',
-        activityTypeRaceDetails: 'A race to observe the specified taxa before other participants.',
+        activityTypeRaceDetails: 'A race to observe the specified taxa before other participants. Only the first 3 observations (per taxon) will score points.',
         activityTypeHuntDetails: 'A treasure hunt to solve the steps, by making observations, in order to find the final treasure.',
         activityTypeQuizDetails: 'A quiz that is answered by making the correct observation.',
         activityTypeExploreDetails: 'Explore an area by making observations in a grid.',
@@ -93,6 +94,7 @@ export default {
         activityCardStepCount: 'Step {{step}}',
         activityCardStepAdd: 'Add',
         activityCardStepRemove: 'Remove step',
+        activityCardEditTitle: 'Edit',
         activityCriteriaKey: 'Field',
         activityCriteriaValue: 'Value',
         activityCriteria_taxon_id: 'Taxon ID (comma separated list of iNaturalist taxon numbers)',
@@ -104,7 +106,11 @@ export default {
         activityCriteria_swlat: 'South-West Latitude',
         activityCriteria_swlng: 'South-West Longitude',
         activityCriteria_custom: 'Custom parameter as specified in the iNaturalist API',
-
+        activityStatusNEW: 'New Activity',
+        activityStatusPENDING: 'Pending',
+        activityStatusCALCULATING: 'Calculating',
+        activityStatusCALCULATED: 'Calculated',
+        activityStatusERROR: 'Error',
 
 
 

@@ -6,8 +6,8 @@ import { Stack, useRouter } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, ListRenderItemInfo, RefreshControl, SafeAreaView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Icon, List, Searchbar, Text, Tooltip } from 'react-native-paper';
+import { FlatList, ListRenderItemInfo, RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Button, Divider, Icon, List, Searchbar, Text, Tooltip } from 'react-native-paper';
 
 function Events() {
     // Translation
@@ -18,7 +18,7 @@ function Events() {
     const [page, setPage] = useState(0);
     const [fetchedEvents, setFetchedEvents] = useState<Event[]>([]);
     // TODO: debounce the search filed to prevent too many requests being sent to the backend
-    const [search, setSearch] = useState('');
+    // const [search, setSearch] = useState('');
     // Redux
     const { data, isLoading, isFetching } = useFindEventsQuery({ page });
     useEffect(() => {
@@ -42,13 +42,16 @@ function Events() {
     }, [data, setFetchedEvents]);
     // Search
     // TODO: Search on backend, not frontend
-    const events = !search ? fetchedEvents : fetchedEvents.filter(event =>
-        event.name.toLowerCase().includes(search.toLowerCase())
-        || event.description?.toLowerCase().includes(search.toLowerCase()));
+    const events = fetchedEvents;
+    // const events = !search ? fetchedEvents : fetchedEvents.filter(event =>
+    //     event.name.toLowerCase().includes(search.toLowerCase())
+    //     || event.description?.toLowerCase().includes(search.toLowerCase()));
+    // Actions
+    const handleView = useCallback((event: Event) => () => router.push(`/events/${event.id}`), []);
     // NavBar
     const navBarActions = useCallback(() => (
         <View style={styles.navBar}>
-            <Searchbar value={search} onChangeText={setSearch} placeholder={t('search')} />
+            {/* <Searchbar value={search} onChangeText={setSearch} placeholder={t('search')} /> */}
             <LogoutButton />
         </View>
     ), []);
@@ -64,6 +67,8 @@ function Events() {
                 <ActivityIndicator size='large' animating={true} style={styles.loading} />
             }
             <FlatList style={styles.list}
+                numColumns={2}
+                horizontal={false}
                 refreshControl={
                     <RefreshControl
                         refreshing={isLoading || isFetching}
@@ -87,39 +92,45 @@ function Events() {
                 }, [page, setPage, isFetching, isLoading, data?.totalRecords])}
                 // getItemCount={() => pagedEvents?.totalRecords ?? 0}
                 data={events}
-                keyExtractor={useCallback((item: Event) => item.id, [])}
-                renderItem={useCallback(({ item }: ListRenderItemInfo<Event>) => (
-                    <List.Item
-                        key={item.id}
-                        title={<Text variant='headlineLarge' style={{ borderBottomWidth: 1, borderBottomColor: '#585' }}>{item.name}</Text>}
-                        description={<Markdown>{item.description ?? ''}</Markdown>}
-                        // left={props => <List.Icon {...props} icon='barley' />}
-                        right={() => (
-                            <View style={{ gap: 5 }}>
+                keyExtractor={useCallback((event: Event) => event.id, [])}
+                renderItem={useCallback(({ item: event }: ListRenderItemInfo<Event>) => (
+                    <View key={event.id} style={styles.card} >
+                        <Text variant='headlineLarge'>
+                            {event.name}
+                        </Text>
+                        <View>
+                            <View style={{ flexDirection: 'row', gap: 12, marginVertical: 8 }}>
                                 <Tooltip title={t('eventCardStartDate')}>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Icon source='calendar-arrow-right' size={20} />
-                                        <Text> {format(item.start, 'yyyy-MM-dd')}</Text>
+                                        <Text> {format(event.start, 'yyyy-MM-dd')}</Text>
                                     </View>
                                 </Tooltip>
                                 <Tooltip title={t('eventCardStopDate')}>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Icon source='calendar-arrow-left' size={20} />
-                                        <Text> {format(item.stop, 'yyyy-MM-dd')}</Text>
+                                        <Text> {format(event.stop, 'yyyy-MM-dd')}</Text>
                                     </View>
                                 </Tooltip>
                                 <Tooltip title={t('eventCardCloseDate')}>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Icon source='calendar-edit' size={20} />
-                                        <Text> {format(item.close, 'yyyy-MM-dd')}</Text>
+                                        <Text> {format(event.close, 'yyyy-MM-dd')}</Text>
                                     </View>
                                 </Tooltip>
                             </View>
-                        )}
-                        // TODO: Make this a callback somehow?
-                        onPress={() => router.push(`/events/${item.id}`)}
-                        style={{ borderWidth: 1, borderRadius: 10, borderColor: '#555', margin: 10 }}
-                    />
+                            <ScrollView style={styles.description}>
+                                <Markdown>{event.description ?? ''}</Markdown>
+                            </ScrollView>
+                            <Divider style={{ width: '100%', marginVertical: 8 }} />
+                            {/* TODO: Justify button to the bottom */}
+                            <Button mode='text' icon='eye' uppercase
+                                onPress={handleView(event)}
+                            >
+                                {t('view')}
+                            </Button>
+                        </View>
+                    </View>
                 ), [router])}
             />
         </SafeAreaView >
@@ -148,5 +159,21 @@ const styles = StyleSheet.create({
     },
     list: {
         width: '100%'
+    },
+    card: {
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#555',
+        margin: 10,
+        padding: 12
+    },
+    description: {
+        borderWidth: 1,
+        borderRadius: 4,
+        borderColor: '#ABA',
+        backgroundColor: '#EFD8',
+        paddingHorizontal: 12,
+        paddingTop: 0,
+        paddingBottom: 4
     }
 });
