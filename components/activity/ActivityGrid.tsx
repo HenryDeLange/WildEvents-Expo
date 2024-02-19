@@ -6,6 +6,7 @@ import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Card, Divider, Text, useTheme } from 'react-native-paper';
+import { useIsEventAdmin } from '../event/utils/hooks';
 import ActivityStepScoreboard from './ActivityStepScoreboard';
 import ModifyActivity from './ModifyActivity';
 
@@ -13,14 +14,13 @@ type Props = {
     eventId: string;
 }
 
-function ActivityGrid({ eventId }: Props) {
+function ActivityGrid({ eventId }: Readonly<Props>) {
     const theme = useTheme();
     const { t } = useTranslation();
     const router = useRouter();
     const { data: activities, isFetching: isActivitiesFetching, refetch } = useFindActivitiesQuery({ eventId });
-    // const [doCalculateActivity, { isLoading: isCalculating }] = useCalculateActivityMutation();
-    // const handleCalculate = useCallback((activity: Activity) => () => doCalculateActivity({ id: activity.id }), []);
     const handleView = useCallback((activity: Activity) => () => router.push(`/activities/${activity.id}`), []);
+    const isAdmin = useIsEventAdmin(eventId);
     // RENDER
     return (
         <View style={styles.container}>
@@ -28,7 +28,7 @@ function ActivityGrid({ eventId }: Props) {
                 <Text variant='headlineMedium'>
                     {t('eventActivities')}
                 </Text>
-                {(activities && activities.length < 5) &&
+                {(isAdmin && activities && activities.length < 5) &&
                     <ModifyActivity eventId={eventId} />
                 }
             </View>
@@ -74,14 +74,6 @@ function ActivityGrid({ eventId }: Props) {
                             </View>
                             {/* TODO: Align the button to the bottom of the card */}
                             <View style={styles.buttonRow}>
-                                {/* TODO: Only trigger loading animation for the effected activity (not all) */}
-                                {/* <Button mode='text' icon='calculator-variant-outline' uppercase
-                                    onPress={handleCalculate(activity)}
-                                    loading={isCalculating}
-                                    disabled={isCalculating}
-                                >
-                                    {t('eventCalculate')}
-                                </Button> */}
                                 <Button mode='text' icon='eye' uppercase style={styles.button}
                                     onPress={handleView(activity)}
                                 >

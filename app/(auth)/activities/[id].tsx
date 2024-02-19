@@ -1,8 +1,9 @@
 import ActivityStepScores from '@/components/activity/ActivityStepScores';
 import ActivityStepTotalScores from '@/components/activity/ActivityStepTotalScores';
+import ModifyActivity from '@/components/activity/ModifyActivity';
+import { useIsEventAdmin } from '@/components/event/utils/hooks';
 import LogoutButton from '@/components/user/LogoutButton';
 import { useCalculateActivityMutation, useFindActivityQuery } from '@/state/redux/api/wildEventsApi';
-import { selectAuthUsername } from '@/state/redux/auth/authSlice';
 import { format } from 'date-fns';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
@@ -10,7 +11,6 @@ import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Divider, Text, useTheme } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 function Activity() {
     // Theme
@@ -21,14 +21,12 @@ function Activity() {
     const { id } = useLocalSearchParams();
     const activityId = id.toString();
     // Redux
-    const { data: activity, isLoading: isActivityLoading, isFetching: isActivityFetching } = useFindActivityQuery({ id: activityId });
+    const { data: activity, isLoading: isActivityLoading, isFetching: isActivityFetching } = useFindActivityQuery({ activityId });
     const [doCalculate, { isLoading: isCalculating }] = useCalculateActivityMutation();
     // Permissions
-    // TODO: Do the admin stuff
-    const username = useSelector(selectAuthUsername);
-    const isAdmin = true; //!!event && event.admins.indexOf(username ?? '') >= 0;
+    const isAdmin = useIsEventAdmin(activity?.eventId ?? null);
     // Actions
-    const handleCalculate = useCallback(() => doCalculate({ id: activityId }), [activityId]);
+    const handleCalculate = useCallback(() => doCalculate({ activityId }), [activityId]);
     // NavBar
     const navBarActions = useCallback(() => (
         <View style={styles.actions}>
@@ -41,8 +39,9 @@ function Activity() {
                     >
                         {t('eventCalculate')}
                     </Button>
-                    {/* TODO: Make editable */}
-                    {/* <ModifyActivity eventId={event} /> */}
+                    {activity &&
+                        <ModifyActivity eventId={activity.eventId} activity={activity} />
+                    }
                 </>
             }
             <LogoutButton />

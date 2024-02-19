@@ -31,7 +31,7 @@ const injectedRtkApi = api
         invalidatesTags: ["Events"],
       }),
       findActivity: build.query<FindActivityApiResponse, FindActivityApiArg>({
-        query: (queryArg) => ({ url: `/activities/${queryArg.id}` }),
+        query: (queryArg) => ({ url: `/activities/${queryArg.activityId}` }),
         providesTags: ["Activities"],
       }),
       updateActivity: build.mutation<
@@ -39,7 +39,7 @@ const injectedRtkApi = api
         UpdateActivityApiArg
       >({
         query: (queryArg) => ({
-          url: `/activities/${queryArg.id}`,
+          url: `/activities/${queryArg.activityId}`,
           method: "PUT",
           body: queryArg.activityBase,
         }),
@@ -50,7 +50,7 @@ const injectedRtkApi = api
         DeleteActivityApiArg
       >({
         query: (queryArg) => ({
-          url: `/activities/${queryArg.id}`,
+          url: `/activities/${queryArg.activityId}`,
           method: "DELETE",
         }),
         invalidatesTags: ["Activities"],
@@ -169,7 +169,7 @@ const injectedRtkApi = api
         CalculateActivityApiArg
       >({
         query: (queryArg) => ({
-          url: `/activities/${queryArg.id}/calculate`,
+          url: `/activities/${queryArg.activityId}/calculate`,
           method: "POST",
         }),
         invalidatesTags: ["Activities"],
@@ -197,16 +197,16 @@ export type DeleteEventApiArg = {
 };
 export type FindActivityApiResponse = /** status 200 OK */ Activity;
 export type FindActivityApiArg = {
-  id: string;
+  activityId: string;
 };
 export type UpdateActivityApiResponse = /** status 200 OK */ Activity;
 export type UpdateActivityApiArg = {
-  id: string;
+  activityId: string;
   activityBase: ActivityBase;
 };
 export type DeleteActivityApiResponse = unknown;
 export type DeleteActivityApiArg = {
-  id: string;
+  activityId: string;
 };
 export type RegisterApiResponse = /** status 200 OK */ Tokens;
 export type RegisterApiArg = {
@@ -261,7 +261,7 @@ export type CreateActivityApiArg = {
 };
 export type CalculateActivityApiResponse = /** status 200 OK */ Activity;
 export type CalculateActivityApiArg = {
-  id: string;
+  activityId: string;
 };
 export type GetVersionApiResponse = /** status 200 OK */ Version;
 export type GetVersionApiArg = void;

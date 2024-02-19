@@ -1,4 +1,4 @@
-import { ActivityCreate, ActivityStep, useCreateActivityMutation } from '@/state/redux/api/wildEventsApi';
+import { Activity, ActivityCreate, ActivityStep, useCreateActivityMutation, useUpdateActivityMutation } from '@/state/redux/api/wildEventsApi';
 import * as Crypto from 'expo-crypto';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,9 +11,10 @@ const ADD_STEP = 'addStep';
 
 type Props = {
     eventId: string;
+    activity?: Activity;
 }
 
-function ModifyActivity({ eventId }: Props) {
+function ModifyActivity({ eventId, activity }: Readonly<Props>) {
     // Translation
     const { t } = useTranslation();
     // State
@@ -28,34 +29,77 @@ function ModifyActivity({ eventId }: Props) {
         criteria: { 'taxon_id': '' }
     }]);
     const [addedSteps, setAddedSteps] = useState(1);
+    useEffect(() => {
+        if (activity) {
+            setName(activity.name);
+            setDescription(activity.description);
+            setType(activity.type);
+            setSteps(activity.steps);
+        }
+    }, [activity]);
     // Redux
-    const [doCreate, { isLoading: isCreating, isError, isSuccess }] = useCreateActivityMutation();
+    const [doCreate, { isLoading: isCreating, isError: isErrorCreate, isSuccess: isSuccessCreate }] = useCreateActivityMutation();
+    const [doUpdate, { isLoading: isUpdating, isError: isErrorUpdate, isSuccess: isSuccessUpdate }] = useUpdateActivityMutation();
     // Actions
     const hideModal = useCallback(() => {
-        if (!isCreating) {
+        if (!isCreating && !isUpdating)
             setModalVisible(false);
-            setName('');
-            setDescription(undefined);
-            setType('RACE');
-            setSteps(undefined);
-        }
     }, [isCreating, setModalVisible, setName, setDescription, setType, setSteps]);
     useEffect(() => {
-        if (isSuccess)
+        if (isSuccessCreate || isSuccessUpdate)
             hideModal();
-    }, [isSuccess, hideModal]);
-    const handleFloatButton = useCallback(() => setModalVisible(true), [setModalVisible]);
-    const handleCreate = useCallback(() => {
-        doCreate({
-            activityCreate: {
+    }, [isSuccessCreate, isSuccessUpdate, hideModal]);
+    const handleShowButton = useCallback(() => setModalVisible(true), []);
+    const handleTypeChange = useCallback((selectedType: string) => {
+        setType(selectedType as ActivityCreate['type']);
+        setStep('1');
+        setAddedSteps(1);
+        switch (selectedType) {
+            case 'RACE':
+                setSteps([{
+                    id: Crypto.randomUUID(),
+                    description: '',
+                    criteria: { 'taxon_id': '' }
+                }]);
+                break;
+            case 'HUNT':
+                setSteps([{
+                    id: Crypto.randomUUID(),
+                    description: '',
+                    criteria: { 'taxon_id': '', 'lat': '', 'lng': '', 'radius': '' }
+                }]);
+                break;
+            case 'QUIZ':
+                setSteps([{
+                    id: Crypto.randomUUID(),
+                    description: '',
+                    criteria: { 'taxon_id': '' }
+                }]);
+                break;
+            case 'EXPLORE':
+                setSteps([{
+                    id: Crypto.randomUUID(),
+                    description: '',
+                    criteria: { 'nelat': '', 'nelng': '', 'swlat': '', 'swlng': '' }
+                }]);
+                break;
+        }
+    }, []);
+    const handleConfirm = useCallback(() => {
+        if (eventId) {
+            const activityBase = {
                 eventId: eventId,
                 name: name,
                 description: description,
                 type: type,
                 steps: steps
-            }
-        });
-    }, [doCreate, eventId, name, description, type, steps]);
+            };
+            if (activity)
+                doUpdate({ activityId: activity.id, activityBase })
+            else
+                doCreate({ activityCreate: activityBase });
+        }
+    }, [doCreate, doUpdate, eventId, activity, name, description, type, steps]);
     const handleStepDescription = useCallback((text: string) => {
         if (steps && step) {
             const stepIndex = Number(step) - 1;
@@ -101,40 +145,6 @@ function ModifyActivity({ eventId }: Props) {
         }
     }, [steps, step]);
     // Effects
-    useEffect(() => { // Reset when the type changes
-        setStep('1');
-        setAddedSteps(1);
-        switch (type) {
-            case 'RACE':
-                setSteps([{
-                    id: Crypto.randomUUID(),
-                    description: '',
-                    criteria: { 'taxon_id': '' }
-                }]);
-                break;
-            case 'HUNT':
-                setSteps([{
-                    id: Crypto.randomUUID(),
-                    description: '',
-                    criteria: { 'taxon_id': '', 'lat': '', 'lng': '', 'radius': '' }
-                }]);
-                break;
-            case 'QUIZ':
-                setSteps([{
-                    id: Crypto.randomUUID(),
-                    description: '',
-                    criteria: { 'taxon_id': '' }
-                }]);
-                break;
-            case 'EXPLORE':
-                setSteps([{
-                    id: Crypto.randomUUID(),
-                    description: '',
-                    criteria: { 'nelat': '', 'nelng': '', 'swlat': '', 'swlng': '' }
-                }]);
-                break;
-        }
-    }, [type]);
     useEffect(() => { // Add a new step
         if (step === ADD_STEP) {
             setAddedSteps(addedSteps + 1);
@@ -217,12 +227,13 @@ function ModifyActivity({ eventId }: Props) {
     const activeStep = steps ? steps[Number(step) - 1] : null;
     return (
         <>
-            <Button mode='contained-tonal' style={styles.addButton} uppercase
-                icon={isCreating ? 'loading' : 'plus'}
-                disabled={isCreating}
-                onPress={handleFloatButton}
+            <Button mode={activity ? 'text' : 'contained-tonal'} style={styles.addButton} uppercase
+                icon={activity ? 'pencil' : 'plus'}
+                loading={isCreating || isUpdating}
+                disabled={isCreating || isUpdating}
+                onPress={handleShowButton}
             >
-                {isCreating ? <ActivityIndicator animating={true} /> : t('activityCardCreateTitle')}
+                {activity ? t('activityCardEditTitle') : t('activityCardCreateTitle')}
             </Button>
             <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={hideModal}>
                 <Card.Title title={t('activityCardCreateTitle')} titleVariant='titleLarge' />
@@ -246,7 +257,7 @@ function ModifyActivity({ eventId }: Props) {
                     />
                     <SegmentedButtons
                         value={type}
-                        onValueChange={setType as any}
+                        onValueChange={handleTypeChange}
                         buttons={typeOptions}
                     />
                     <Text variant='bodyMedium' style={{ alignSelf: 'center' }}>
@@ -315,12 +326,12 @@ function ModifyActivity({ eventId }: Props) {
                         <Button mode='contained' style={styles.button} uppercase
                             icon={isCreating ? undefined : 'check'}
                             disabled={isCreating || nameError || stepError}
-                            onPress={handleCreate}
+                            onPress={handleConfirm}
                         >
                             {isCreating ? <ActivityIndicator animating={true} /> : t('confirm')}
                         </Button>
-                        {isError &&
-                            <HelperText type='error' visible={isError} >
+                        {(isErrorCreate || isErrorUpdate) &&
+                            <HelperText type='error' visible={isErrorCreate || isErrorUpdate} >
                                 {t('activityCardCreateFailed')}
                             </HelperText>
                         }

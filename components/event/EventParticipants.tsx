@@ -1,11 +1,11 @@
 import { useParticipantJoinEventMutation, useParticipantLeaveEventMutation } from '@/state/redux/api/wildEventsApi';
+import { selectAuthINaturalist } from '@/state/redux/auth/authSlice';
+import { useAppSelector } from '@/state/redux/hooks';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View } from 'react-native';
 import { ActivityIndicator, Button, Chip, Dialog, HelperText, Icon, Text, TextInput, useTheme } from 'react-native-paper';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
-import { useSelector } from 'react-redux';
-import { selectAuthINaturalist } from '@/state/redux/auth/authSlice';
 
 type Props = {
     eventId: string;
@@ -18,7 +18,7 @@ function EventParticipants({ eventId, isAdmin, participants }: Readonly<Props>) 
     const theme = useTheme();
 
     // User's participant iNaturalist username
-    const inaturalistName = useSelector(selectAuthINaturalist) ?? '';
+    const inaturalistName = useAppSelector(selectAuthINaturalist) ?? '';
     // New participant iNaturalist username
     const [participantName, setParticipantName] = useState(isAdmin ? '' : inaturalistName);
 

@@ -6,10 +6,12 @@ import { Stack, useRouter } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, ListRenderItemInfo, RefreshControl, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { FlatList, ListRenderItemInfo, RefreshControl, SafeAreaView, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Button, Divider, Icon, List, Searchbar, Text, Tooltip } from 'react-native-paper';
 
 function Events() {
+    // UI
+    const { width } = useWindowDimensions();
     // Translation
     const { t } = useTranslation();
     // Router
@@ -56,6 +58,7 @@ function Events() {
         </View>
     ), []);
     // RENDER
+    const gridSize = (width > 800) ? (width > 1200) ? 3 : 2 : 1;
     return (
         <SafeAreaView style={styles.container}>
             <Stack.Screen options={{
@@ -66,8 +69,10 @@ function Events() {
             {(isLoading || isFetching) &&
                 <ActivityIndicator size='large' animating={true} style={styles.loading} />
             }
-            <FlatList style={styles.list}
-                numColumns={2}
+            <FlatList style={{ width: '100%' }}
+                key={gridSize}
+                numColumns={gridSize}
+                columnWrapperStyle={gridSize > 1 ? { justifyContent: 'center' } : undefined}
                 horizontal={false}
                 refreshControl={
                     <RefreshControl
@@ -157,9 +162,6 @@ const styles = StyleSheet.create({
         height: '100%',
         alignItems: 'center'
     },
-    list: {
-        width: '100%'
-    },
     card: {
         borderWidth: 1,
         borderRadius: 10,
@@ -167,7 +169,8 @@ const styles = StyleSheet.create({
         margin: 10,
         padding: 12,
         alignItems: 'center',
-        gap: 6
+        gap: 6,
+        maxWidth: 400
     },
     description: {
         borderWidth: 1,

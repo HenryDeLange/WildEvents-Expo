@@ -26,12 +26,14 @@ function ModifyEvent({ event }: Readonly<Props>) {
     const [stopDate, setStopDate] = useState<CalendarDate>(undefined);
     const [closeDate, setCloseDate] = useState<CalendarDate>(undefined);
     useEffect(() => {
-        setName(event ? event.name : '');
-        setDescription(event ? event.description : undefined);
-        setVisibility(event ? event.visibility : 'PUBLIC');
-        setStartDate(event ? new Date(event.start) : undefined);
-        setStopDate(event ? new Date(event.stop) : undefined);
-        setCloseDate(event ? new Date(event.close) : undefined);
+        if (event) {
+            setName(event.name);
+            setDescription(event.description);
+            setVisibility(event.visibility);
+            setStartDate(new Date(event.start));
+            setStopDate(new Date(event.stop));
+            setCloseDate(new Date(event.close));
+        }
     }, [event]);
     // Redux
     const [doCreate, { isLoading: isCreating, isError: isErrorCreate, isSuccess: isSuccessCreate }] = useCreateEventMutation();
@@ -44,7 +46,7 @@ function ModifyEvent({ event }: Readonly<Props>) {
     useEffect(() => {
         if (isSuccessCreate || isSuccessUpdate)
             hideModal();
-    }, [isSuccessCreate, isSuccessUpdate]);
+    }, [isSuccessCreate, isSuccessUpdate, hideModal]);
     const handleShowButton = useCallback(() => setModalVisible(true), []);
     const handleConfirm = useCallback(() => {
         const eventBase = {
@@ -92,11 +94,12 @@ function ModifyEvent({ event }: Readonly<Props>) {
     return (
         <>
             <Button mode={event ? 'text' : 'contained-tonal'} style={styles.addButton} uppercase
-                icon={(isCreating || isUpdating) ? 'loading' : event ? 'pencil' : 'plus'}
+                icon={event ? 'pencil' : 'plus'}
+                loading={isCreating || isUpdating}
+                disabled={isCreating || isUpdating}
                 onPress={handleShowButton}
             >
-                {(isCreating || isUpdating) ? <ActivityIndicator animating={true} /> :
-                    event ? t('eventCardEditTitle') : t('eventCardCreateTitle')}
+                {event ? t('eventCardEditTitle') : t('eventCardCreateTitle')}
             </Button>
             <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={hideModal}>
                 <Card.Title titleVariant='titleLarge' right={renderVisibilityToggle}

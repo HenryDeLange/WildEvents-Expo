@@ -1,19 +1,18 @@
-import ActivityGrid from '@/components/activity/ActivityGrid';
 import ActivityEventTotals from '@/components/activity/ActivityEventTotals';
+import ActivityGrid from '@/components/activity/ActivityGrid';
 import EventAdmins from '@/components/event/EventAdmins';
 import EventDates from '@/components/event/EventDates';
 import EventParticipants from '@/components/event/EventParticipants';
 import ModifyEvent from '@/components/event/ModifyEvent';
+import { useIsEventAdmin } from '@/components/event/utils/hooks';
 import LogoutButton from '@/components/user/LogoutButton';
 import { useCalculateEventMutation, useFindEventQuery } from '@/state/redux/api/wildEventsApi';
-import { selectAuthUsername } from '@/state/redux/auth/authSlice';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Divider, Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 function Event() {
     // Translation
@@ -25,8 +24,7 @@ function Event() {
     const { data: event, isLoading: isEventLoading, isFetching: isEventFetching } = useFindEventQuery({ eventId });
     const [doCalculateEvent, { isLoading: isCalculating }] = useCalculateEventMutation();
     // Permissions
-    const username = useSelector(selectAuthUsername);
-    const isAdmin = !!event && event.admins.indexOf(username ?? '') >= 0;
+    const isAdmin = useIsEventAdmin(eventId);
     // Actions
     const handleCalculateEvent = useCallback(() => doCalculateEvent({ eventId }), [eventId]);
     // NavBar
