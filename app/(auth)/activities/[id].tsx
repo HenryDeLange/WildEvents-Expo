@@ -2,15 +2,16 @@ import ActivityStepScores from '@/components/activity/ActivityStepScores';
 import ActivityStepTotalScores from '@/components/activity/ActivityStepTotalScores';
 import ModifyActivity from '@/components/activity/ModifyActivity';
 import { useIsEventAdmin } from '@/components/event/utils/hooks';
+import ResponsiveCardWrapper from '@/components/ui/ResponsiveCardWrapper';
 import LogoutButton from '@/components/user/LogoutButton';
-import { useCalculateActivityMutation, useFindActivityQuery } from '@/state/redux/api/wildEventsApi';
+import { useCalculateActivityMutation, useDeleteActivityMutation, useFindActivityQuery } from '@/state/redux/api/wildEventsApi';
 import { format } from 'date-fns';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Divider, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Button, Dialog, Divider, Text, useTheme } from 'react-native-paper';
 
 function Activity() {
     // Theme
@@ -20,13 +21,28 @@ function Activity() {
     // Router
     const { id } = useLocalSearchParams();
     const activityId = id.toString();
+    const router = useRouter();
     // Redux
     const { data: activity, isLoading: isActivityLoading, isFetching: isActivityFetching } = useFindActivityQuery({ activityId });
     const [doCalculate, { isLoading: isCalculating }] = useCalculateActivityMutation();
+    const [doDelete, { isLoading: isDeleting, isSuccess: isDeleted }] = useDeleteActivityMutation();
+    // State
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     // Permissions
     const isAdmin = useIsEventAdmin(activity?.eventId ?? null);
     // Actions
     const handleCalculate = useCallback(() => doCalculate({ activityId }), [activityId]);
+    const handleDeleteButton = useCallback(() => setShowDeleteDialog(true), [activityId]);
+    const handleDelete = useCallback(() => doDelete({ activityId }), [activityId]);
+    const handleHideDeleteDialog = useCallback(() => {
+        if (!isDeleting)
+            setShowDeleteDialog(false);
+    }, [isDeleting]);
+    // Effects
+    useEffect(() => {
+        if (isDeleted)
+            router.back();
+    }, [isDeleted, router]);
     // NavBar
     const navBarActions = useCallback(() => (
         <View style={styles.actions}>
@@ -42,6 +58,13 @@ function Activity() {
                     {activity &&
                         <ModifyActivity eventId={activity.eventId} activity={activity} />
                     }
+                    <Button mode='text' icon='trash-can-outline' uppercase
+                        onPress={handleDeleteButton}
+                        loading={isDeleting}
+                        disabled={isDeleting}
+                    >
+                        {t('delete')}
+                    </Button>
                 </>
             }
             <LogoutButton />
@@ -98,6 +121,25 @@ function Activity() {
                 <ActivityStepTotalScores results={activity.results} />
                 <Divider style={styles.divider} />
                 <ActivityStepScores steps={activity.steps} results={activity.results} />
+                {/* Delete Dialog */}
+                <ResponsiveCardWrapper modalVisible={showDeleteDialog} hideModal={handleHideDeleteDialog}>
+                    <Dialog.Title>{t('activityDeleteTitle')}</Dialog.Title>
+                    <Dialog.Content>
+                        <Text variant='bodyMedium'>
+                            {t('activityDeleteMessage', { name: activity.name })}
+                        </Text>
+                        <View style={styles.buttonWrapper}>
+                            <Button mode='contained' style={styles.button} uppercase
+                                icon={'trash-can-outline'}
+                                loading={isDeleting}
+                                disabled={isDeleting}
+                                onPress={handleDelete}
+                            >
+                                {t('delete')}
+                            </Button>
+                        </View>
+                    </Dialog.Content>
+                </ResponsiveCardWrapper>
             </SafeAreaView>
         </ScrollView>
     );
@@ -154,5 +196,13 @@ const styles = StyleSheet.create({
     },
     scoresScroll: {
         maxHeight: 200
+    },
+    buttonWrapper: {
+        marginTop: 10,
+        alignItems: 'center'
+    },
+    button: {
+        marginTop: 10,
+        width: '80%'
     }
 });

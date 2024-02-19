@@ -5,14 +5,15 @@ import EventDates from '@/components/event/EventDates';
 import EventParticipants from '@/components/event/EventParticipants';
 import ModifyEvent from '@/components/event/ModifyEvent';
 import { useIsEventAdmin } from '@/components/event/utils/hooks';
+import ResponsiveCardWrapper from '@/components/ui/ResponsiveCardWrapper';
 import LogoutButton from '@/components/user/LogoutButton';
-import { useCalculateEventMutation, useFindEventQuery } from '@/state/redux/api/wildEventsApi';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { useCalculateEventMutation, useDeleteEventMutation, useFindEventQuery } from '@/state/redux/api/wildEventsApi';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Divider, Text } from 'react-native-paper';
+import { ActivityIndicator, Button, Dialog, Divider, Text } from 'react-native-paper';
 
 function Event() {
     // Translation
@@ -20,13 +21,28 @@ function Event() {
     // Router
     const { id } = useLocalSearchParams();
     const eventId = id.toString();
+    const router = useRouter();
     // Redux
     const { data: event, isLoading: isEventLoading, isFetching: isEventFetching } = useFindEventQuery({ eventId });
     const [doCalculateEvent, { isLoading: isCalculating }] = useCalculateEventMutation();
+    const [doDelete, { isLoading: isDeleting, isSuccess: isDeleted }] = useDeleteEventMutation();
+    // State
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     // Permissions
     const isAdmin = useIsEventAdmin(eventId);
     // Actions
     const handleCalculateEvent = useCallback(() => doCalculateEvent({ eventId }), [eventId]);
+    const handleDeleteButton = useCallback(() => setShowDeleteDialog(true), [eventId]);
+    const handleDelete = useCallback(() => doDelete({ eventId }), [eventId]);
+    const handleHideDeleteDialog = useCallback(() => {
+        if (!isDeleting)
+            setShowDeleteDialog(false);
+    }, [isDeleting]);
+    // Effects
+    useEffect(() => {
+        if (isDeleted)
+            router.back();
+    }, [isDeleted, router]);
     // NavBar
     const navBarActions = useCallback(() => (
         <View style={styles.actions}>
@@ -40,6 +56,13 @@ function Event() {
                         {t('eventCalculate')}
                     </Button>
                     <ModifyEvent event={event} />
+                    <Button mode='text' icon='trash-can-outline' uppercase
+                        onPress={handleDeleteButton}
+                        loading={isDeleting}
+                        disabled={isDeleting}
+                    >
+                        {t('delete')}
+                    </Button>
                 </>
             }
             <LogoutButton />
@@ -81,6 +104,25 @@ function Event() {
                 </View>
                 <Divider style={styles.divider} />
                 <ActivityGrid eventId={eventId} />
+                {/* Delete Dialog */}
+                <ResponsiveCardWrapper modalVisible={showDeleteDialog} hideModal={handleHideDeleteDialog}>
+                    <Dialog.Title>{t('eventDeleteTitle')}</Dialog.Title>
+                    <Dialog.Content>
+                        <Text variant='bodyMedium'>
+                            {t('eventDeleteMessage', { name: event.name })}
+                        </Text>
+                        <View style={styles.buttonWrapper}>
+                            <Button mode='contained' style={styles.button} uppercase
+                                icon={'trash-can-outline'}
+                                loading={isDeleting}
+                                disabled={isDeleting}
+                                onPress={handleDelete}
+                            >
+                                {t('delete')}
+                            </Button>
+                        </View>
+                    </Dialog.Content>
+                </ResponsiveCardWrapper>
             </SafeAreaView>
         </ScrollView>
     );
@@ -132,5 +174,13 @@ const styles = StyleSheet.create({
     },
     actions: {
         flexDirection: 'row'
+    },
+    buttonWrapper: {
+        marginTop: 10,
+        alignItems: 'center'
+    },
+    button: {
+        marginTop: 10,
+        width: '80%'
     }
 });

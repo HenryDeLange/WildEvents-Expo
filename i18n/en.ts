@@ -6,6 +6,8 @@ export default {
         confirm: 'Confirm',
         search: 'Search...',
         view: 'View',
+        delete: 'Delete',
+
         aboutButton: 'About',
         aboutNavTitle: 'WildEvents Information',
         aboutTitle: 'About',
@@ -14,6 +16,7 @@ export default {
         aboutINatLink: 'iNaturalist',
         aboutClient: 'Client',
         aboutServer: 'Server',
+
         registerButton: 'Register',
         registerNavTitle: 'Register a new User',
         registerCardTitle: 'New WildEvents Account',
@@ -70,6 +73,8 @@ export default {
         eventCalculate: 'Calculate',
         eventTotalTitle: 'Scoreboard',
         eventTotalCalculateScores: 'No scores have been calculated yet...',
+        eventDeleteTitle: 'Delete Event?',
+        eventDeleteMessage: 'Are you sure you want to delete the \'{{name}}\' event?',
 
         welcomeTitle: 'Welcome to Wild Events!',
         welcomeSubTitle: 'Here you can take part in fun events that centers around exploring nature through the use of the iNaturalist website.',
@@ -112,6 +117,8 @@ export default {
         activityStatusERROR: 'Error',
         activityTotalScores: 'Total Scores',
         activitySteps: 'Steps',
+        activityDeleteTitle: 'Delete Activity?',
+        activityDeleteMessage: 'Are you sure you want to delete the \'{{name}}\' activity?',
 
 
     }
