@@ -1,10 +1,10 @@
-import { useParticipantJoinEventMutation, useParticipantLeaveEventMutation } from '@/state/redux/api/wildEventsApi';
-import { selectAuthINaturalist } from '@/state/redux/auth/authSlice';
-import { useAppSelector } from '@/state/redux/hooks';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View } from 'react-native';
 import { ActivityIndicator, Button, Chip, Dialog, HelperText, Icon, Text, TextInput, useTheme } from 'react-native-paper';
+import { useParticipantJoinEventMutation, useParticipantLeaveEventMutation } from '../../state/redux/api/wildEventsApi';
+import { selectAuthINaturalist } from '../../state/redux/auth/authSlice';
+import { useAppSelector } from '../../state/redux/hooks';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
 
 type Props = {

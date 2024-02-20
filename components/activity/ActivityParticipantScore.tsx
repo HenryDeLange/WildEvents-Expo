@@ -1,7 +1,7 @@
-import { ActivityCalculation } from '@/state/redux/api/wildEventsApi';
 import { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
+import { ActivityCalculation } from '../../state/redux/api/wildEventsApi';
 import { ExternalLink } from '../ui/ExternalLink';
 
 export type ParticipantScore = ActivityCalculation & {

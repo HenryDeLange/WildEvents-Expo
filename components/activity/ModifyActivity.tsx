@@ -1,9 +1,9 @@
-import { Activity, ActivityCreate, ActivityStep, useCreateActivityMutation, useUpdateActivityMutation } from '@/state/redux/api/wildEventsApi';
 import * as Crypto from 'expo-crypto';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Button, Card, HelperText, IconButton, SegmentedButtons, SegmentedButtonsProps, Text, TextInput, Tooltip } from 'react-native-paper';
+import { Activity, ActivityCreate, ActivityStep, useCreateActivityMutation, useUpdateActivityMutation } from '../../state/redux/api/wildEventsApi';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
 
 // TODO: Get these values from the BE via an endpoint

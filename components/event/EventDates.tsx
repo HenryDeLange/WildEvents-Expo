@@ -1,9 +1,9 @@
-import { Event } from '@/state/redux/api/wildEventsApi';
 import { format } from 'date-fns';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Icon, Text } from 'react-native-paper';
+import { Event } from '../../state/redux/api/wildEventsApi';
 
 type Props = {
     event: Event;

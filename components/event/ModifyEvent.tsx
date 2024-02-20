@@ -1,4 +1,3 @@
-import { Event, useCreateEventMutation, useUpdateEventMutation } from '@/state/redux/api/wildEventsApi';
 import { addDays, addMonths, getYear, isAfter, subDays } from 'date-fns';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { Button, Card, HelperText, IconButton, Text, TextInput } from 'react-native-paper';
 import { DatePickerInput, enGB, registerTranslation } from 'react-native-paper-dates';
 import { CalendarDate } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
+import { Event, useCreateEventMutation, useUpdateEventMutation } from '../../state/redux/api/wildEventsApi';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
 
 registerTranslation('en-GB', enGB);

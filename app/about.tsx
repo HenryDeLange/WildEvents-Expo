@@ -1,11 +1,11 @@
-import { ExternalLink } from '@/components/ui/ExternalLink';
-import PageContainer from '@/components/ui/PageContainer';
-import { useGetVersionQuery } from '@/state/redux/api/wildEventsApi';
 import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, ViewStyle, useWindowDimensions } from 'react-native';
 import { Card, Text } from 'react-native-paper';
+import { ExternalLink } from '../components/ui/ExternalLink';
+import PageContainer from '../components/ui/PageContainer';
+import { useGetVersionQuery } from '../state/redux/api/wildEventsApi';
 
 export default function About() {
     const { t } = useTranslation();

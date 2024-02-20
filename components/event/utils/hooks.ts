@@ -1,6 +1,6 @@
-import { useFindEventQuery } from "@/state/redux/api/wildEventsApi";
-import { selectAuthUsername } from "@/state/redux/auth/authSlice";
-import { useAppSelector } from "@/state/redux/hooks";
+import { useFindEventQuery } from '../../../state/redux/api/wildEventsApi';
+import { selectAuthUsername } from '../../../state/redux/auth/authSlice';
+import { useAppSelector } from '../../../state/redux/hooks';
 
 export function useIsEventAdmin(eventId: string | null): boolean {
     const username = useAppSelector(selectAuthUsername);

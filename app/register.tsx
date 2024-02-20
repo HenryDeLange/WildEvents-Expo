@@ -1,7 +1,7 @@
-import RegisterCard from '@/components/user/RegisterCard';
 import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import PageContainer from '../components/ui/PageContainer';
+import RegisterCard from '../components/user/RegisterCard';
 
 export default function Register() {
     const { t } = useTranslation();

@@ -1,9 +1,9 @@
-import { ActivityStep, ActivityStepResult } from '@/state/redux/api/wildEventsApi';
 import Markdown from 'markdown-to-jsx';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
+import { ActivityStep, ActivityStepResult } from '../../state/redux/api/wildEventsApi';
 import ActivityParticipantScore, { ParticipantScore } from './ActivityParticipantScore';
 import { generateStepScoreList } from './utils';
 

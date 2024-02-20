@@ -1,22 +1,22 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useAsyncStorage } from '@react-native-async-storage/async-storage';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import * as Localization from 'expo-localization';
 import { SplashScreen, Stack } from 'expo-router';
 import i18n from 'i18next';
-import { ReactElement, ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import { useColorScheme } from 'react-native';
 import { MD3LightTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Provider as ReduxProvider } from 'react-redux';
 import en from '../i18n/en';
+import { setRefreshToken } from '../state/redux/auth/authSlice';
+import { REFRESH_TOKEN } from '../state/redux/auth/authStorage';
+import { useAppDispatch } from '../state/redux/hooks';
 import { store } from '../state/redux/store';
 import dark from '../theme/dark.json';
 import light from '../theme/light.json';
-import { useAsyncStorage } from '@react-native-async-storage/async-storage';
-import { REFRESH_TOKEN } from '@/state/redux/auth/authStorage';
-import { useAppDispatch } from '@/state/redux/hooks';
-import { setRefreshToken } from '@/state/redux/auth/authSlice';
 
 export {
     // Catch any errors thrown by the Layout component.

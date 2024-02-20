@@ -1,10 +1,3 @@
-import ActivityStepScores from '@/components/activity/ActivityStepScores';
-import ActivityStepTotalScores from '@/components/activity/ActivityStepTotalScores';
-import ModifyActivity from '@/components/activity/ModifyActivity';
-import { useIsEventAdmin } from '@/components/event/utils/hooks';
-import ResponsiveCardWrapper from '@/components/ui/ResponsiveCardWrapper';
-import LogoutButton from '@/components/user/LogoutButton';
-import { useCalculateActivityMutation, useDeleteActivityMutation, useFindActivityQuery } from '@/state/redux/api/wildEventsApi';
 import { format } from 'date-fns';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
@@ -12,6 +5,13 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Dialog, Divider, Text, useTheme } from 'react-native-paper';
+import ActivityStepScores from '../../../components/activity/ActivityStepScores';
+import ActivityStepTotalScores from '../../../components/activity/ActivityStepTotalScores';
+import ModifyActivity from '../../../components/activity/ModifyActivity';
+import { useIsEventAdmin } from '../../../components/event/utils/hooks';
+import ResponsiveCardWrapper from '../../../components/ui/ResponsiveCardWrapper';
+import LogoutButton from '../../../components/user/LogoutButton';
+import { useCalculateActivityMutation, useDeleteActivityMutation, useFindActivityQuery } from '../../../state/redux/api/wildEventsApi';
 
 function Activity() {
     // Theme

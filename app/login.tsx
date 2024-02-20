@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'react-native-paper';
 import PageContainer from '../components/ui/PageContainer';
-import LoginCard from '@/components/user/LoginCard';
+import LoginCard from '../components/user/LoginCard';
 
 export default function Login() {
     const { t } = useTranslation();

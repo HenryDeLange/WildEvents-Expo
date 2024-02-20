@@ -1,4 +1,4 @@
-import { ActivityCalculation, ActivityStepResult } from "@/state/redux/api/wildEventsApi";
+import { ActivityCalculation, ActivityStepResult } from "../../../state/redux/api/wildEventsApi";
 import { ParticipantScore } from "../ActivityParticipantScore";
 
 export function generateScoreMap(map: Map<string, ActivityCalculation>, results?: ActivityStepResult[]) {

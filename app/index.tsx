@@ -1,11 +1,11 @@
 import { Stack } from 'expo-router';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
+import AboutButton from '../components/AboutButton';
 import HomeCard from '../components/HomeCard';
 import PageContainer from '../components/ui/PageContainer';
-import { useTranslation } from 'react-i18next';
-import RegisterButton from '@/components/user/RegisterButton';
-import AboutButton from '@/components/AboutButton';
+import RegisterButton from '../components/user/RegisterButton';
 
 export default function Home() {
     const { t } = useTranslation();

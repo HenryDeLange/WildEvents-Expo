@@ -1,10 +1,10 @@
-import { ActivityCalculation, useFindActivitiesQuery } from '@/state/redux/api/wildEventsApi';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import { generateScoreList, generateScoreMap } from './utils';
+import { ActivityCalculation, useFindActivitiesQuery } from '../../state/redux/api/wildEventsApi';
 import ActivityParticipantScore, { ParticipantScore } from './ActivityParticipantScore';
+import { generateScoreList, generateScoreMap } from './utils';
 
 type Props = {
     eventId: string;

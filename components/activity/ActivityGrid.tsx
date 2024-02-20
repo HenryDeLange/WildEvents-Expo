@@ -1,4 +1,3 @@
-import { Activity, useFindActivitiesQuery } from '@/state/redux/api/wildEventsApi';
 import { format } from 'date-fns';
 import { useRouter } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
@@ -6,6 +5,7 @@ import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Card, Divider, Text, useTheme } from 'react-native-paper';
+import { Activity, useFindActivitiesQuery } from '../../state/redux/api/wildEventsApi';
 import { useIsEventAdmin } from '../event/utils/hooks';
 import ActivityStepScoreboard from './ActivityStepScoreboard';
 import ModifyActivity from './ModifyActivity';

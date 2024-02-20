@@ -1,13 +1,13 @@
-import { useLoginMutation } from '@/state/redux/api/wildEventsApi';
-import { doLogin } from '@/state/redux/auth/authSlice';
-import { REFRESH_TOKEN, saveData } from '@/state/redux/auth/authStorage';
-import { useAppDispatch } from '@/state/redux/hooks';
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View, ViewStyle, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Button, Card, HelperText, TextInput } from 'react-native-paper';
+import { useLoginMutation } from '../../state/redux/api/wildEventsApi';
+import { doLogin } from '../../state/redux/auth/authSlice';
+import { REFRESH_TOKEN, saveData } from '../../state/redux/auth/authStorage';
+import { useAppDispatch } from '../../state/redux/hooks';
 
 export default memo(function () {
     // UI
