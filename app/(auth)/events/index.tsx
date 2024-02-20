@@ -96,7 +96,7 @@ function Events() {
                     // }
                 }, [page, setPage, isFetching, isLoading, data?.totalRecords])}
                 // getItemCount={() => pagedEvents?.totalRecords ?? 0}
-                data={events}
+                data={(isLoading || isFetching) ? [] : events}
                 keyExtractor={useCallback((event: Event) => event.id, [])}
                 renderItem={useCallback(({ item: event }: ListRenderItemInfo<Event>) => (
                     <View key={event.id} style={styles.card} >

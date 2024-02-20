@@ -7,6 +7,7 @@ export default {
         search: 'Search...',
         view: 'View',
         delete: 'Delete',
+        edit: 'Edit',
 
         aboutButton: 'About',
         aboutNavTitle: 'WildEvents Information',
@@ -33,6 +34,7 @@ export default {
         registerCardConfirmPasswordHelp: 'Confirm WildEvents Password',
         registerCardConfirmPasswordError: 'Must match the password field.',
         registerCardFailed: 'Failed to register the user!',
+
         loginButton: 'Login',
         loginNavTitle: 'WildEvents Login',
         loginCardTitle: 'WildEvents Account',
@@ -42,12 +44,18 @@ export default {
         loginCardPasswordHelp: 'Account Password',
         loginCardFailed: 'Failed to login!',
         logoutButton: 'Logout',
+
+        welcomeTitle: 'Welcome to Wild Events!',
+        welcomeSubTitle: 'Here you can take part in fun events that centers around exploring nature through the use of the iNaturalist website.',
+        welcomeAction: 'View and join existing events below, or create your own!',
+
+        eventNavTitle: 'Event',
         eventsNavTitle: 'Events',
         eventVisibilityPUBLIC: 'Public Event',
         eventVisibilityPRIVATE: 'Private Event',
         eventCardCreateTitle: 'New Event',
         eventCardCreateFailed: 'Failed to create the event!',
-        eventCardEditTitle: 'Edit',
+        eventCardEditTitle: 'Edit Event',
         eventCardName: 'Name',
         eventCardDescription: 'Description',
         eventCardStartDate: 'Start Date',
@@ -76,10 +84,7 @@ export default {
         eventDeleteTitle: 'Delete Event?',
         eventDeleteMessage: 'Are you sure you want to delete the \'{{name}}\' event?',
 
-        welcomeTitle: 'Welcome to Wild Events!',
-        welcomeSubTitle: 'Here you can take part in fun events that centers around exploring nature through the use of the iNaturalist website.',
-        welcomeAction: 'View and join existing events below, or create your own!',
-
+        activityNavTitle: 'Activity',
         activitiesNavTitle: 'Activities',
         activityTypeRACE: 'Race',
         activityTypeHUNT: 'Treasure Hunt',

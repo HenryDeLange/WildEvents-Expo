@@ -41,8 +41,8 @@ function Activity() {
     // Effects
     useEffect(() => {
         if (isDeleted)
-            router.back();
-    }, [isDeleted, router]);
+            router.navigate(`/events/${activity?.eventId}`);
+    }, [activity, isDeleted, router]);
     // NavBar
     const navBarActions = useCallback(() => (
         <View style={styles.actions}>
@@ -71,13 +71,16 @@ function Activity() {
         </View>
     ), [isAdmin, activity, isCalculating]);
     const navBar = useMemo(() => ({
-        title: isActivityFetching ? t('loading') : activity?.name,
+        title: isActivityFetching ? t('loading') : t('activityNavTitle'),
         headerRight: navBarActions
-    }), [isActivityFetching, activity?.name, navBarActions]);
+    }), [t, isActivityFetching, navBarActions]);
     // RENDER
     if (!activity || isActivityLoading || isActivityFetching) {
         return (
-            <ActivityIndicator animating={true} size='large' style={{ margin: 20 }} />
+            <SafeAreaView style={styles.container}>
+                <Stack.Screen options={navBar} />
+                <ActivityIndicator animating={true} size='large' style={{ margin: 20 }} />
+            </SafeAreaView>
         );
     }
     return (
@@ -90,7 +93,7 @@ function Activity() {
                 <Divider style={styles.divider} />
                 <View>
                     <View style={styles.statusWrapper}>
-                        <Text variant='titleMedium'>
+                        <Text variant='titleMedium' style={styles.type}>
                             {t(`activityType${activity.type}`)}
                         </Text>
                         <Text variant='titleMedium'>
@@ -204,5 +207,8 @@ const styles = StyleSheet.create({
     button: {
         marginTop: 10,
         width: '80%'
+    },
+    type: {
+        fontWeight: 'bold'
     }
 });

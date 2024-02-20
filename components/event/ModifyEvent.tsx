@@ -3,12 +3,12 @@ import { addDays, addMonths, getYear, isAfter, subDays } from 'date-fns';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Card, HelperText, IconButton, Text, TextInput } from 'react-native-paper';
-import { DatePickerInput, ca, registerTranslation } from 'react-native-paper-dates';
+import { Button, Card, HelperText, IconButton, Text, TextInput } from 'react-native-paper';
+import { DatePickerInput, enGB, registerTranslation } from 'react-native-paper-dates';
 import { CalendarDate } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
 
-registerTranslation('ca', ca);
+registerTranslation('en-GB', enGB);
 
 type Props = {
     event?: Event;
@@ -46,6 +46,14 @@ function ModifyEvent({ event }: Readonly<Props>) {
     useEffect(() => {
         if (isSuccessCreate || isSuccessUpdate)
             hideModal();
+        if (isSuccessCreate) {
+            setName('');
+            setDescription(undefined);
+            setVisibility('PUBLIC');
+            setStartDate(undefined);
+            setStopDate(undefined);
+            setCloseDate(undefined);
+        }
     }, [isSuccessCreate, isSuccessUpdate, hideModal]);
     const handleShowButton = useCallback(() => setModalVisible(true), []);
     const handleConfirm = useCallback(() => {
@@ -67,17 +75,21 @@ function ModifyEvent({ event }: Readonly<Props>) {
     }, [visibility]);
     const renderVisibilityToggle = useCallback(() => (
         < View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text onPress={toggleVisibility}>
+            <Text
+                disabled={isCreating || isUpdating}
+                onPress={(isCreating || isUpdating) ? undefined : toggleVisibility}
+            >
                 {t(`eventVisibility${visibility}`)}
             </Text>
             <IconButton
                 icon={visibility === 'PRIVATE' ? 'lock' : 'lock-open-outline'}
+                disabled={isCreating || isUpdating}
                 onPress={toggleVisibility}
                 animated
                 selected={visibility === 'PRIVATE'}
             />
         </View >
-    ), [visibility]);
+    ), [visibility, isCreating, isUpdating]);
     // Validation
     const nameError = name.length === 0;
     const dateError = !startDate || !stopDate || !closeDate || !isAfter(stopDate, startDate) || !isAfter(closeDate, stopDate);
@@ -99,7 +111,7 @@ function ModifyEvent({ event }: Readonly<Props>) {
                 disabled={isCreating || isUpdating}
                 onPress={handleShowButton}
             >
-                {event ? t('eventCardEditTitle') : t('eventCardCreateTitle')}
+                {event ? t('edit') : t('eventCardCreateTitle')}
             </Button>
             <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={hideModal}>
                 <Card.Title titleVariant='titleLarge' right={renderVisibilityToggle}
@@ -109,6 +121,7 @@ function ModifyEvent({ event }: Readonly<Props>) {
                     <TextInput
                         mode='outlined'
                         label={t('eventCardName')}
+                        disabled={isCreating || isUpdating}
                         value={name}
                         onChangeText={setName}
                         left={<TextInput.Icon icon='tag' focusable={false} disabled />}
@@ -117,6 +130,7 @@ function ModifyEvent({ event }: Readonly<Props>) {
                     <TextInput
                         mode='outlined'
                         label={t('eventCardDescription')}
+                        disabled={isCreating || isUpdating}
                         value={description}
                         onChangeText={setDescription}
                         left={<TextInput.Icon icon='information' focusable={false} disabled />}
@@ -124,8 +138,9 @@ function ModifyEvent({ event }: Readonly<Props>) {
                         numberOfLines={3}
                     />
                     <DatePickerInput
-                        locale='ca'
+                        locale='en-GB'
                         label={t('eventCardStartDate')}
+                        disabled={isCreating || isUpdating}
                         saveLabel={t('confirm')}
                         left={<TextInput.Icon icon='calendar-arrow-right' focusable={false} disabled />}
                         value={startDate}
@@ -141,8 +156,9 @@ function ModifyEvent({ event }: Readonly<Props>) {
                         onValidationError={useCallback(() => setStartDate(undefined), [setStartDate])}
                     />
                     <DatePickerInput
-                        locale='ca'
+                        locale='en-GB'
                         label={t('eventCardStopDate')}
+                        disabled={isCreating || isUpdating || !startDate}
                         saveLabel={t('confirm')}
                         left={<TextInput.Icon icon='calendar-arrow-left' focusable={false} disabled />}
                         value={stopDate}
@@ -150,7 +166,6 @@ function ModifyEvent({ event }: Readonly<Props>) {
                         inputMode='start'
                         mode='outlined'
                         animationType='fade'
-                        disabled={!startDate}
                         validRange={{ startDate: addDays(startDate ?? '', 1), endDate: addMonths(startDate ?? '', 6) }}
                         startYear={getYear(addDays(startDate ?? '', 1))}
                         endYear={getYear(addMonths(startDate ?? '', 6))}
@@ -159,8 +174,9 @@ function ModifyEvent({ event }: Readonly<Props>) {
                         onValidationError={useCallback(() => setStopDate(undefined), [setStopDate])}
                     />
                     <DatePickerInput
-                        locale='ca'
+                        locale='en-GB'
                         label={t('eventCardCloseDate')}
+                        disabled={isCreating || isUpdating || !startDate || !stopDate}
                         saveLabel={t('confirm')}
                         left={<TextInput.Icon icon='calendar-edit' focusable={false} disabled />}
                         value={closeDate}
@@ -168,7 +184,6 @@ function ModifyEvent({ event }: Readonly<Props>) {
                         inputMode='start'
                         mode='outlined'
                         animationType='fade'
-                        disabled={!startDate || !stopDate}
                         validRange={{ startDate: addDays(stopDate ?? '', 1), endDate: addMonths(stopDate ?? '', 2) }}
                         startYear={getYear(addDays(stopDate ?? '', 1))}
                         endYear={getYear(addMonths(stopDate ?? '', 2))}
@@ -180,9 +195,10 @@ function ModifyEvent({ event }: Readonly<Props>) {
                         <Button mode='contained' style={styles.button} uppercase
                             icon={(isCreating || isUpdating) ? undefined : 'check'}
                             disabled={isCreating || isUpdating || nameError || dateError}
+                            loading={isCreating || isUpdating}
                             onPress={handleConfirm}
                         >
-                            {isCreating ? <ActivityIndicator animating={true} /> : t('confirm')}
+                            {t('confirm')}
                         </Button>
                         {(isErrorCreate || isErrorUpdate) &&
                             <HelperText type='error' visible={isErrorCreate || isErrorUpdate} >

@@ -3,9 +3,10 @@ import * as Crypto from 'expo-crypto';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Card, HelperText, IconButton, SegmentedButtons, SegmentedButtonsProps, Text, TextInput, Tooltip } from 'react-native-paper';
+import { Button, Card, HelperText, IconButton, SegmentedButtons, SegmentedButtonsProps, Text, TextInput, Tooltip } from 'react-native-paper';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
 
+// TODO: Get these values from the BE via an endpoint
 const MAX_STEPS = 5;
 const ADD_STEP = 'addStep';
 
@@ -23,17 +24,19 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
     const [description, setDescription] = useState<string | undefined>('');
     const [type, setType] = useState<ActivityCreate['type']>('RACE');
     const [step, setStep] = useState('1');
+    const [addedSteps, setAddedSteps] = useState(1);
     const [steps, setSteps] = useState<ActivityCreate['steps']>([{
         id: '',
         description: '',
         criteria: { 'taxon_id': '' }
     }]);
-    const [addedSteps, setAddedSteps] = useState(1);
     useEffect(() => {
         if (activity) {
             setName(activity.name);
             setDescription(activity.description);
             setType(activity.type);
+            setStep('1');
+            setAddedSteps(activity.steps?.length ?? 1);
             setSteps(activity.steps);
         }
     }, [activity]);
@@ -48,6 +51,17 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
     useEffect(() => {
         if (isSuccessCreate || isSuccessUpdate)
             hideModal();
+        if (isSuccessCreate) {
+            setName('');
+            setDescription(undefined);
+            setType('RACE');
+            setStep('1');
+            setSteps([{
+                id: '',
+                description: '',
+                criteria: { 'taxon_id': '' }
+            }]);
+        }
     }, [isSuccessCreate, isSuccessUpdate, hideModal]);
     const handleShowButton = useCallback(() => setModalVisible(true), []);
     const handleTypeChange = useCallback((selectedType: string) => {
@@ -182,29 +196,39 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
         }
     }, [type, step, steps, addedSteps]);
     // Memo
-    const typeOptions = useMemo(() => [
-        { value: 'RACE', label: t('activityTypeRACE') },
-        { value: 'HUNT', label: t('activityTypeHUNT') },
-        { value: 'QUIZ', label: t('activityTypeQUIZ') },
-        { value: 'EXPLORE', label: t('activityTypeEXPLORE') }
-    ], []);
-    const stepOptions = useMemo(() => {
-        const stepButtons: SegmentedButtonsProps['buttons'] = [{ value: '1', label: t('activityCardStepCount', { step: 1 }) }];
+    const isDisabled = useMemo(() => isCreating || isUpdating, [isCreating, isUpdating]);
+    const isDisabledType = useMemo(() => !!activity || isDisabled, [activity, isDisabled]);
+    const typeOptions = useMemo<SegmentedButtonsProps['buttons']>(() => [
+        { value: 'RACE', label: t('activityTypeRACE'), disabled: isDisabledType },
+        { value: 'HUNT', label: t('activityTypeHUNT'), disabled: isDisabledType },
+        { value: 'QUIZ', label: t('activityTypeQUIZ'), disabled: isDisabledType },
+        { value: 'EXPLORE', label: t('activityTypeEXPLORE'), disabled: isDisabledType }
+    ], [isDisabledType]);
+    const stepOptions = useMemo<SegmentedButtonsProps['buttons']>(() => {
+        const stepButtons: SegmentedButtonsProps['buttons'] = [{
+            value: '1',
+            label: t('activityCardStepCount', { step: 1 }),
+            disabled: isDisabled
+        }];
         if (type !== 'RACE') {
             for (let i = 2; i <= addedSteps; i++) {
-                stepButtons.push({ value: String(i), label: t('activityCardStepCount', { step: i }) });
+                stepButtons.push({
+                    value: String(i),
+                    label: t('activityCardStepCount', { step: i }),
+                    disabled: isDisabled
+                });
             }
         }
         if (stepButtons.length < MAX_STEPS) {
             stepButtons.push({
                 value: ADD_STEP,
                 label: type === 'RACE' ? 'N/A' : t('activityCardStepAdd'),
-                disabled: type === 'RACE',
+                disabled: isDisabled || type === 'RACE',
                 icon: type === 'RACE' ? undefined : 'plus'
             });
         }
         return stepButtons;
-    }, [type, addedSteps]);
+    }, [type, addedSteps, isDisabled]);
     // Validation
     const nameError = name.length === 0;
     let stepError = false;
@@ -229,11 +253,11 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
         <>
             <Button mode={activity ? 'text' : 'contained-tonal'} style={styles.addButton} uppercase
                 icon={activity ? 'pencil' : 'plus'}
-                loading={isCreating || isUpdating}
-                disabled={isCreating || isUpdating}
+                loading={isDisabled}
+                disabled={isDisabled}
                 onPress={handleShowButton}
             >
-                {activity ? t('activityCardEditTitle') : t('activityCardCreateTitle')}
+                {activity ? t('edit') : t('activityCardCreateTitle')}
             </Button>
             <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={hideModal}>
                 <Card.Title title={t('activityCardCreateTitle')} titleVariant='titleLarge' />
@@ -241,6 +265,7 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                     <TextInput
                         mode='outlined'
                         label={t('activityCardName')}
+                        disabled={isDisabled}
                         value={name}
                         onChangeText={setName}
                         left={<TextInput.Icon icon='tag' focusable={false} disabled />}
@@ -249,6 +274,7 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                     <TextInput
                         mode='outlined'
                         label={t('activityCardDescription')}
+                        disabled={isDisabled}
                         value={description}
                         onChangeText={setDescription}
                         left={<TextInput.Icon icon='information' focusable={false} disabled />}
@@ -279,6 +305,7 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                                     <TextInput
                                         mode='outlined'
                                         label={t('activityCardStepDescription')}
+                                        disabled={isDisabled}
                                         value={activeStep.description}
                                         onChangeText={handleStepDescription}
                                         left={<TextInput.Icon icon='information' focusable={false} disabled />}
@@ -292,6 +319,7 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                                                 <TextInput
                                                     key={`step${step}Criterion${type}Entry${index}Key`}
                                                     style={{ flex: 1 }}
+                                                    disabled={isDisabled}
                                                     mode='outlined'
                                                     label={t('activityCriteriaKey')}
                                                     value={key}
@@ -301,6 +329,7 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                                             <TextInput
                                                 key={`step${step}Criterion${type}Entry${index}Value`}
                                                 style={{ flex: 2 }}
+                                                disabled={isDisabled}
                                                 mode='outlined'
                                                 label={t('activityCriteriaValue')}
                                                 value={activeStep.criteria && activeStep.criteria[key]}
@@ -313,7 +342,7 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                                     <Tooltip title={t('activityCardStepRemove')}>
                                         <IconButton
                                             icon='trash-can-outline'
-                                            disabled={addedSteps <= 1}
+                                            disabled={isDisabled || (addedSteps <= 1)}
                                             animated
                                             onPress={handleStepRemove}
                                         />
@@ -325,10 +354,11 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                     <View style={styles.buttonWrapper}>
                         <Button mode='contained' style={styles.button} uppercase
                             icon={isCreating ? undefined : 'check'}
-                            disabled={isCreating || nameError || stepError}
+                            disabled={isDisabled || nameError || stepError}
+                            loading={isDisabled}
                             onPress={handleConfirm}
                         >
-                            {isCreating ? <ActivityIndicator animating={true} /> : t('confirm')}
+                            {t('confirm')}
                         </Button>
                         {(isErrorCreate || isErrorUpdate) &&
                             <HelperText type='error' visible={isErrorCreate || isErrorUpdate} >

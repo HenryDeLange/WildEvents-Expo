@@ -35,55 +35,57 @@ function ActivityGrid({ eventId }: Readonly<Props>) {
             {isActivitiesFetching &&
                 <ActivityIndicator size='small' />
             }
-            <View style={styles.grid}>
-                {activities?.map(activity => (
-                    <Card key={activity.id} style={styles.card}>
-                        <Card.Title
-                            title={activity.name} titleVariant='titleLarge' titleStyle={styles.title}
-                            subtitle={t(`activityType${activity.type}`)} subtitleVariant='bodySmall' subtitleStyle={styles.title}
-                        />
-                        <Card.Content>
-                            <View style={styles.content}>
-                                <Divider style={styles.dividerTop} />
-                                <View style={styles.statusWrapper}>
-                                    <Text style={styles.status}>
-                                        {t(`activityStatus${activity.status ?? 'NEW'}`)}
-                                    </Text>
-                                    {activity.calculated &&
-                                        <Text>
-                                            {format(activity.calculated, 'yyyy-MM-dd HH:mm')}
+            {!isActivitiesFetching &&
+                <View style={styles.grid}>
+                    {activities?.map(activity => (
+                        <Card key={activity.id} style={styles.card}>
+                            <Card.Title
+                                title={activity.name} titleVariant='titleLarge' titleStyle={styles.title}
+                                subtitle={t(`activityType${activity.type}`)} subtitleVariant='bodySmall' subtitleStyle={styles.title}
+                            />
+                            <Card.Content>
+                                <View style={styles.content}>
+                                    <Divider style={styles.dividerTop} />
+                                    <View style={styles.statusWrapper}>
+                                        <Text style={styles.status}>
+                                            {t(`activityStatus${activity.status ?? 'NEW'}`)}
                                         </Text>
+                                        {activity.calculated &&
+                                            <Text>
+                                                {format(activity.calculated, 'yyyy-MM-dd HH:mm')}
+                                            </Text>
+                                        }
+                                    </View>
+                                    {activity.disableReason &&
+                                        <>
+                                            <Text style={{ color: theme.colors.error }}>
+                                                {activity.disableReason}
+                                            </Text>
+                                            <Divider style={styles.divider} />
+                                        </>
                                     }
+                                    <Divider style={styles.divider} />
+                                    <ScrollView style={styles.description}>
+                                        <Markdown>
+                                            {activity.description ?? ''}
+                                        </Markdown>
+                                    </ScrollView>
+                                    <Divider style={styles.divider} />
+                                    <ActivityStepScoreboard results={activity.results} />
                                 </View>
-                                {activity.disableReason &&
-                                    <>
-                                        <Text style={{ color: theme.colors.error }}>
-                                            {activity.disableReason}
-                                        </Text>
-                                        <Divider style={styles.divider} />
-                                    </>
-                                }
-                                <Divider style={styles.divider} />
-                                <ScrollView style={styles.description}>
-                                    <Markdown>
-                                        {activity.description ?? ''}
-                                    </Markdown>
-                                </ScrollView>
-                                <Divider style={styles.divider} />
-                                <ActivityStepScoreboard results={activity.results} />
-                            </View>
-                            {/* TODO: Align the button to the bottom of the card */}
-                            <View style={styles.buttonRow}>
-                                <Button mode='text' icon='eye' uppercase style={styles.button}
-                                    onPress={handleView(activity)}
-                                >
-                                    {t('view')}
-                                </Button>
-                            </View>
-                        </Card.Content>
-                    </Card>
-                ))}
-            </View>
+                                {/* TODO: Align the button to the bottom of the card */}
+                                <View style={styles.buttonRow}>
+                                    <Button mode='text' icon='eye' uppercase style={styles.button}
+                                        onPress={handleView(activity)}
+                                    >
+                                        {t('view')}
+                                    </Button>
+                                </View>
+                            </Card.Content>
+                        </Card>
+                    ))}
+                </View>
+            }
         </View>
     );
 }

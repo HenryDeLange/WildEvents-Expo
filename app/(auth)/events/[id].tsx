@@ -41,7 +41,7 @@ function Event() {
     // Effects
     useEffect(() => {
         if (isDeleted)
-            router.back();
+            router.navigate('/events');
     }, [isDeleted, router]);
     // NavBar
     const navBarActions = useCallback(() => (
@@ -69,13 +69,16 @@ function Event() {
         </View>
     ), [isAdmin, event, isCalculating]);
     const navBar = useMemo(() => ({
-        title: isEventFetching ? t('loading') : event?.name,
+        title: isEventFetching ? t('loading') : t('eventNavTitle'),
         headerRight: navBarActions
-    }), [isEventFetching, event?.name, navBarActions]);
+    }), [t, isEventFetching, navBarActions]);
     // RENDER
     if (!event || isEventLoading || isEventFetching) {
         return (
-            <ActivityIndicator animating={true} size='large' style={{ margin: 20 }} />
+            <SafeAreaView style={styles.container}>
+                <Stack.Screen options={navBar} />
+                <ActivityIndicator animating={true} size='large' style={{ margin: 20 }} />
+            </SafeAreaView>
         );
     }
     return (
