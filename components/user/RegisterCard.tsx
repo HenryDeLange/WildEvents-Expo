@@ -2,19 +2,20 @@ import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View, ViewStyle, useWindowDimensions } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import { ActivityIndicator, Button, Card, HelperText, TextInput } from 'react-native-paper';
 import { useRegisterMutation } from '../../state/redux/api/wildEventsApi';
 import { doLogin } from '../../state/redux/auth/authSlice';
 import { REFRESH_TOKEN, saveData } from '../../state/redux/auth/authStorage';
 import { useAppDispatch } from '../../state/redux/hooks';
+import { useIsMobile } from '../ui/utils';
 
 export default memo(function () {
     // UI
-    const { width } = useWindowDimensions();
+    const isMobile = useIsMobile();
     const cardStyle: ViewStyle = {
-        width: width < 500 ? '90%' : '80%',
-        maxWidth: width > 700 ? 650 : undefined
+        width: isMobile ? '90%' : '80%',
+        maxWidth: isMobile ? undefined : 650
     };
     // Translation
     const { t } = useTranslation();
@@ -59,7 +60,7 @@ export default memo(function () {
     return (
         <Card elevation={4} style={cardStyle}>
             <Card.Title title={t('registerCardTitle')} titleVariant='titleLarge' />
-            <Card.Content>
+            <Card.Content style={styles.content}>
                 <TextInput
                     mode='outlined'
                     label={t('registerCardUsername')}
@@ -69,9 +70,11 @@ export default memo(function () {
                     left={<TextInput.Icon icon='account-circle' focusable={false} disabled />}
                     autoFocus
                 />
-                <HelperText type='error' visible={username.length > 0 && usernameError} >
-                    {t('registerCardUsernameError')}
-                </HelperText>
+                {(username.length > 0 && usernameError) &&
+                    <HelperText type='error' >
+                        {t('registerCardUsernameError')}
+                    </HelperText>
+                }
                 <TextInput
                     mode='outlined'
                     label={t('registerCardPassword')}
@@ -82,9 +85,11 @@ export default memo(function () {
                     right={<TextInput.Icon icon={showPassword ? 'eye-off' : 'eye'} onPress={toggleShowPassword} />}
                     secureTextEntry={!showPassword}
                 />
-                <HelperText type='error' visible={password.length > 0 && passwordError} >
-                    {t('registerCardPasswordError')}
-                </HelperText>
+                {(password.length > 0 && passwordError) &&
+                    <HelperText type='error'>
+                        {t('registerCardPasswordError')}
+                    </HelperText>
+                }
                 <TextInput
                     mode='outlined'
                     label={t('registerCardConfirmPassword')}
@@ -95,9 +100,11 @@ export default memo(function () {
                     right={<TextInput.Icon icon={showPassword ? 'eye-off' : 'eye'} onPress={toggleShowPassword} />}
                     secureTextEntry={!showPassword}
                 />
-                <HelperText type='error' visible={confirmPassword.length > 0 && confirmPasswordError} >
-                    {t('registerCardConfirmPasswordError')}
-                </HelperText>
+                {(confirmPassword.length > 0 && confirmPasswordError) &&
+                    <HelperText type='error' >
+                        {t('registerCardConfirmPasswordError')}
+                    </HelperText>
+                }
                 <TextInput
                     mode='outlined'
                     label={t('registerCardINatName')}
@@ -106,9 +113,11 @@ export default memo(function () {
                     onChangeText={setInaturalist}
                     left={<TextInput.Icon icon='account-eye' focusable={false} disabled />}
                 />
-                <HelperText type='error' visible={inaturalist.length > 0 && inatNameError} >
-                    {t('registerCardINatNameError')}
-                </HelperText>
+                {(inaturalist.length > 0 && inatNameError) &&
+                    <HelperText type='error'>
+                        {t('registerCardINatNameError')}
+                    </HelperText>
+                }
                 <View style={styles.buttonWrapper}>
                     <Button mode='contained' style={styles.button} uppercase
                         icon={isLoading ? undefined : 'account-plus'}
@@ -129,11 +138,14 @@ export default memo(function () {
 });
 
 const styles = StyleSheet.create({
+    content: {
+        gap: 15
+    },
     buttonWrapper: {
         alignItems: 'center'
     },
     button: {
-        marginBottom: 10,
+        marginBottom: 8,
         width: '80%'
     }
 });

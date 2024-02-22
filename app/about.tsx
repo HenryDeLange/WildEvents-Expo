@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, ViewStyle, useWindowDimensions } from 'react-native';
+import { Image, StyleSheet, View, ViewStyle, useWindowDimensions } from 'react-native';
 import { Card, Text } from 'react-native-paper';
 import { ExternalLink } from '../components/ui/ExternalLink';
 import PageContainer from '../components/ui/PageContainer';
@@ -20,6 +20,7 @@ export default function About() {
             <Stack.Screen options={{
                 title: t('aboutNavTitle')
             }} />
+            <Image source={require('../assets/images/logo.png')} style={{ width: 100, height: 100 }} />
             <Card style={cardStyle}>
                 <Card.Title title={t('aboutTitle')} titleVariant='titleLarge' />
                 <Card.Content>

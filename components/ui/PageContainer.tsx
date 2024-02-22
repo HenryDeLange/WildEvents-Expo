@@ -4,16 +4,13 @@ import { useTheme } from 'react-native-paper';
 export default function PageContainer(props: Readonly<ViewProps>) {
     const theme = useTheme();
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView
+            style={{ backgroundColor: theme.colors.background }}
+            contentContainerStyle={styles.container}
+        >
             <View
                 {...props}
-                style={[
-                    props.style,
-                    {
-                        backgroundColor: theme.colors.background
-                    },
-                    styles.container
-                ]}
+                style={[styles.content, props.style]}
             />
         </ScrollView>
     );
@@ -21,10 +18,12 @@ export default function PageContainer(props: Readonly<ViewProps>) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1
+    },
+    content: {
+        margin: 12,
         alignItems: 'center',
         justifyContent: 'center',
-        width: '100%',
-        height: '100%'
+        flexGrow: 1
     }
 });

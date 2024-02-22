@@ -2,7 +2,7 @@
   "expo": {
     "name": "WildEvents",
     "slug": "WildEvents",
-    "version": "1.0.0",
+    "version": "0.0.2",
     "orientation": "portrait",
     "jsEngine": "hermes",
     "icon": "./assets/images/icon.png",

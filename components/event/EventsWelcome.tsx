@@ -2,31 +2,19 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Divider, Text } from 'react-native-paper';
-import ModifyEvent from './ModifyEvent';
 
 function EventsWelcome() {
     const { t } = useTranslation();
     return (
-        <>
-            <View style={styles.welcomeWrapper}>
-                <Text variant='displayLarge'>
-                    {t('welcomeTitle')}
-                </Text>
-                <Text variant='titleMedium'>
-                    {t('welcomeSubTitle')}
-                </Text>
-                <Divider style={styles.sectionDivider} />
-                <View style={styles.actionWrapper}>
-                    <Text variant='titleMedium'>
-                        {t('welcomeAction')}
-                    </Text>
-                    <View style={styles.createWrapper}>
-                        <ModifyEvent />
-                    </View>
-                </View>
-            </View>
-            <Divider style={styles.footerDivider} />
-        </>
+        <View style={styles.welcomeWrapper}>
+            <Text variant='displayLarge' style={styles.text}>
+                {t('welcomeTitle')}
+            </Text>
+            <Text variant='titleMedium' style={styles.text}>
+                {t('welcomeSubTitle')}
+            </Text>
+            <Divider style={styles.sectionDivider} />
+        </View>
     );
 }
 
@@ -37,21 +25,12 @@ const styles = StyleSheet.create({
         margin: 20,
         alignItems: 'center'
     },
+    text: {
+        textAlign: 'center'
+    },
     sectionDivider: {
         marginTop: 10,
         marginBottom: 20,
         width: '80%'
-    },
-    actionWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    createWrapper: {
-        marginHorizontal: 20
-    },
-    footerDivider: {
-        width: '100%',
-        height: 2
     }
 });

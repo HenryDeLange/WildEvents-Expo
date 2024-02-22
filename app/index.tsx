@@ -2,21 +2,20 @@ import { Stack } from 'expo-router';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import AboutButton from '../components/AboutButton';
 import HomeCard from '../components/HomeCard';
+import HeaderButton from '../components/ui/HeaderButton';
 import PageContainer from '../components/ui/PageContainer';
-import RegisterButton from '../components/user/RegisterButton';
 
 export default function Home() {
     const { t } = useTranslation();
     const navBarActions = useCallback(() => (
         <View style={styles.actions}>
-            <RegisterButton />
-            <AboutButton />
+            <HeaderButton icon='account-plus' href='/register' textKey='registerButton' />
+            <HeaderButton icon='information-outline' href='/about' textKey='aboutButton' />
         </View>
     ), []);
     return (
-        <PageContainer>
+        <PageContainer style={styles.container}>
             <Stack.Screen options={{
                 title: t('app'),
                 headerRight: navBarActions
@@ -27,6 +26,9 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        justifyContent: 'flex-start'
+    },
     actions: {
         flexDirection: 'row'
     }

@@ -5,9 +5,9 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ListRenderItemInfo, RefreshControl, SafeAreaView, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Button, Divider, Icon, Text, Tooltip } from 'react-native-paper';
-import EventsWelcome from '../../../components/event/EventsWelcome';
 import LogoutButton from '../../../components/user/LogoutButton';
 import { Event, useFindEventsQuery } from '../../../state/redux/api/wildEventsApi';
+import ModifyEvent from '../../../components/event/ModifyEvent';
 
 function Events() {
     // UI
@@ -65,10 +65,17 @@ function Events() {
                 title: (isLoading || isFetching) ? t('loading') : t('eventsNavTitle'),
                 headerRight: navBarActions
             }} />
-            <EventsWelcome />
             {(isLoading || isFetching) &&
                 <ActivityIndicator size='large' animating={true} style={styles.loading} />
             }
+            <View style={styles.actionWrapper}>
+                <Text variant='titleMedium' style={styles.text}>
+                    {t('welcomeAction')}
+                </Text>
+                <View style={styles.createWrapper}>
+                    <ModifyEvent />
+                </View>
+            </View>
             <FlatList style={{ width: '100%' }}
                 key={gridSize}
                 numColumns={gridSize}
@@ -180,5 +187,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingTop: 0,
         paddingBottom: 4
+    },
+    text: {
+        textAlign: 'center'
+    },
+    actionWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    createWrapper: {
+        marginHorizontal: 20
     }
 });

@@ -10,8 +10,8 @@ export default {
         edit: 'Edit',
 
         aboutButton: 'About',
-        aboutNavTitle: 'WildEvents Information',
-        aboutTitle: 'About',
+        aboutNavTitle: 'About WildEvents',
+        aboutTitle: 'About WildEvents',
         aboutDetails: 'WildEvents is a website for creating wild events! It uses your iNaturalist observations to complete various events and activities.',
         aboutMyWildLink: 'MyWild',
         aboutINatLink: 'iNaturalist',
@@ -37,7 +37,7 @@ export default {
 
         loginButton: 'Login',
         loginNavTitle: 'WildEvents Login',
-        loginCardTitle: 'WildEvents Account',
+        loginCardTitle: 'WildEvents Login',
         loginCardUsername: 'Username',
         loginCardUsernameHelp: 'Account Username',
         loginCardPassword: 'Password',

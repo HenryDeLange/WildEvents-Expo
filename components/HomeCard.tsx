@@ -1,26 +1,30 @@
 import { Link } from 'expo-router';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, StyleSheet, ViewStyle, useWindowDimensions } from 'react-native';
+import { StyleSheet, ViewStyle } from 'react-native';
 import { Button, Card } from 'react-native-paper';
+import EventsWelcome from './event/EventsWelcome';
+import { useIsMobile } from './ui/utils';
 
 export default memo(function () {
-    const { width } = useWindowDimensions();
     const { t } = useTranslation();
+    const isMobile = useIsMobile();
     const cardStyle: ViewStyle = {
-        width: width < 450 ? '90%' : '80%',
-        maxWidth: width > 450 ? 400 : undefined
+        width: isMobile ? '90%' : '80%',
+        maxWidth: isMobile ? undefined : 450
     };
     return (
-        <Card elevation={3} style={[styles.card, cardStyle]} contentStyle={styles.cardContent}>
-            <Image source={require('../assets/images/logo.png')} style={{ width: 100, height: 100 }} />
-            <Card.Title title={t('app')} titleVariant='displayMedium' style={styles.title} />
-            <Link href='/login' asChild>
-                <Button mode='contained' icon='login-variant' uppercase style={styles.button}>
-                    {t('loginButton')}
-                </Button>
-            </Link>
-        </Card>
+        <>
+            <EventsWelcome />
+            <Card elevation={3} style={[styles.card, cardStyle]} contentStyle={styles.cardContent}>
+                <Card.Title title={t('app')} titleVariant='headlineMedium' style={styles.title} />
+                <Link href='/login' asChild>
+                    <Button mode='contained' icon='login-variant' uppercase style={styles.button}>
+                        {t('loginButton')}
+                    </Button>
+                </Link>
+            </Card>
+        </>
     );
 });
 
@@ -32,7 +36,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     title: {
-        marginVertical: 20
+        marginBottom: 12
     },
     button: {
         width: '90%',
