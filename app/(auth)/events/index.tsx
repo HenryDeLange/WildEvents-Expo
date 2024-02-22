@@ -5,9 +5,9 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ListRenderItemInfo, RefreshControl, SafeAreaView, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Button, Divider, Icon, Text, Tooltip } from 'react-native-paper';
+import ModifyEvent from '../../../components/event/ModifyEvent';
 import LogoutButton from '../../../components/user/LogoutButton';
 import { Event, useFindEventsQuery } from '../../../state/redux/api/wildEventsApi';
-import ModifyEvent from '../../../components/event/ModifyEvent';
 
 function Events() {
     // UI
@@ -69,14 +69,14 @@ function Events() {
                 <ActivityIndicator size='large' animating={true} style={styles.loading} />
             }
             <View style={styles.actionWrapper}>
-                <Text variant='titleMedium' style={styles.text}>
+                <Text variant='titleLarge' style={styles.text}>
                     {t('welcomeAction')}
                 </Text>
                 <View style={styles.createWrapper}>
                     <ModifyEvent />
                 </View>
             </View>
-            <FlatList style={{ width: '100%' }}
+            <FlatList style={styles.list}
                 key={gridSize}
                 numColumns={gridSize}
                 columnWrapperStyle={gridSize > 1 ? { justifyContent: 'center' } : undefined}
@@ -111,21 +111,21 @@ function Events() {
                             {event.name}
                         </Text>
                         <View>
-                            <View style={{ flexDirection: 'row', gap: 12, marginVertical: 8 }}>
+                            <View style={styles.dates}>
                                 <Tooltip title={t('eventCardStartDate')}>
-                                    <View style={{ flexDirection: 'row' }}>
+                                    <View style={styles.row}>
                                         <Icon source='calendar-arrow-right' size={20} />
                                         <Text> {format(event.start, 'yyyy-MM-dd')}</Text>
                                     </View>
                                 </Tooltip>
                                 <Tooltip title={t('eventCardStopDate')}>
-                                    <View style={{ flexDirection: 'row' }}>
+                                    <View style={styles.row}>
                                         <Icon source='calendar-arrow-left' size={20} />
                                         <Text> {format(event.stop, 'yyyy-MM-dd')}</Text>
                                     </View>
                                 </Tooltip>
                                 <Tooltip title={t('eventCardCloseDate')}>
-                                    <View style={{ flexDirection: 'row' }}>
+                                    <View style={styles.row}>
                                         <Icon source='calendar-edit' size={20} />
                                         <Text> {format(event.close, 'yyyy-MM-dd')}</Text>
                                     </View>
@@ -134,7 +134,7 @@ function Events() {
                             <ScrollView style={styles.description}>
                                 <Markdown>{event.description ?? ''}</Markdown>
                             </ScrollView>
-                            <Divider style={{ width: '100%', marginVertical: 8 }} />
+                            <Divider style={styles.divider} />
                             {/* TODO: Justify button to the bottom */}
                             <Button mode='text' icon='eye' uppercase
                                 onPress={handleView(event)}
@@ -189,14 +189,34 @@ const styles = StyleSheet.create({
         paddingBottom: 4
     },
     text: {
-        textAlign: 'center'
+        textAlign: 'center',
+        marginBottom: 4
     },
     actionWrapper: {
         flexDirection: 'row',
+        flexWrap: 'wrap',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        margin: 12
     },
     createWrapper: {
         marginHorizontal: 20
+    },
+    list: {
+        width: '100%'
+    },
+    dates: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: 12,
+        marginVertical: 8
+    },
+    row: {
+        flexDirection: 'row'
+    },
+    divider: {
+        width: '100%',
+        marginVertical: 8
     }
 });

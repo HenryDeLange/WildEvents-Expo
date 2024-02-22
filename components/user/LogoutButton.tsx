@@ -1,28 +1,21 @@
-import { useRouter } from 'expo-router';
 import { memo, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button } from 'react-native-paper';
 import { doLogout } from '../../state/redux/auth/authSlice';
 import { REFRESH_TOKEN, saveData } from '../../state/redux/auth/authStorage';
 import { useAppDispatch } from '../../state/redux/hooks';
+import HeaderButton from '../ui/HeaderButton';
 
 export default memo(function () {
-    const { t } = useTranslation();
-    const router = useRouter();
     const dispatch = useAppDispatch();
     const handleLogout = useCallback(() => {
         dispatch(doLogout());
         saveData(REFRESH_TOKEN, '');
-        router.replace('/');
-    }, [dispatch, doLogout, router]);
+    }, [dispatch]);
     return (
-        <Button
-            mode='text'
+        <HeaderButton
+            href='/'
             icon='logout-variant'
+            textKey='logoutButton'
             onPress={handleLogout}
-            uppercase
-        >
-            {t('logoutButton')}
-        </Button>
+        />
     );
 });

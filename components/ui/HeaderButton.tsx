@@ -12,12 +12,12 @@ type Props = LinkProps<any> & {
     textKey: string;
 }
 
-export default memo(function ({ href, icon, textKey }: Props) {
+export default memo(function ({ href, icon, textKey, onPress }: Props) {
     const { t } = useTranslation();
     const isMobile = useIsMobile();
     return (
         <Link href={href} asChild>
-            <Button icon={icon} uppercase style={styles.button}>
+            <Button icon={icon} uppercase style={styles.button} onPress={onPress}>
                 {!isMobile && t(textKey)}
             </Button>
         </Link>

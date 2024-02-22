@@ -1,6 +1,6 @@
 // English Translations
 export default {
-    translation: { 
+    translation: {
         app: 'WildEvents',
         loading: 'Loading...',
         confirm: 'Confirm',
@@ -8,6 +8,10 @@ export default {
         view: 'View',
         delete: 'Delete',
         edit: 'Edit',
+
+        noPageNavTitle: 'Oops!',
+        noPage: 'This screen doesn\'t exist.',
+        noPageHome: 'Go to home screen!',
 
         aboutButton: 'About',
         aboutNavTitle: 'About WildEvents',
@@ -47,7 +51,7 @@ export default {
 
         welcomeTitle: 'Welcome to Wild Events!',
         welcomeSubTitle: 'Here you can take part in fun events that centers around exploring nature through the use of the iNaturalist website.',
-        welcomeAction: 'View and join existing events below, or create your own!',
+        welcomeAction: 'View and join existing events, or create your own!',
 
         eventNavTitle: 'Event',
         eventsNavTitle: 'Events',

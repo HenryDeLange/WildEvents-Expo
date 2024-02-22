@@ -1,26 +1,27 @@
 import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Image, StyleSheet, View, ViewStyle, useWindowDimensions } from 'react-native';
+import { Image, StyleSheet, ViewStyle } from 'react-native';
 import { Card, Text } from 'react-native-paper';
 import { ExternalLink } from '../components/ui/ExternalLink';
 import PageContainer from '../components/ui/PageContainer';
+import { useIsMobile } from '../components/ui/utils';
 import { useGetVersionQuery } from '../state/redux/api/wildEventsApi';
 
 export default function About() {
     const { t } = useTranslation();
     const { data, isFetching } = useGetVersionQuery();
-    const { width } = useWindowDimensions();
+    const isMobile = useIsMobile();
     const cardStyle: ViewStyle = {
-        width: width < 500 ? '90%' : '80%',
-        maxWidth: width > 700 ? 650 : undefined
+        width: isMobile ? '90%' : '80%',
+        maxWidth: isMobile ? undefined : 500
     };
     return (
         <PageContainer style={styles.cardSpacer}>
             <Stack.Screen options={{
                 title: t('aboutNavTitle')
             }} />
-            <Image source={require('../assets/images/logo.png')} style={{ width: 100, height: 100 }} />
+            <Image source={require('../assets/images/logo.png')} style={styles.image} />
             <Card style={cardStyle}>
                 <Card.Title title={t('aboutTitle')} titleVariant='titleLarge' />
                 <Card.Content>
@@ -58,6 +59,10 @@ export default function About() {
 }
 
 const styles = StyleSheet.create({
+    image: {
+        width: 100,
+        height: 100
+    },
     cardSpacer: {
         gap: 15
     }
