@@ -10,7 +10,7 @@ type Props = {
     results?: ActivityStepResult[];
 }
 
-function ActivityStepTotalScores({ results }: Props) {
+function ActivityStepTotalScores({ results }: Readonly<Props>) {
     const { t } = useTranslation();
     const totalScores = useMemo<ParticipantScore[]>(() => {
         const scoreMap = new Map<string, ActivityCalculation>();
@@ -22,7 +22,7 @@ function ActivityStepTotalScores({ results }: Props) {
             <Text variant='titleLarge' style={styles.title}>
                 {t('activityTotalScores')}
             </Text>
-            <View style={{ flexDirection: 'row', gap: 24, flexWrap: 'wrap', marginHorizontal: 32 }}>
+            <View style={styles.row}>
                 {(totalScores && totalScores.length > 0)
                     ? totalScores.map((participant, index) => (
                         <ActivityParticipantScore key={participant.name} participant={participant} rank={index + 1} />
@@ -47,6 +47,12 @@ const styles = StyleSheet.create({
     },
     title: {
         marginBottom: 12
+    },
+    row: {
+        flexDirection: 'row',
+        columnGap: 24,
+        flexWrap: 'wrap',
+        marginHorizontal: 32
     },
     scoresScroll: {
         maxHeight: 200

@@ -1,5 +1,5 @@
 import { addDays, addMonths, getYear, isAfter, subDays } from 'date-fns';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Button, Card, HelperText, IconButton, Text, TextInput } from 'react-native-paper';
@@ -39,6 +39,8 @@ function ModifyEvent({ event }: Readonly<Props>) {
     // Redux
     const [doCreate, { isLoading: isCreating, isError: isErrorCreate, isSuccess: isSuccessCreate }] = useCreateEventMutation();
     const [doUpdate, { isLoading: isUpdating, isError: isErrorUpdate, isSuccess: isSuccessUpdate }] = useUpdateEventMutation();
+    // Memo
+    const isDisabled = useMemo(() => isCreating || isUpdating, [isCreating, isUpdating]);
     // Actions
     const hideModal = useCallback(() => {
         if (!isCreating && !isUpdating)
@@ -77,20 +79,20 @@ function ModifyEvent({ event }: Readonly<Props>) {
     const renderVisibilityToggle = useCallback(() => (
         <View style={styles.visibility}>
             <Text
-                disabled={isCreating || isUpdating}
-                onPress={(isCreating || isUpdating) ? undefined : toggleVisibility}
+                disabled={isDisabled}
+                onPress={isDisabled ? undefined : toggleVisibility}
             >
                 {t(`eventVisibility${visibility}`)}
             </Text>
             <IconButton
                 icon={visibility === 'PRIVATE' ? 'lock' : 'lock-open-outline'}
-                disabled={isCreating || isUpdating}
+                disabled={isDisabled}
                 onPress={toggleVisibility}
                 animated
                 selected={visibility === 'PRIVATE'}
             />
         </View >
-    ), [visibility, isCreating, isUpdating]);
+    ), [visibility, isDisabled]);
     // Validation
     const nameError = name.length === 0;
     const dateError = !startDate || !stopDate || !closeDate || !isAfter(stopDate, startDate) || !isAfter(closeDate, stopDate);
@@ -112,15 +114,15 @@ function ModifyEvent({ event }: Readonly<Props>) {
                         textKey={event ? 'edit' : 'eventCardCreateTitle'}
                         icon={event ? 'pencil' : 'plus'}
                         onPress={handleShowButton}
-                        busy={isCreating || isUpdating}
+                        busy={isDisabled}
                         mode={event ? 'text' : 'contained-tonal'}
                     />
                 )
                 : (
                     <Button mode={event ? 'text' : 'contained-tonal'} uppercase
                         icon={event ? 'pencil' : 'plus'}
-                        loading={isCreating || isUpdating}
-                        disabled={isCreating || isUpdating}
+                        loading={isDisabled}
+                        disabled={isDisabled}
                         onPress={handleShowButton}
                     >
                         {event ? t('edit') : t('eventCardCreateTitle')}
@@ -134,7 +136,7 @@ function ModifyEvent({ event }: Readonly<Props>) {
                     <TextInput
                         mode='outlined'
                         label={t('eventCardName')}
-                        disabled={isCreating || isUpdating}
+                        disabled={isDisabled}
                         value={name}
                         onChangeText={setName}
                         left={<TextInput.Icon icon='tag' focusable={false} disabled />}
@@ -143,7 +145,7 @@ function ModifyEvent({ event }: Readonly<Props>) {
                     <TextInput
                         mode='outlined'
                         label={t('eventCardDescription')}
-                        disabled={isCreating || isUpdating}
+                        disabled={isDisabled}
                         value={description}
                         onChangeText={setDescription}
                         left={<TextInput.Icon icon='information' focusable={false} disabled />}
@@ -153,7 +155,7 @@ function ModifyEvent({ event }: Readonly<Props>) {
                     <DatePickerInput
                         locale='en-GB'
                         label={t('eventCardStartDate')}
-                        disabled={isCreating || isUpdating}
+                        disabled={isDisabled}
                         saveLabel={t('confirm')}
                         left={<TextInput.Icon icon='calendar-arrow-right' focusable={false} disabled />}
                         value={startDate}
@@ -171,7 +173,7 @@ function ModifyEvent({ event }: Readonly<Props>) {
                     <DatePickerInput
                         locale='en-GB'
                         label={t('eventCardStopDate')}
-                        disabled={isCreating || isUpdating || !startDate}
+                        disabled={isDisabled || !startDate}
                         saveLabel={t('confirm')}
                         left={<TextInput.Icon icon='calendar-arrow-left' focusable={false} disabled />}
                         value={stopDate}
@@ -189,7 +191,7 @@ function ModifyEvent({ event }: Readonly<Props>) {
                     <DatePickerInput
                         locale='en-GB'
                         label={t('eventCardCloseDate')}
-                        disabled={isCreating || isUpdating || !startDate || !stopDate}
+                        disabled={isDisabled || !startDate || !stopDate}
                         saveLabel={t('confirm')}
                         left={<TextInput.Icon icon='calendar-edit' focusable={false} disabled />}
                         value={closeDate}
@@ -206,9 +208,9 @@ function ModifyEvent({ event }: Readonly<Props>) {
                     />
                     <View style={styles.buttonWrapper}>
                         <Button mode='contained' style={styles.button} uppercase
-                            icon={(isCreating || isUpdating) ? undefined : 'check'}
-                            disabled={isCreating || isUpdating || nameError || dateError}
-                            loading={isCreating || isUpdating}
+                            icon={isDisabled ? undefined : 'check'}
+                            disabled={isDisabled || nameError || dateError}
+                            loading={isDisabled}
                             onPress={handleConfirm}
                         >
                             {t('confirm')}

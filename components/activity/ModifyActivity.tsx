@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Button, Card, HelperText, IconButton, SegmentedButtons, SegmentedButtonsProps, Text, TextInput, Tooltip } from 'react-native-paper';
 import { Activity, ActivityCreate, ActivityStep, useCreateActivityMutation, useUpdateActivityMutation } from '../../state/redux/api/wildEventsApi';
+import HeaderActionButton from '../ui/HeaderActionButton';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
 
 // TODO: Get these values from the BE via an endpoint
@@ -199,10 +200,10 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
     const isDisabled = useMemo(() => isCreating || isUpdating, [isCreating, isUpdating]);
     const isDisabledType = useMemo(() => !!activity || isDisabled, [activity, isDisabled]);
     const typeOptions = useMemo<SegmentedButtonsProps['buttons']>(() => [
-        { value: 'RACE', label: t('activityTypeRACE'), disabled: isDisabledType },
-        { value: 'HUNT', label: t('activityTypeHUNT'), disabled: isDisabledType },
-        { value: 'QUIZ', label: t('activityTypeQUIZ'), disabled: isDisabledType },
-        { value: 'EXPLORE', label: t('activityTypeEXPLORE'), disabled: isDisabledType }
+        { value: 'RACE', label: t('activityTypeRACE'), disabled: isDisabledType, style: { width: '15%' } },
+        { value: 'HUNT', label: t('activityTypeHUNT'), disabled: isDisabledType, style: { width: '40%', minWidth: 130 } },
+        { value: 'QUIZ', label: t('activityTypeQUIZ'), disabled: isDisabledType, style: { width: '15%' } },
+        { value: 'EXPLORE', label: t('activityTypeEXPLORE'), disabled: isDisabledType, style: { width: '30%', minWidth: 120 } }
     ], [isDisabledType]);
     const stepOptions = useMemo<SegmentedButtonsProps['buttons']>(() => {
         const stepButtons: SegmentedButtonsProps['buttons'] = [{
@@ -251,14 +252,26 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
     const activeStep = steps ? steps[Number(step) - 1] : null;
     return (
         <>
-            <Button mode={activity ? 'text' : 'contained-tonal'} style={styles.addButton} uppercase
-                icon={activity ? 'pencil' : 'plus'}
-                loading={isDisabled}
-                disabled={isDisabled}
-                onPress={handleShowButton}
-            >
-                {activity ? t('edit') : t('activityCardCreateTitle')}
-            </Button>
+            {activity
+                ? (
+                    <HeaderActionButton
+                        textKey={activity ? t('edit') : t('activityCardCreateTitle')}
+                        icon={activity ? 'pencil' : 'plus'}
+                        onPress={handleShowButton}
+                        busy={isDisabled}
+                        mode={activity ? 'text' : 'contained-tonal'}
+                    />
+                )
+                : (
+                    <Button mode={activity ? 'text' : 'contained-tonal'} uppercase
+                        icon={activity ? 'pencil' : 'plus'}
+                        loading={isDisabled}
+                        disabled={isDisabled}
+                        onPress={handleShowButton}
+                    >
+                        {activity ? t('edit') : t('activityCardCreateTitle')}
+                    </Button>
+                )}
             <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={hideModal}>
                 <Card.Title title={t('activityCardCreateTitle')} titleVariant='titleLarge' />
                 <Card.Content style={styles.content}>
@@ -282,17 +295,19 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                         numberOfLines={3}
                     />
                     <SegmentedButtons
+                        style={styles.segmentedButtons}
                         value={type}
                         onValueChange={handleTypeChange}
                         buttons={typeOptions}
                     />
-                    <Text variant='bodyMedium' style={{ alignSelf: 'center' }}>
+                    <Text variant='bodyMedium' style={styles.type}>
                         {type === 'RACE' && t('activityTypeRaceDetails')}
                         {type === 'HUNT' && t('activityTypeHuntDetails')}
                         {type === 'QUIZ' && t('activityTypeQuizDetails')}
                         {type === 'EXPLORE' && t('activityTypeExploreDetails')}
                     </Text>
                     <SegmentedButtons
+                        style={styles.segmentedButtons}
                         value={step}
                         onValueChange={setStep as any}
                         buttons={stepOptions}
@@ -300,9 +315,10 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                     />
                     <View>
                         {activeStep &&
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{ flex: 1, gap: 10 }}>
+                            <View style={styles.activityWrapper}>
+                                <View style={styles.activityContent}>
                                     <TextInput
+                                        style={styles.activityDescription}
                                         mode='outlined'
                                         label={t('activityCardStepDescription')}
                                         disabled={isDisabled}
@@ -311,14 +327,15 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                                         left={<TextInput.Icon icon='information' focusable={false} disabled />}
                                         multiline
                                         numberOfLines={3}
-                                        style={{ display: 'flex', flex: 1 }}
                                     />
                                     {Object.keys(activeStep.criteria ?? {}).map((key, index) => (
-                                        <View key={`step${step}Criterion${type}Entry${index}`} style={{ flexDirection: 'row', gap: 10 }}>
-                                            <Tooltip title={t(`activityCriteria_${key}`, { defaultValue: t('activityCriteria_custom') })}>
+                                        <View key={`step${step}Criterion${type}Entry${index}`} style={styles.activityCriteriaRow}>
+                                            <Tooltip
+                                                title={t(`activityCriteria_${key}`, { defaultValue: t('activityCriteria_custom') })}
+                                            >
                                                 <TextInput
                                                     key={`step${step}Criterion${type}Entry${index}Key`}
-                                                    style={{ flex: 1 }}
+                                                    style={styles.activityCriteriaKey}
                                                     disabled={isDisabled}
                                                     mode='outlined'
                                                     label={t('activityCriteriaKey')}
@@ -328,7 +345,7 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                                             </Tooltip>
                                             <TextInput
                                                 key={`step${step}Criterion${type}Entry${index}Value`}
-                                                style={{ flex: 2 }}
+                                                style={styles.activityCriteriaValue}
                                                 disabled={isDisabled}
                                                 mode='outlined'
                                                 label={t('activityCriteriaValue')}
@@ -375,11 +392,37 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
 export default memo(ModifyActivity);
 
 const styles = StyleSheet.create({
-    addButton: {
-
-    },
     content: {
         gap: 15
+    },
+    type: {
+        alignSelf: 'center'
+    },
+    segmentedButtons: {
+        flexWrap: 'wrap'
+    },
+    activityWrapper: {
+        flexDirection: 'row'
+    },
+    activityContent: {
+        flex: 1,
+        gap: 10
+    },
+    activityDescription: {
+        display: 'flex',
+        flex: 1
+    },
+    activityCriteriaRow: {
+        flexDirection: 'row',
+        gap: 10,
+        flexWrap: 'wrap'
+    },
+    activityCriteriaKey: {
+        maxWidth: 100
+    },
+    activityCriteriaValue: {
+        flex: 1,
+        minWidth: 200
     },
     buttonWrapper: {
         marginTop: 10,

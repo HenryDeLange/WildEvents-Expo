@@ -95,7 +95,7 @@ export default memo(ActivityGrid);
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        margin: 12,
+        margin: 8,
         paddingBottom: '5%'
     },
     heading: {

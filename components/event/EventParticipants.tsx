@@ -66,6 +66,7 @@ function EventParticipants({ eventId, isAdmin, participants }: Readonly<Props>) 
         if (isJoined && !isJoinError)
             setShowJoinDialog(false);
     }, [isJoined, isJoinError]);
+    
     // RENDER
     return (
         <View style={styles.wrapper}>

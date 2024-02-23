@@ -82,9 +82,7 @@ const styles = StyleSheet.create({
         borderColor: '#ABA',
         backgroundColor: '#EFD8',
         paddingHorizontal: 12,
-        paddingVertical: 6,
-        // flex: 1,
-        // height: '100%'
+        paddingVertical: 6
     },
     scoresScroll: {
         maxHeight: 200

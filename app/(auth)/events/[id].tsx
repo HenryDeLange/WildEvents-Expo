@@ -90,7 +90,6 @@ function Event() {
                 <Divider style={styles.divider} />
                 <EventDates event={event} />
                 <Divider style={styles.divider} />
-                {/* TODO: Fix wrapping to new line on mobile screens (the row doesn't seem to grow, resulting in overlapped components) */}
                 <View style={styles.descriptionRow}>
                     <ScrollView style={styles.description}>
                         <Markdown>
@@ -159,23 +158,23 @@ const styles = StyleSheet.create({
         paddingTop: 0,
         paddingBottom: 4,
         flex: 1,
-        minWidth: '50%',
-        height: '100%'
+        minWidth: '60%',
+        flexGrow: 1
     },
     descriptionRow: {
-        flex: 1,
         flexDirection: 'row',
         width: '75%',
         flexWrap: 'wrap',
-        gap: 16,
-        minHeight: 220
+        justifyContent: 'center',
+        gap: 16
     },
     chipsRow: {
         flex: 1,
         flexDirection: 'row',
         gap: 16,
         width: '75%',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        marginBottom: 16
     },
     actions: {
         flexDirection: 'row'

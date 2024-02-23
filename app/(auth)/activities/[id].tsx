@@ -12,6 +12,7 @@ import { useIsEventAdmin } from '../../../components/event/utils/hooks';
 import ResponsiveCardWrapper from '../../../components/ui/ResponsiveCardWrapper';
 import LogoutButton from '../../../components/user/LogoutButton';
 import { useCalculateActivityMutation, useDeleteActivityMutation, useFindActivityQuery } from '../../../state/redux/api/wildEventsApi';
+import HeaderActionButton from '../../../components/ui/HeaderActionButton';
 
 function Activity() {
     // Theme
@@ -48,23 +49,21 @@ function Activity() {
         <View style={styles.actions}>
             {isAdmin &&
                 <>
-                    <Button mode='text' icon='calculator-variant-outline' uppercase
+                    <HeaderActionButton
+                        icon='calculator-variant-outline'
+                        textKey='eventCalculate'
                         onPress={handleCalculate}
-                        loading={isCalculating}
-                        disabled={isCalculating}
-                    >
-                        {t('eventCalculate')}
-                    </Button>
+                        busy={isCalculating}
+                    />
                     {activity &&
                         <ModifyActivity eventId={activity.eventId} activity={activity} />
                     }
-                    <Button mode='text' icon='trash-can-outline' uppercase
+                    <HeaderActionButton
+                        icon='trash-can-outline'
+                        textKey='delete'
                         onPress={handleDeleteButton}
-                        loading={isDeleting}
-                        disabled={isDeleting}
-                    >
-                        {t('delete')}
-                    </Button>
+                        busy={isDeleting}
+                    />
                 </>
             }
             <LogoutButton />
@@ -161,7 +160,8 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         height: '100%',
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingBottom: '10%'
     },
     divider: {
         height: 2,
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     },
     statusWrapper: {
         flexDirection: 'row',
-        gap: 32,
+        columnGap: 32,
         flex: 1,
         flexWrap: 'wrap',
         justifyContent: 'center'
