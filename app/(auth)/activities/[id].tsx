@@ -9,10 +9,11 @@ import ActivityStepScores from '../../../components/activity/ActivityStepScores'
 import ActivityStepTotalScores from '../../../components/activity/ActivityStepTotalScores';
 import ModifyActivity from '../../../components/activity/ModifyActivity';
 import { useIsEventAdmin } from '../../../components/event/utils/hooks';
+import HeaderActionButton from '../../../components/ui/HeaderActionButton';
 import ResponsiveCardWrapper from '../../../components/ui/ResponsiveCardWrapper';
+import ThemedSafeAreaView from '../../../components/ui/ThemedSafeAreaView';
 import LogoutButton from '../../../components/user/LogoutButton';
 import { useCalculateActivityMutation, useDeleteActivityMutation, useFindActivityQuery } from '../../../state/redux/api/wildEventsApi';
-import HeaderActionButton from '../../../components/ui/HeaderActionButton';
 
 function Activity() {
     // Theme
@@ -76,15 +77,15 @@ function Activity() {
     // RENDER
     if (!activity || isActivityLoading || isActivityFetching) {
         return (
-            <SafeAreaView style={styles.container}>
+            <ThemedSafeAreaView style={styles.container}>
                 <Stack.Screen options={navBar} />
                 <ActivityIndicator animating={true} size='large' style={{ margin: 20 }} />
-            </SafeAreaView>
+            </ThemedSafeAreaView>
         );
     }
     return (
-        <ScrollView style={styles.scrollView}>
-            <SafeAreaView style={styles.container}>
+        <ThemedSafeAreaView style={styles.container}>
+            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
                 <Stack.Screen options={navBar} />
                 <Text variant='headlineLarge'>
                     {activity.name}
@@ -142,8 +143,8 @@ function Activity() {
                         </View>
                     </Dialog.Content>
                 </ResponsiveCardWrapper>
-            </SafeAreaView>
-        </ScrollView>
+            </ScrollView>
+        </ThemedSafeAreaView>
     );
 }
 
@@ -153,13 +154,15 @@ const styles = StyleSheet.create({
     actions: {
         flexDirection: 'row'
     },
-    scrollView: {
-        width: '100%',
-        padding: 8
-    },
     container: {
         flexGrow: 1,
         height: '100%',
+        alignItems: 'center',
+    },
+    scrollView: {
+        width: '100%',
+    },
+    scrollViewContent: {
         alignItems: 'center',
         paddingBottom: '10%'
     },

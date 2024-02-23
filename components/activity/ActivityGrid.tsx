@@ -112,9 +112,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     card: {
-        borderWidth: 1,
-        borderRadius: 10,
-        borderColor: '#555',
         margin: 10,
         width: '30%',
         minWidth: 260,

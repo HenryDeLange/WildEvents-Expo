@@ -2,7 +2,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Dialog, Divider, Text } from 'react-native-paper';
 import ActivityEventTotals from '../../../components/activity/ActivityEventTotals';
 import ActivityGrid from '../../../components/activity/ActivityGrid';
@@ -12,7 +12,9 @@ import EventParticipants from '../../../components/event/EventParticipants';
 import ModifyEvent from '../../../components/event/ModifyEvent';
 import { useIsEventAdmin } from '../../../components/event/utils/hooks';
 import HeaderActionButton from '../../../components/ui/HeaderActionButton';
+import PageContainer from '../../../components/ui/PageContainer';
 import ResponsiveCardWrapper from '../../../components/ui/ResponsiveCardWrapper';
+import ThemedSafeAreaView from '../../../components/ui/ThemedSafeAreaView';
 import LogoutButton from '../../../components/user/LogoutButton';
 import { useCalculateEventMutation, useDeleteEventMutation, useFindEventQuery } from '../../../state/redux/api/wildEventsApi';
 
@@ -74,15 +76,15 @@ function Event() {
     // RENDER
     if (!event || isEventLoading || isEventFetching) {
         return (
-            <SafeAreaView style={styles.container}>
+            <ThemedSafeAreaView style={styles.container}>
                 <Stack.Screen options={navBar} />
                 <ActivityIndicator animating={true} size='large' style={styles.loading} />
-            </SafeAreaView>
+            </ThemedSafeAreaView>
         );
     }
     return (
-        <ScrollView style={styles.scrollView}>
-            <SafeAreaView style={styles.container}>
+        <ThemedSafeAreaView style={styles.container}>
+            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
                 <Stack.Screen options={navBar} />
                 <Text variant='headlineLarge'>
                     {event.name}
@@ -124,8 +126,9 @@ function Event() {
                         </View>
                     </Dialog.Content>
                 </ResponsiveCardWrapper>
-            </SafeAreaView>
-        </ScrollView>
+            </ScrollView>
+        </ThemedSafeAreaView>
+
     );
 }
 
@@ -135,13 +138,15 @@ const styles = StyleSheet.create({
     loading: {
         margin: 20
     },
-    scrollView: {
-        width: '100%',
-        padding: 8
-    },
     container: {
         flexGrow: 1,
         height: '100%',
+        alignItems: 'center'
+    },
+    scrollView: {
+        width: '100%',
+    },
+    scrollViewContent: {
         alignItems: 'center'
     },
     divider: {

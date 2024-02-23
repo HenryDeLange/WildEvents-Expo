@@ -3,9 +3,10 @@ import { Stack, useRouter } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, ListRenderItemInfo, RefreshControl, SafeAreaView, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
-import { ActivityIndicator, Button, Divider, Icon, Text, Tooltip } from 'react-native-paper';
+import { FlatList, ListRenderItemInfo, RefreshControl, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Button, Card, Divider, Icon, Text, Tooltip } from 'react-native-paper';
 import ModifyEvent from '../../../components/event/ModifyEvent';
+import ThemedSafeAreaView from '../../../components/ui/ThemedSafeAreaView';
 import LogoutButton from '../../../components/user/LogoutButton';
 import { Event, useFindEventsQuery } from '../../../state/redux/api/wildEventsApi';
 
@@ -57,10 +58,11 @@ function Events() {
             <LogoutButton />
         </View>
     ), []);
+
     // RENDER
     const gridSize = (width > 800) ? (width > 1200) ? 3 : 2 : 1;
     return (
-        <SafeAreaView style={styles.container}>
+        <ThemedSafeAreaView style={styles.container}>
             <Stack.Screen options={{
                 title: (isLoading || isFetching) ? t('loading') : t('eventsNavTitle'),
                 headerRight: navBarActions
@@ -106,7 +108,7 @@ function Events() {
                 data={(isLoading || isFetching) ? [] : events}
                 keyExtractor={useCallback((event: Event) => event.id, [])}
                 renderItem={useCallback(({ item: event }: ListRenderItemInfo<Event>) => (
-                    <View key={event.id} style={styles.card} >
+                    <Card key={event.id} style={styles.card} >
                         <Text variant='headlineLarge'>
                             {event.name}
                         </Text>
@@ -142,10 +144,10 @@ function Events() {
                                 {t('view')}
                             </Button>
                         </View>
-                    </View>
+                    </Card>
                 ), [router])}
             />
-        </SafeAreaView >
+        </ThemedSafeAreaView>
     );
 }
 
@@ -170,9 +172,6 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     card: {
-        borderWidth: 1,
-        borderRadius: 10,
-        borderColor: '#555',
         margin: 10,
         padding: 12,
         alignItems: 'center',
