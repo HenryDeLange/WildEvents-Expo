@@ -3,15 +3,15 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import HomeCard from '../components/HomeCard';
-import HeaderButton from '../components/ui/HeaderButton';
+import HeaderLinkButton from '../components/ui/HeaderLinkButton';
 import PageContainer from '../components/ui/PageContainer';
 
 export default function Home() {
     const { t } = useTranslation();
     const navBarActions = useCallback(() => (
         <View style={styles.actions}>
-            <HeaderButton icon='account-plus' href='/register' textKey='registerButton' />
-            <HeaderButton icon='information-outline' href='/about' textKey='aboutButton' />
+            <HeaderLinkButton icon='account-plus' href='/register' textKey='registerButton' />
+            <HeaderLinkButton icon='information-outline' href='/about' textKey='aboutButton' />
         </View>
     ), []);
     return (

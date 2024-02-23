@@ -2,5 +2,5 @@ import { useWindowDimensions } from 'react-native';
 
 export function useIsMobile() {
     const { width } = useWindowDimensions();
-    return width < 500;
+    return width < 550;
 }

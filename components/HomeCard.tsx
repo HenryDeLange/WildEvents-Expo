@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, ViewStyle } from 'react-native';
 import { Button, Card } from 'react-native-paper';
@@ -11,10 +11,10 @@ import { selectAuthRefreshToken } from '../state/redux/auth/authSlice';
 export default memo(function () {
     const { t } = useTranslation();
     const isMobile = useIsMobile();
-    const cardStyle: ViewStyle = {
+    const cardStyle: ViewStyle = useMemo(() => ({
         width: isMobile ? '90%' : '80%',
         maxWidth: isMobile ? undefined : 450
-    };
+    }), [isMobile]);
     const hasRefreshToken = !!useAppSelector(selectAuthRefreshToken);
     return (
         <>

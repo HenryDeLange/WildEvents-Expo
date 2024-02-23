@@ -1,6 +1,6 @@
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View, ViewStyle } from 'react-native';
 import { ActivityIndicator, Button, Card, HelperText, TextInput } from 'react-native-paper';
@@ -13,10 +13,10 @@ import { useIsMobile } from '../ui/utils';
 export default memo(function () {
     // UI
     const isMobile = useIsMobile();
-    const cardStyle: ViewStyle = {
+    const cardStyle: ViewStyle = useMemo(() => ({
         width: isMobile ? '90%' : '80%',
         maxWidth: isMobile ? undefined : 650
-    };
+    }), [isMobile]);
     // Translation
     const { t } = useTranslation();
     // State

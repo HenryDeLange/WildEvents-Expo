@@ -6,6 +6,7 @@ import { Button, Card, HelperText, IconButton, Text, TextInput } from 'react-nat
 import { DatePickerInput, enGB, registerTranslation } from 'react-native-paper-dates';
 import { CalendarDate } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import { Event, useCreateEventMutation, useUpdateEventMutation } from '../../state/redux/api/wildEventsApi';
+import HeaderActionButton from '../ui/HeaderActionButton';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
 
 registerTranslation('en-GB', enGB);
@@ -74,7 +75,7 @@ function ModifyEvent({ event }: Readonly<Props>) {
         setVisibility(visibility === 'PRIVATE' ? 'PUBLIC' : 'PRIVATE');
     }, [visibility]);
     const renderVisibilityToggle = useCallback(() => (
-        < View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={styles.visibility}>
             <Text
                 disabled={isCreating || isUpdating}
                 onPress={(isCreating || isUpdating) ? undefined : toggleVisibility}
@@ -105,14 +106,26 @@ function ModifyEvent({ event }: Readonly<Props>) {
     const now = new Date();
     return (
         <>
-            <Button mode={event ? 'text' : 'contained-tonal'} style={styles.addButton} uppercase
-                icon={event ? 'pencil' : 'plus'}
-                loading={isCreating || isUpdating}
-                disabled={isCreating || isUpdating}
-                onPress={handleShowButton}
-            >
-                {event ? t('edit') : t('eventCardCreateTitle')}
-            </Button>
+            {event
+                ? (
+                    <HeaderActionButton
+                        textKey={event ? 'edit' : 'eventCardCreateTitle'}
+                        icon={event ? 'pencil' : 'plus'}
+                        onPress={handleShowButton}
+                        busy={isCreating || isUpdating}
+                        mode={event ? 'text' : 'contained-tonal'}
+                    />
+                )
+                : (
+                    <Button mode={event ? 'text' : 'contained-tonal'} uppercase
+                        icon={event ? 'pencil' : 'plus'}
+                        loading={isCreating || isUpdating}
+                        disabled={isCreating || isUpdating}
+                        onPress={handleShowButton}
+                    >
+                        {event ? t('edit') : t('eventCardCreateTitle')}
+                    </Button>
+                )}
             <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={hideModal}>
                 <Card.Title titleVariant='titleLarge' right={renderVisibilityToggle}
                     title={event ? t('eventCardEditTitle') : t('eventCardCreateTitle')}
@@ -215,11 +228,12 @@ function ModifyEvent({ event }: Readonly<Props>) {
 export default memo(ModifyEvent);
 
 const styles = StyleSheet.create({
-    addButton: {
-
+    visibility: {
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     content: {
-        gap: 15
+        gap: 12
     },
     buttonWrapper: {
         marginTop: 10,

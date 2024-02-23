@@ -1,5 +1,5 @@
 import { Link, LinkProps } from 'expo-router';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
@@ -17,7 +17,14 @@ export default memo(function ({ href, icon, textKey, onPress }: Props) {
     const isMobile = useIsMobile();
     return (
         <Link href={href} asChild>
-            <Button icon={icon} uppercase style={styles.button} onPress={onPress}>
+            <Button
+                icon={icon}
+                uppercase
+                style={useMemo(() => ({ ...styles.button, minWidth: isMobile ? 30 : undefined }), [isMobile])}
+                labelStyle={useMemo(() => ({ margin: isMobile ? 10 : undefined }), [isMobile])}
+                contentStyle={useMemo(() => ({ width: isMobile ? 30 : undefined, marginHorizontal: isMobile ? 4 : undefined }), [isMobile])}
+                onPress={onPress}
+            >
                 {!isMobile && t(textKey)}
             </Button>
         </Link>

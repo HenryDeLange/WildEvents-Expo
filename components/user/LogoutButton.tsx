@@ -2,7 +2,7 @@ import { memo, useCallback } from 'react';
 import { doLogout } from '../../state/redux/auth/authSlice';
 import { REFRESH_TOKEN, saveData } from '../../state/redux/auth/authStorage';
 import { useAppDispatch } from '../../state/redux/hooks';
-import HeaderButton from '../ui/HeaderButton';
+import HeaderLinkButton from '../ui/HeaderLinkButton';
 
 export default memo(function () {
     const dispatch = useAppDispatch();
@@ -11,7 +11,7 @@ export default memo(function () {
         saveData(REFRESH_TOKEN, '');
     }, [dispatch]);
     return (
-        <HeaderButton
+        <HeaderLinkButton
             href='/'
             icon='logout-variant'
             textKey='logoutButton'

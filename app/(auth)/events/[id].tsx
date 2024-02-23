@@ -11,6 +11,7 @@ import EventDates from '../../../components/event/EventDates';
 import EventParticipants from '../../../components/event/EventParticipants';
 import ModifyEvent from '../../../components/event/ModifyEvent';
 import { useIsEventAdmin } from '../../../components/event/utils/hooks';
+import HeaderActionButton from '../../../components/ui/HeaderActionButton';
 import ResponsiveCardWrapper from '../../../components/ui/ResponsiveCardWrapper';
 import LogoutButton from '../../../components/user/LogoutButton';
 import { useCalculateEventMutation, useDeleteEventMutation, useFindEventQuery } from '../../../state/redux/api/wildEventsApi';
@@ -48,21 +49,19 @@ function Event() {
         <View style={styles.actions}>
             {isAdmin &&
                 <>
-                    <Button mode='text' icon='calculator-variant-outline' uppercase
+                    <HeaderActionButton
+                        textKey='eventCalculate'
+                        icon='calculator-variant-outline'
                         onPress={handleCalculateEvent}
-                        loading={isCalculating}
-                        disabled={isCalculating}
-                    >
-                        {t('eventCalculate')}
-                    </Button>
+                        busy={isCalculating}
+                    />
                     <ModifyEvent event={event} />
-                    <Button mode='text' icon='trash-can-outline' uppercase
+                    <HeaderActionButton
+                        textKey='delete'
+                        icon='trash-can-outline'
                         onPress={handleDeleteButton}
-                        loading={isDeleting}
-                        disabled={isDeleting}
-                    >
-                        {t('delete')}
-                    </Button>
+                        busy={isDeleting}
+                    />
                 </>
             }
             <LogoutButton />

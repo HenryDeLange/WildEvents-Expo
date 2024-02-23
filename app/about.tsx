@@ -7,15 +7,16 @@ import { ExternalLink } from '../components/ui/ExternalLink';
 import PageContainer from '../components/ui/PageContainer';
 import { useIsMobile } from '../components/ui/utils';
 import { useGetVersionQuery } from '../state/redux/api/wildEventsApi';
+import { useMemo } from 'react';
 
 export default function About() {
     const { t } = useTranslation();
     const { data, isFetching } = useGetVersionQuery();
     const isMobile = useIsMobile();
-    const cardStyle: ViewStyle = {
+    const cardStyle: ViewStyle = useMemo(() => ({
         width: isMobile ? '90%' : '80%',
         maxWidth: isMobile ? undefined : 500
-    };
+    }), [isMobile]);
     return (
         <PageContainer style={styles.cardSpacer}>
             <Stack.Screen options={{
