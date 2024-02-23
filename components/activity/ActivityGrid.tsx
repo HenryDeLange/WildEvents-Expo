@@ -18,7 +18,7 @@ function ActivityGrid({ eventId }: Readonly<Props>) {
     const theme = useTheme();
     const { t } = useTranslation();
     const router = useRouter();
-    const { data: activities, isFetching: isActivitiesFetching, refetch } = useFindActivitiesQuery({ eventId });
+    const { data: activities, isFetching: isActivitiesFetching } = useFindActivitiesQuery({ eventId });
     const handleView = useCallback((activity: Activity) => () => router.push(`/activities/${activity.id}`), []);
     const isAdmin = useIsEventAdmin(eventId);
     // RENDER
@@ -100,8 +100,10 @@ const styles = StyleSheet.create({
     },
     heading: {
         flexDirection: 'row',
-        gap: 15,
-        marginBottom: 8
+        gap: 12,
+        marginBottom: 8,
+        flexWrap: 'wrap',
+        justifyContent: 'center'
     },
     grid: {
         flex: 1,

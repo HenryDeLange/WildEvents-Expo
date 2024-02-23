@@ -50,8 +50,10 @@ const styles = StyleSheet.create({
     wrapper: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 35,
-        marginHorizontal: 20
+        columnGap: 32,
+        rowGap: 8,
+        marginHorizontal: 20,
+        justifyContent: 'center'
     },
     row: {
         flexDirection: 'row'

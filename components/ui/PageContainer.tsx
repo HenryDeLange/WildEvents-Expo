@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import { ScrollView, StyleSheet, View, ViewProps } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
-export default function PageContainer(props: Readonly<ViewProps>) {
+export default memo(function (props: Readonly<ViewProps>) {
     const theme = useTheme();
     return (
         <ScrollView
@@ -14,7 +15,7 @@ export default function PageContainer(props: Readonly<ViewProps>) {
             />
         </ScrollView>
     );
-}
+});
 
 const styles = StyleSheet.create({
     container: {

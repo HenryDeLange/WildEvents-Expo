@@ -76,7 +76,7 @@ function Event() {
         return (
             <SafeAreaView style={styles.container}>
                 <Stack.Screen options={navBar} />
-                <ActivityIndicator animating={true} size='large' style={{ margin: 20 }} />
+                <ActivityIndicator animating={true} size='large' style={styles.loading} />
             </SafeAreaView>
         );
     }
@@ -133,6 +133,9 @@ function Event() {
 export default memo(Event);
 
 const styles = StyleSheet.create({
+    loading: {
+        margin: 20
+    },
     scrollView: {
         width: '100%',
         padding: 8

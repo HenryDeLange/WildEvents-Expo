@@ -24,10 +24,10 @@ export default memo(function ({ modalVisible, hideModal, children }: Props) {
                 contentContainerStyle={[styles.modal, cardStyle]}
             >
                 <ScrollView
-                    style={{ width: '100%', flexGrow: 1 }}
+                    style={styles.scrollView}
                     contentContainerStyle={styles.container}
                 >
-                    <View style={{ flexGrow: 1 }}>
+                    <View style={styles.view}>
                         <Card elevation={5} style={styles.card}>
                             {children}
                         </Card>
@@ -45,6 +45,13 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginVertical: 20,
         flexShrink: 1
+    },
+    scrollView: {
+        width: '100%',
+        flexGrow: 1
+    },
+    view: {
+        flexGrow: 1
     },
     container: {
         flexGrow: 1
