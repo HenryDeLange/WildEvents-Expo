@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { Stack, useRouter } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ListRenderItemInfo, RefreshControl, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Button, Card, Divider, Icon, Text, Tooltip } from 'react-native-paper';
@@ -58,16 +58,17 @@ function Events() {
             <LogoutButton />
         </View>
     ), []);
+    const navBar = useMemo(() => ({
+        title: isFetching ? t('loading') : t('eventsNavTitle'),
+        headerRight: navBarActions
+    }), [t, isFetching, navBarActions]);
 
     // RENDER
     const gridSize = (width > 800) ? (width > 1200) ? 3 : 2 : 1;
     return (
         <ThemedSafeAreaView style={styles.container}>
-            <Stack.Screen options={{
-                title: (isLoading || isFetching) ? t('loading') : t('eventsNavTitle'),
-                headerRight: navBarActions
-            }} />
-            {(isLoading || isFetching) &&
+            <Stack.Screen options={navBar} />
+            {isLoading &&
                 <ActivityIndicator size='large' animating={true} style={styles.loading} />
             }
             <View style={styles.actionWrapper}>
@@ -105,7 +106,7 @@ function Events() {
                     // }
                 }, [page, setPage, isFetching, isLoading, data?.totalRecords])}
                 // getItemCount={() => pagedEvents?.totalRecords ?? 0}
-                data={(isLoading || isFetching) ? [] : events}
+                data={isLoading ? [] : events}
                 keyExtractor={useCallback((event: Event) => event.id, [])}
                 renderItem={useCallback(({ item: event }: ListRenderItemInfo<Event>) => (
                     <Card key={event.id} style={styles.card} >

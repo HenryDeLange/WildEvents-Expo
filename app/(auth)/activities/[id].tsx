@@ -75,7 +75,7 @@ function Activity() {
         headerRight: navBarActions
     }), [t, isActivityFetching, navBarActions]);
     // RENDER
-    if (!activity || isActivityLoading || isActivityFetching) {
+    if (!activity || isActivityLoading) {
         return (
             <ThemedSafeAreaView style={styles.container}>
                 <Stack.Screen options={navBar} />

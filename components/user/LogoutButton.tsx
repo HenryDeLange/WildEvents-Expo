@@ -8,7 +8,7 @@ export default memo(function () {
     const dispatch = useAppDispatch();
     const handleLogout = useCallback(() => {
         dispatch(doLogout());
-        saveData(REFRESH_TOKEN, '');
+        saveData(REFRESH_TOKEN, '')
     }, [dispatch]);
     return (
         <HeaderLinkButton

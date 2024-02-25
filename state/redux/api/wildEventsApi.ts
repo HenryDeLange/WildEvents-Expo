@@ -55,6 +55,26 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["Activities"],
       }),
+      enableActivity: build.mutation<
+        EnableActivityApiResponse,
+        EnableActivityApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/activities/${queryArg.activityId}/enable`,
+          method: "PUT",
+        }),
+        invalidatesTags: ["Activities"],
+      }),
+      disableActivity: build.mutation<
+        DisableActivityApiResponse,
+        DisableActivityApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/activities/${queryArg.activityId}/disable`,
+          method: "PUT",
+        }),
+        invalidatesTags: ["Activities"],
+      }),
       register: build.mutation<RegisterApiResponse, RegisterApiArg>({
         query: (queryArg) => ({
           url: `/users/register`,
@@ -206,6 +226,14 @@ export type UpdateActivityApiArg = {
 };
 export type DeleteActivityApiResponse = unknown;
 export type DeleteActivityApiArg = {
+  activityId: string;
+};
+export type EnableActivityApiResponse = unknown;
+export type EnableActivityApiArg = {
+  activityId: string;
+};
+export type DisableActivityApiResponse = /** status 200 OK */ Activity;
+export type DisableActivityApiArg = {
   activityId: string;
 };
 export type RegisterApiResponse = /** status 200 OK */ Tokens;
@@ -363,6 +391,8 @@ export const {
   useFindActivityQuery,
   useUpdateActivityMutation,
   useDeleteActivityMutation,
+  useEnableActivityMutation,
+  useDisableActivityMutation,
   useRegisterMutation,
   useRefreshMutation,
   useLoginMutation,

@@ -51,7 +51,10 @@ function EventParticipants({ eventId, isAdmin, participants }: Readonly<Props>) 
         if (!isJoining)
             setShowJoinDialog(false);
     }, [isJoining]);
-    const handleJoinButton = useCallback(() => setShowJoinDialog(true), []);
+    const handleJoinButton = useCallback(() => {
+        setParticipantName('');
+        setShowJoinDialog(true);
+    }, []);
     const handleJoin = useCallback(() => {
         doJoin({
             eventId: eventId,

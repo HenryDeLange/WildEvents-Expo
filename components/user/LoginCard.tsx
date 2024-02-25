@@ -4,7 +4,7 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View, ViewStyle } from 'react-native';
 import { ActivityIndicator, Button, Card, HelperText, TextInput } from 'react-native-paper';
-import { useLoginMutation } from '../../state/redux/api/wildEventsApi';
+import { addTagTypes, useLoginMutation, wildEventsApi } from '../../state/redux/api/wildEventsApi';
 import { doLogin } from '../../state/redux/auth/authSlice';
 import { REFRESH_TOKEN, saveData } from '../../state/redux/auth/authStorage';
 import { useAppDispatch } from '../../state/redux/hooks';
@@ -45,6 +45,10 @@ export default memo(function () {
                     // TODO: Only navigate to events if not already on the All Events / Single Event pages
                     router.replace('/(auth)/events');
                 });
+                for (let tag of addTagTypes) {
+                    console.log(tag)
+                    dispatch(wildEventsApi.util.invalidateTags([tag]));
+                }
         }
         catch (err) {
             console.error('Login failed!', err);
@@ -53,6 +57,7 @@ export default memo(function () {
     // Validation
     const usernameError = username.length < 3;
     const passwordError = password.length < 8;
+    const isInvalid = usernameError || passwordError;
     // RENDER
     return (
         <Card elevation={4} style={cardStyle}>
@@ -77,12 +82,12 @@ export default memo(function () {
                     right={<TextInput.Icon icon={showPassword ? 'eye-off' : 'eye'} onPress={toggleShowPassword} />}
                     secureTextEntry={!showPassword}
                     onKeyPress={useCallback((event: NativeSyntheticEvent<TextInputKeyPressEventData>) =>
-                        (event.nativeEvent.key === 'Enter') && handleLogin(), [handleLogin])}
+                        (event.nativeEvent.key === 'Enter') && !isInvalid && handleLogin(), [handleLogin, isInvalid])}
                 />
                 <View style={styles.buttonWrapper}>
                     <Button mode='contained' style={styles.button} uppercase
                         icon={isLoading ? undefined : 'login-variant'}
-                        disabled={isLoading || usernameError || passwordError}
+                        disabled={isLoading || isInvalid}
                         onPress={handleLogin}
                     >
                         {isLoading ? <ActivityIndicator animating={true} /> : t('loginButton')}

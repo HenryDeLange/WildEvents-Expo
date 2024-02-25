@@ -12,11 +12,11 @@ import EventParticipants from '../../../components/event/EventParticipants';
 import ModifyEvent from '../../../components/event/ModifyEvent';
 import { useIsEventAdmin } from '../../../components/event/utils/hooks';
 import HeaderActionButton from '../../../components/ui/HeaderActionButton';
-import PageContainer from '../../../components/ui/PageContainer';
 import ResponsiveCardWrapper from '../../../components/ui/ResponsiveCardWrapper';
 import ThemedSafeAreaView from '../../../components/ui/ThemedSafeAreaView';
 import LogoutButton from '../../../components/user/LogoutButton';
-import { useCalculateEventMutation, useDeleteEventMutation, useFindEventQuery } from '../../../state/redux/api/wildEventsApi';
+import { useCalculateEventMutation, useDeleteEventMutation, useFindEventQuery, wildEventsApi } from '../../../state/redux/api/wildEventsApi';
+import { useAppDispatch } from '../../../state/redux/hooks';
 
 function Event() {
     // Translation
@@ -26,6 +26,7 @@ function Event() {
     const eventId = id.toString();
     const router = useRouter();
     // Redux
+    const dispatch = useAppDispatch();
     const { data: event, isLoading: isEventLoading, isFetching: isEventFetching } = useFindEventQuery({ eventId });
     const [doCalculateEvent, { isLoading: isCalculating }] = useCalculateEventMutation();
     const [doDelete, { isLoading: isDeleting, isSuccess: isDeleted }] = useDeleteEventMutation();
@@ -34,7 +35,10 @@ function Event() {
     // Permissions
     const isAdmin = useIsEventAdmin(eventId);
     // Actions
-    const handleCalculateEvent = useCallback(() => doCalculateEvent({ eventId }), [eventId]);
+    const handleCalculateEvent = useCallback(() => {
+        doCalculateEvent({ eventId });
+        dispatch(wildEventsApi.util.invalidateTags(['Activities']));
+    }, [eventId, dispatch]);
     const handleDeleteButton = useCallback(() => setShowDeleteDialog(true), [eventId]);
     const handleDelete = useCallback(() => doDelete({ eventId }), [eventId]);
     const handleHideDeleteDialog = useCallback(() => {
@@ -74,7 +78,7 @@ function Event() {
         headerRight: navBarActions
     }), [t, isEventFetching, navBarActions]);
     // RENDER
-    if (!event || isEventLoading || isEventFetching) {
+    if (!event || isEventLoading) {
         return (
             <ThemedSafeAreaView style={styles.container}>
                 <Stack.Screen options={navBar} />
