@@ -1,14 +1,17 @@
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View, ViewStyle } from 'react-native';
-import { ActivityIndicator, Button, Card, HelperText, TextInput } from 'react-native-paper';
+import { ActivityIndicator, Avatar, Button, Card, HelperText, IconButton, Menu, Text, TextInput, TouchableRipple } from 'react-native-paper';
+import { useDebounce } from 'use-debounce';
+import { useUsersAutocompleteQuery } from '../../state/redux/api/iNaturalistApi';
 import { useRegisterMutation } from '../../state/redux/api/wildEventsApi';
 import { doLogin } from '../../state/redux/auth/authSlice';
 import { REFRESH_TOKEN, saveData } from '../../state/redux/auth/authStorage';
 import { useAppDispatch } from '../../state/redux/hooks';
 import { useIsMobile } from '../ui/utils';
+import AutocompleteINatUser from '../ui/AutocompleteINatUser';
 
 export default memo(function () {
     // UI
@@ -20,12 +23,12 @@ export default memo(function () {
     // Translation
     const { t } = useTranslation();
     // State
-    const [inaturalist, setInaturalist] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const toggleShowPassword = useCallback(() => setShowPassword(!showPassword), [showPassword]);
+    const [inaturalist, setInaturalist] = useState('');
     // Redux
     const dispatch = useAppDispatch();
     const [register, { isLoading, isError }] = useRegisterMutation();
@@ -105,13 +108,9 @@ export default memo(function () {
                         {t('registerCardConfirmPasswordError')}
                     </HelperText>
                 }
-                <TextInput
-                    mode='outlined'
-                    label={t('registerCardINatName')}
-                    placeholder={t('registerCardINatNameHelp')}
+                <AutocompleteINatUser
                     value={inaturalist}
-                    onChangeText={setInaturalist}
-                    left={<TextInput.Icon icon='account-eye' focusable={false} disabled />}
+                    onChange={setInaturalist}
                 />
                 {(inaturalist.length > 0 && inatNameError) &&
                     <HelperText type='error'>

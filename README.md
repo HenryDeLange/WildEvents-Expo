@@ -4,6 +4,9 @@
 
 The Expo (React Native) frontend for WildEvents.
 
+**Live Site:**\
+[https://wild-events.mywild.co.za](https://wild-events.mywild.co.za)
+
 ## Development
 
 ### Build

@@ -79,7 +79,6 @@ export default {
         eventParticipantLeaveError: 'Failed to remove the participant from the event!',
         eventParticipantJoinTitle: 'Add Participant',
         eventParticipantJoinMessage: 'Please specify the username of the iNaturalist user to add as a participant to this event.',
-        eventParticipantJoinInput: 'Participant Name',
         eventParticipantJoinError: 'Failed to add the participant to the event!',
         eventActivities: 'Event Activities',
         eventCalculate: 'Calculate',

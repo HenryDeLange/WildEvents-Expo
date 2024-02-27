@@ -1,8 +1,10 @@
 {
     "cSpell.words": [
         "codegen",
+        "geoprivacy",
         "iNat",
         "iNaturalist",
+        "iucn",
         "multipass",
         "MyWild",
         "nelat",
@@ -14,6 +16,7 @@
         "Searchbar",
         "swlat",
         "swlng",
+        "telenko",
         "WildEvents"
     ]
 }

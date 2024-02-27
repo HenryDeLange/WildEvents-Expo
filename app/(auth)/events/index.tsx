@@ -68,9 +68,6 @@ function Events() {
     return (
         <ThemedSafeAreaView style={styles.container}>
             <Stack.Screen options={navBar} />
-            {isLoading &&
-                <ActivityIndicator size='large' animating={true} style={styles.loading} />
-            }
             <View style={styles.actionWrapper}>
                 <Text variant='titleLarge' style={styles.text}>
                     {t('welcomeAction')}
@@ -79,6 +76,9 @@ function Events() {
                     <ModifyEvent />
                 </View>
             </View>
+            {isLoading &&
+                <ActivityIndicator size='large' animating={true} style={styles.loading} />
+            }
             <FlatList style={styles.list}
                 key={gridSize}
                 numColumns={gridSize}

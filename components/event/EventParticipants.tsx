@@ -6,6 +6,7 @@ import { useParticipantJoinEventMutation, useParticipantLeaveEventMutation } fro
 import { selectAuthINaturalist } from '../../state/redux/auth/authSlice';
 import { useAppSelector } from '../../state/redux/hooks';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
+import AutocompleteINatUser from '../ui/AutocompleteINatUser';
 
 type Props = {
     eventId: string;
@@ -61,15 +62,11 @@ function EventParticipants({ eventId, isAdmin, participants }: Readonly<Props>) 
             iNatId: participantName
         });
     }, [participantName]);
-    const handleJoinEnterKey = useCallback((event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-        if (event.nativeEvent.key === 'Enter')
-            handleJoin();
-    }, [handleJoin]);
     useEffect(() => {
         if (isJoined && !isJoinError)
             setShowJoinDialog(false);
     }, [isJoined, isJoinError]);
-    
+
     // RENDER
     return (
         <View style={styles.wrapper}>
@@ -119,19 +116,16 @@ function EventParticipants({ eventId, isAdmin, participants }: Readonly<Props>) 
             {/* Join Dialog */}
             <ResponsiveCardWrapper modalVisible={showJoinDialog} hideModal={handleHideJoinDialog}>
                 <Dialog.Title>{t('eventParticipantJoinTitle')}</Dialog.Title>
-                <Dialog.Content>
+                <Dialog.Content style={styles.content}>
                     <Text variant='bodyMedium'>
                         {t('eventParticipantJoinMessage')}
                     </Text>
-                    <TextInput
-                        style={styles.participantName}
-                        mode='outlined'
-                        label={t('eventParticipantJoinInput')}
+                    <AutocompleteINatUser
                         value={participantName}
-                        onChangeText={setParticipantName}
+                        onChange={setParticipantName}
                         autoFocus
-                        onKeyPress={handleJoinEnterKey}
-                        disabled={!isAdmin}
+                        disabled={!isAdmin || isJoining}
+                        onEnterKeyPress={isJoining ? undefined : handleJoin}
                     />
                     <View style={styles.buttonWrapper}>
                         <Button mode='contained' style={styles.button} uppercase
@@ -166,15 +160,14 @@ const styles = StyleSheet.create({
         marginTop: 8
     },
     buttonWrapper: {
-        marginTop: 10,
         alignItems: 'center'
     },
     button: {
         marginTop: 10,
         width: '80%'
     },
-    participantName: {
-        marginTop: 15
+    content: {
+        gap: 12
     },
     title: {
         fontWeight: 'bold'
