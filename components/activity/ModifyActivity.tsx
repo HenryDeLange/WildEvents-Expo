@@ -6,7 +6,7 @@ import { Button, Card, HelperText, IconButton, SegmentedButtons, SegmentedButton
 import { Activity, ActivityCreate, ActivityStep, useCreateActivityMutation, useUpdateActivityMutation } from '../../state/redux/api/wildEventsApi';
 import HeaderActionButton from '../ui/HeaderActionButton';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
-import AutoCompleteINatTaxa from '../ui/AutoCompleteINatTaxa';
+import InatAutocompleteTaxa from '../ui/InatAutocompleteTaxa';
 
 // TODO: Get these values from the BE via an endpoint
 const MAX_STEPS = 5;
@@ -343,7 +343,7 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                                         switch (key) {
                                             case 'taxon_name':
                                                 return (
-                                                    <AutoCompleteINatTaxa
+                                                    <InatAutocompleteTaxa
                                                         key={`step${step}Criterion${type}Entry${index}`}
                                                         value={(activeStep.criteria && activeStep.criteria[key]) ?? ''}
                                                         onChange={handleStepCriteriaValue(key)}

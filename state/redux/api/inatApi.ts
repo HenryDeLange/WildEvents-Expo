@@ -5,8 +5,8 @@ export const tagTypes = [
     'Taxa'
 ] as const;
 
-export const iNaturalistApi = createApi({
-    reducerPath: 'iNaturalistApi',
+export const inatApi = createApi({
+    reducerPath: 'inatApi',
     tagTypes,
     baseQuery: fetchBaseQuery({ baseUrl: 'https://api.inaturalist.org/v1/' }),
     endpoints: (builder) => ({
@@ -36,7 +36,7 @@ export const iNaturalistApi = createApi({
 export const {
     useUsersAutocompleteQuery,
     useTaxaAutocompleteQuery
-} = iNaturalistApi;
+} = inatApi;
 
 type UserAutocompleteArgs = {
     q: string;

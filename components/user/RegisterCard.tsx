@@ -9,7 +9,7 @@ import { doLogin } from '../../state/redux/auth/authSlice';
 import { REFRESH_TOKEN, saveData } from '../../state/redux/auth/authStorage';
 import { useAppDispatch } from '../../state/redux/hooks';
 import { useIsMobile } from '../ui/utils';
-import AutoCompleteINatUser from '../ui/AutoCompleteINatUser';
+import InatAutoCompleteUser from '../ui/InatAutoCompleteUser';
 
 export default memo(function () {
     // UI
@@ -106,7 +106,7 @@ export default memo(function () {
                         {t('registerCardConfirmPasswordError')}
                     </HelperText>
                 }
-                <AutoCompleteINatUser
+                <InatAutoCompleteUser
                     value={inaturalist}
                     onChange={setInaturalist}
                 />

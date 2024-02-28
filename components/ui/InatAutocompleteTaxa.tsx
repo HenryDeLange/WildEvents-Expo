@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Image, NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View } from 'react-native';
 import { Avatar, Menu, Text, TextInput, TouchableRipple } from 'react-native-paper';
 import { useDebounce } from 'use-debounce';
-import { Taxon, useTaxaAutocompleteQuery } from '../../state/redux/api/iNaturalistApi';
+import { Taxon, useTaxaAutocompleteQuery } from '../../state/redux/api/inatApi';
 
 type Props = {
     value: string;
@@ -15,7 +15,7 @@ type Props = {
 
 // TODO: Make this multi-selectable (using chips, similar to participants)
 
-function AutocompleteINatTaxa({ value, onChange, autoFocus, disabled, onEnterKeyPress }: Props) {
+function InatAutocompleteTaxa({ value, onChange, autoFocus, disabled, onEnterKeyPress }: Readonly<Props>) {
     // Translation
     const { t } = useTranslation();
     // State
@@ -122,7 +122,7 @@ function AutocompleteINatTaxa({ value, onChange, autoFocus, disabled, onEnterKey
     );
 }
 
-export default memo(AutocompleteINatTaxa);
+export default memo(InatAutocompleteTaxa);
 
 const styles = StyleSheet.create({
     menuItemWrapper: {

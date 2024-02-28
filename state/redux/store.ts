@@ -1,7 +1,7 @@
 import { Middleware, MiddlewareAPI, configureStore, isRejectedWithValue } from '@reduxjs/toolkit';
 import { UnknownAsyncThunkRejectedWithValueAction } from '@reduxjs/toolkit/dist/matchers';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import { iNaturalistApi } from './api/iNaturalistApi';
+import { inatApi } from './api/inatApi';
 import { wildEventsApi } from './api/wildEventsApi';
 import authReducer from './auth/authSlice';
 import errorReducer, { addError } from './error/errorSlice';
@@ -43,12 +43,12 @@ export const store = configureStore({
         auth: authReducer,
         error: errorReducer,
         [wildEventsApi.reducerPath]: wildEventsApi.reducer,
-        [iNaturalistApi.reducerPath]: iNaturalistApi.reducer
+        [inatApi.reducerPath]: inatApi.reducer
     },
     middleware: (getDefaultMiddleware) => {
         return getDefaultMiddleware()
             .concat(wildEventsApi.middleware)
-            .concat(iNaturalistApi.middleware)
+            .concat(inatApi.middleware)
             .concat(rtkQueryErrorLogger);
     }
 });

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Image, NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View } from 'react-native';
 import { Avatar, Menu, Text, TextInput, TouchableRipple } from 'react-native-paper';
 import { useDebounce } from 'use-debounce';
-import { useUsersAutocompleteQuery } from '../../state/redux/api/iNaturalistApi';
+import { useUsersAutocompleteQuery } from '../../state/redux/api/inatApi';
 
 type Props = {
     value: string;
@@ -13,7 +13,7 @@ type Props = {
     onEnterKeyPress?: () => void;
 }
 
-function AutoCompleteINatUser({ value, onChange, autoFocus, disabled, onEnterKeyPress }: Props) {
+function InatAutoCompleteUser({ value, onChange, autoFocus, disabled, onEnterKeyPress }: Readonly<Props>) {
     // Translation
     const { t } = useTranslation();
     // State
@@ -100,7 +100,7 @@ function AutoCompleteINatUser({ value, onChange, autoFocus, disabled, onEnterKey
     );
 }
 
-export default memo(AutoCompleteINatUser);
+export default memo(InatAutoCompleteUser);
 
 const styles = StyleSheet.create({
     menuItemWrapper: {

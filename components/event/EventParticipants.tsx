@@ -1,12 +1,12 @@
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View } from 'react-native';
-import { ActivityIndicator, Button, Chip, Dialog, HelperText, Icon, Text, TextInput, useTheme } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Button, Chip, Dialog, HelperText, Icon, Text, useTheme } from 'react-native-paper';
 import { useParticipantJoinEventMutation, useParticipantLeaveEventMutation } from '../../state/redux/api/wildEventsApi';
 import { selectAuthINaturalist } from '../../state/redux/auth/authSlice';
 import { useAppSelector } from '../../state/redux/hooks';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
-import AutoCompleteINatUser from '../ui/AutoCompleteINatUser';
+import InatAutoCompleteUser from '../ui/InatAutoCompleteUser';
 
 type Props = {
     eventId: string;
@@ -120,7 +120,7 @@ function EventParticipants({ eventId, isAdmin, participants }: Readonly<Props>) 
                     <Text variant='bodyMedium'>
                         {t('eventParticipantJoinMessage')}
                     </Text>
-                    <AutoCompleteINatUser
+                    <InatAutoCompleteUser
                         value={participantName}
                         onChange={setParticipantName}
                         autoFocus
