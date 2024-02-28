@@ -34,7 +34,8 @@ export const iNaturalistApi = createApi({
 })
 
 export const {
-    useUsersAutocompleteQuery
+    useUsersAutocompleteQuery,
+    useTaxaAutocompleteQuery
 } = iNaturalistApi;
 
 type UserAutocompleteArgs = {
@@ -77,10 +78,10 @@ type TaxaAutocomplete = {
     total_results: number;
     page: number; // Starts at 1
     per_page: number;
-    results: Taxa[];
+    results: Taxon[];
 }
 
-type Taxa = {
+export type Taxon = {
     id: number;
     is_active: boolean;
     name: string;

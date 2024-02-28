@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Image, NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View } from 'react-native';
 import { Avatar, Menu, Text, TextInput, TouchableRipple } from 'react-native-paper';
 import { useDebounce } from 'use-debounce';
-import { useUsersAutocompleteQuery } from '../../state/redux/api/iNaturalistApi';
+import { Taxon, useTaxaAutocompleteQuery } from '../../state/redux/api/iNaturalistApi';
 
 type Props = {
     value: string;
@@ -13,30 +13,34 @@ type Props = {
     onEnterKeyPress?: () => void;
 }
 
-function AutoCompleteINatUser({ value, onChange, autoFocus, disabled, onEnterKeyPress }: Props) {
+// TODO: Make this multi-selectable (using chips, similar to participants)
+
+function AutocompleteINatTaxa({ value, onChange, autoFocus, disabled, onEnterKeyPress }: Props) {
     // Translation
     const { t } = useTranslation();
     // State
-    const [selectedValue, setSelectedValue] = useState('');
+    const [selectedValue, setSelectedValue] = useState(value);
     const [menuVisibility, setMenuVisibility] = useState(false);
     const showMenu = useCallback(() => setMenuVisibility(true), []);
     const hideMenu = useCallback(() => setMenuVisibility(false), []);
     // Debounce
     const [debouncedValue] = useDebounce(value, 500);
     // Redux
-    const { data: inaturalistUsers, isFetching, isSuccess } = useUsersAutocompleteQuery(
+    const { data: inaturalistTaxa, isFetching, isSuccess } = useTaxaAutocompleteQuery(
+        // TODO: add locale
         { q: debouncedValue, per_page: 4 },
         { skip: disabled || debouncedValue.length <= 3 || value === selectedValue }
     );
     // Effects
     useEffect(() => {
-        if (!isFetching && isSuccess)
+        if (!isFetching && isSuccess && value !== selectedValue) {
             showMenu();
-    }, [isFetching, isSuccess]);
+        }
+    }, [isFetching, isSuccess, selectedValue]);
     // Callbacks
-    const handleMenuSelection = useCallback((text: string) => () => {
-        onChange(text);
-        setSelectedValue(text);
+    const handleMenuSelection = useCallback((text: Taxon) => () => {
+        onChange(text.name);
+        setSelectedValue(text.name);
         hideMenu();
     }, [onChange]);
     const handleJoinEnterKey = useCallback((event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
@@ -56,17 +60,29 @@ function AutoCompleteINatUser({ value, onChange, autoFocus, disabled, onEnterKey
             <View ref={inatRef as any}>
                 <TextInput
                     mode='outlined'
-                    label={t('registerCardINatName')}
-                    placeholder={t('registerCardINatNameHelp')}
+                    label={t('activityCriteria_taxon_name')}
+                    placeholder={t('activityCriteriaHelp_taxon_name')}
                     value={value}
                     onChangeText={onChange}
-                    left={<TextInput.Icon focusable={false} disabled icon={({ size, color }) => (
-                        <Image
-                            source={require('../../assets/images/inaturalist/logo.png')}
-                            style={{ width: size, height: size }}
+                    left={
+                        <TextInput.Icon
+                            focusable={false}
+                            disabled
+                            icon={({ size, color }) => (
+                                <Image
+                                    source={require('../../assets/images/inaturalist/logo.png')}
+                                    style={{ width: size, height: size }}
+                                />
+                            )}
                         />
-                    )} />}
-                    right={<TextInput.Icon icon={isFetching ? 'progress-clock' : 'menu-down'} onPress={showMenu} />}
+                    }
+                    right={
+                        <TextInput.Icon
+                            icon={isFetching ? 'progress-clock' : 'menu-down'}
+                            onPress={showMenu}
+                            disabled={isFetching || !isSuccess || (inaturalistTaxa.results.length <= 0)}
+                        />
+                    }
                     autoFocus={autoFocus}
                     disabled={disabled}
                     onKeyPress={handleJoinEnterKey}
@@ -78,18 +94,24 @@ function AutoCompleteINatUser({ value, onChange, autoFocus, disabled, onEnterKey
                 anchorPosition='bottom'
                 anchor={menuPosition}
             >
-                {!disabled && inaturalistUsers?.results.map((user) => (
-                    <TouchableRipple key={user.id} style={styles.menuItemWrapper}
-                        onPress={handleMenuSelection(user.login)}
+                {!disabled && inaturalistTaxa?.results.map((taxon) => (
+                    <TouchableRipple key={taxon.id} style={styles.menuItemWrapper}
+                        onPress={handleMenuSelection(taxon)}
                     >
                         <>
-                            <Avatar.Image source={{ uri: user.icon }} size={32} style={styles.menuItemAvatar} />
+                            <Avatar.Image
+                                source={(taxon.default_photo && taxon.default_photo.square_url)
+                                    ? { uri: taxon.default_photo.square_url }
+                                    : require('../../assets/images/inaturalist/logo.png')}
+                                size={32}
+                                style={styles.menuItemAvatar}
+                            />
                             <View style={{ width: menuPosition.width }}>
                                 <Text variant='labelLarge'>
-                                    {(user.name && user.name.trim().length > 0) ? user.name : user.login}
+                                    {taxon.preferred_common_name}
                                 </Text>
                                 <Text variant='labelSmall'>
-                                    {user.login}
+                                    {taxon.name}
                                 </Text>
                             </View>
                         </>
@@ -100,7 +122,7 @@ function AutoCompleteINatUser({ value, onChange, autoFocus, disabled, onEnterKey
     );
 }
 
-export default memo(AutoCompleteINatUser);
+export default memo(AutocompleteINatTaxa);
 
 const styles = StyleSheet.create({
     menuItemWrapper: {

@@ -1,17 +1,15 @@
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View, ViewStyle } from 'react-native';
-import { ActivityIndicator, Avatar, Button, Card, HelperText, IconButton, Menu, Text, TextInput, TouchableRipple } from 'react-native-paper';
-import { useDebounce } from 'use-debounce';
-import { useUsersAutocompleteQuery } from '../../state/redux/api/iNaturalistApi';
+import { ActivityIndicator, Button, Card, HelperText, TextInput } from 'react-native-paper';
 import { useRegisterMutation } from '../../state/redux/api/wildEventsApi';
 import { doLogin } from '../../state/redux/auth/authSlice';
 import { REFRESH_TOKEN, saveData } from '../../state/redux/auth/authStorage';
 import { useAppDispatch } from '../../state/redux/hooks';
 import { useIsMobile } from '../ui/utils';
-import AutocompleteINatUser from '../ui/AutocompleteINatUser';
+import AutoCompleteINatUser from '../ui/AutoCompleteINatUser';
 
 export default memo(function () {
     // UI
@@ -108,7 +106,7 @@ export default memo(function () {
                         {t('registerCardConfirmPasswordError')}
                     </HelperText>
                 }
-                <AutocompleteINatUser
+                <AutoCompleteINatUser
                     value={inaturalist}
                     onChange={setInaturalist}
                 />

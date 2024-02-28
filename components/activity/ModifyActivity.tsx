@@ -6,6 +6,7 @@ import { Button, Card, HelperText, IconButton, SegmentedButtons, SegmentedButton
 import { Activity, ActivityCreate, ActivityStep, useCreateActivityMutation, useUpdateActivityMutation } from '../../state/redux/api/wildEventsApi';
 import HeaderActionButton from '../ui/HeaderActionButton';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
+import AutoCompleteINatTaxa from '../ui/AutoCompleteINatTaxa';
 
 // TODO: Get these values from the BE via an endpoint
 const MAX_STEPS = 5;
@@ -29,7 +30,7 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
     const [steps, setSteps] = useState<ActivityCreate['steps']>([{
         id: '',
         description: '',
-        criteria: { 'taxon_id': '' }
+        criteria: { 'taxon_name': '' }
     }]);
     useEffect(() => {
         if (activity) {
@@ -60,7 +61,7 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
             setSteps([{
                 id: '',
                 description: '',
-                criteria: { 'taxon_id': '' }
+                criteria: { 'taxon_name': '' }
             }]);
         }
     }, [isSuccessCreate, isSuccessUpdate, hideModal]);
@@ -74,21 +75,21 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                 setSteps([{
                     id: Crypto.randomUUID(),
                     description: '',
-                    criteria: { 'taxon_id': '' }
+                    criteria: { 'taxon_name': '' }
                 }]);
                 break;
             case 'HUNT':
                 setSteps([{
                     id: Crypto.randomUUID(),
                     description: '',
-                    criteria: { 'taxon_id': '', 'lat': '', 'lng': '', 'radius': '' }
+                    criteria: { 'taxon_name': '', 'lat': '', 'lng': '', 'radius': '' }
                 }]);
                 break;
             case 'QUIZ':
                 setSteps([{
                     id: Crypto.randomUUID(),
                     description: '',
-                    criteria: { 'taxon_id': '' }
+                    criteria: { 'taxon_name': '' }
                 }]);
                 break;
             case 'EXPLORE':
@@ -130,6 +131,17 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
         }
     }, [steps, step]);
     const handleStepCriteriaValue = useCallback((key: string) => (text: string) => {
+        let filteredText = text;
+        switch (key) {
+            case 'taxon_name':
+                filteredText = text.replace(/\d+/g, '');
+                break;
+            case 'radius':
+                filteredText = text.replace(/[^0-9.]/g, '');
+                break;
+            default:
+                filteredText = text.replace(/(?!^-)[^0-9.]/g, '');
+        }
         if (steps && step) {
             const stepIndex = Number(step) - 1;
             const newSteps: ActivityStep[] = [
@@ -139,7 +151,7 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                     description: steps[stepIndex].description,
                     criteria: {
                         ...steps[stepIndex].criteria,
-                        [key]: text
+                        [key]: filteredText
                     }
                 },
                 ...steps.slice(stepIndex + 1)
@@ -169,21 +181,21 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                     setSteps([...steps!, {
                         id: Crypto.randomUUID(),
                         description: '',
-                        criteria: { 'taxon_id': '' }
+                        criteria: { 'taxon_name': '' }
                     }]);
                     break;
                 case 'HUNT':
                     setSteps([...steps!, {
                         id: Crypto.randomUUID(),
                         description: '',
-                        criteria: { 'taxon_id': '', 'lat': '', 'lng': '', 'radius': '' }
+                        criteria: { 'taxon_name': '', 'lat': '', 'lng': '', 'radius': '' }
                     }]);
                     break;
                 case 'QUIZ':
                     setSteps([...steps!, {
                         id: Crypto.randomUUID(),
                         description: '',
-                        criteria: { 'taxon_id': '' }
+                        criteria: { 'taxon_name': '' }
                     }]);
                     break;
                 case 'EXPLORE':
@@ -211,21 +223,19 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
             label: t('activityCardStepCount', { step: 1 }),
             disabled: isDisabled
         }];
-        if (type !== 'RACE') {
-            for (let i = 2; i <= addedSteps; i++) {
-                stepButtons.push({
-                    value: String(i),
-                    label: t('activityCardStepCount', { step: i }),
-                    disabled: isDisabled
-                });
-            }
+        for (let i = 2; i <= addedSteps; i++) {
+            stepButtons.push({
+                value: String(i),
+                label: t('activityCardStepCount', { step: i }),
+                disabled: isDisabled
+            });
         }
         if (stepButtons.length < MAX_STEPS) {
             stepButtons.push({
                 value: ADD_STEP,
-                label: type === 'RACE' ? 'N/A' : t('activityCardStepAdd'),
-                disabled: isDisabled || type === 'RACE',
-                icon: type === 'RACE' ? undefined : 'plus'
+                label: t('activityCardStepAdd'),
+                disabled: isDisabled,
+                icon: 'plus'
             });
         }
         return stepButtons;
@@ -318,6 +328,7 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                             <View style={styles.activityWrapper}>
                                 <View style={styles.activityContent}>
                                     <TextInput
+                                        key='description'
                                         style={styles.activityDescription}
                                         mode='outlined'
                                         label={t('activityCardStepDescription')}
@@ -328,32 +339,31 @@ function ModifyActivity({ eventId, activity }: Readonly<Props>) {
                                         multiline
                                         numberOfLines={3}
                                     />
-                                    {Object.keys(activeStep.criteria ?? {}).map((key, index) => (
-                                        <View key={`step${step}Criterion${type}Entry${index}`} style={styles.activityCriteriaRow}>
-                                            <Tooltip
-                                                title={t(`activityCriteria_${key}`, { defaultValue: t('activityCriteria_custom') })}
-                                            >
-                                                <TextInput
-                                                    key={`step${step}Criterion${type}Entry${index}Key`}
-                                                    style={styles.activityCriteriaKey}
-                                                    disabled={isDisabled}
-                                                    mode='outlined'
-                                                    label={t('activityCriteriaKey')}
-                                                    value={key}
-                                                    readOnly
-                                                />
-                                            </Tooltip>
-                                            <TextInput
-                                                key={`step${step}Criterion${type}Entry${index}Value`}
-                                                style={styles.activityCriteriaValue}
-                                                disabled={isDisabled}
-                                                mode='outlined'
-                                                label={t('activityCriteriaValue')}
-                                                value={activeStep.criteria && activeStep.criteria[key]}
-                                                onChangeText={handleStepCriteriaValue(key)}
-                                            />
-                                        </View>
-                                    ))}
+                                    {Object.keys(activeStep.criteria ?? {}).map((key, index) => {
+                                        switch (key) {
+                                            case 'taxon_name':
+                                                return (
+                                                    <AutoCompleteINatTaxa
+                                                        key={`step${step}Criterion${type}Entry${index}`}
+                                                        value={(activeStep.criteria && activeStep.criteria[key]) ?? ''}
+                                                        onChange={handleStepCriteriaValue(key)}
+                                                    />
+                                                );
+                                            default:
+                                                return (
+                                                    <TextInput
+                                                        key={`step${step}Criterion${type}Entry${index}`}
+                                                        disabled={isDisabled}
+                                                        mode='outlined'
+                                                        label={t(`activityCriteria_${key}`, { defaultValue: t('activityCriteria_custom') })}
+                                                        placeholder={t(`activityCriteriaHelp_${key}`, { defaultValue: t('activityCriteriaHelp_custom') })}
+                                                        value={activeStep.criteria && activeStep.criteria[key]}
+                                                        onChangeText={handleStepCriteriaValue(key)}
+                                                        keyboardType='decimal-pad'
+                                                    />
+                                                );
+                                        }
+                                    })}
                                 </View>
                                 <View>
                                     <Tooltip title={t('activityCardStepRemove')}>
@@ -411,18 +421,6 @@ const styles = StyleSheet.create({
     activityDescription: {
         display: 'flex',
         flex: 1
-    },
-    activityCriteriaRow: {
-        flexDirection: 'row',
-        gap: 10,
-        flexWrap: 'wrap'
-    },
-    activityCriteriaKey: {
-        maxWidth: 100
-    },
-    activityCriteriaValue: {
-        flex: 1,
-        minWidth: 200
     },
     buttonWrapper: {
         marginTop: 10,

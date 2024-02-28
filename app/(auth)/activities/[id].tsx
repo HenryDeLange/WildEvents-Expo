@@ -3,7 +3,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Dialog, Divider, Text, useTheme } from 'react-native-paper';
 import ActivityStepScores from '../../../components/activity/ActivityStepScores';
 import ActivityStepTotalScores from '../../../components/activity/ActivityStepTotalScores';
@@ -13,7 +13,7 @@ import HeaderActionButton from '../../../components/ui/HeaderActionButton';
 import ResponsiveCardWrapper from '../../../components/ui/ResponsiveCardWrapper';
 import ThemedSafeAreaView from '../../../components/ui/ThemedSafeAreaView';
 import LogoutButton from '../../../components/user/LogoutButton';
-import { useCalculateActivityMutation, useDeleteActivityMutation, useFindActivityQuery } from '../../../state/redux/api/wildEventsApi';
+import { useCalculateActivityMutation, useDeleteActivityMutation, useDisableActivityMutation, useEnableActivityMutation, useFindActivityQuery } from '../../../state/redux/api/wildEventsApi';
 
 function Activity() {
     // Theme
@@ -25,8 +25,11 @@ function Activity() {
     const activityId = id.toString();
     const router = useRouter();
     // Redux
-    const { data: activity, isLoading: isActivityLoading, isFetching: isActivityFetching } = useFindActivityQuery({ activityId });
+    const { data: activity, isLoading: isActivityLoading, isFetching: isActivityFetching } =
+        useFindActivityQuery({ activityId }, {});
     const [doCalculate, { isLoading: isCalculating }] = useCalculateActivityMutation();
+    const [doEnable, { isLoading: isEnabling }] = useEnableActivityMutation();
+    const [doDisable, { isLoading: isDisabling }] = useDisableActivityMutation();
     const [doDelete, { isLoading: isDeleting, isSuccess: isDeleted }] = useDeleteActivityMutation();
     // State
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -34,6 +37,8 @@ function Activity() {
     const isAdmin = useIsEventAdmin(activity?.eventId ?? null);
     // Actions
     const handleCalculate = useCallback(() => doCalculate({ activityId }), [activityId]);
+    const handleEnable = useCallback(() => doEnable({ activityId }), [activityId]);
+    const handleDisable = useCallback(() => doDisable({ activityId }), [activityId]);
     const handleDeleteButton = useCallback(() => setShowDeleteDialog(true), [activityId]);
     const handleDelete = useCallback(() => doDelete({ activityId }), [activityId]);
     const handleHideDeleteDialog = useCallback(() => {
@@ -51,10 +56,17 @@ function Activity() {
             {isAdmin &&
                 <>
                     <HeaderActionButton
+                        icon={activity?.disableReason ? 'check-circle-outline' : 'minus-circle-outline'}
+                        textKey={activity?.disableReason ? 'activityEnable' : 'activityDisable'}
+                        onPress={activity?.disableReason ? handleEnable : handleDisable}
+                        busy={isEnabling || isDisabling}
+                    />
+                    <HeaderActionButton
                         icon='calculator-variant-outline'
                         textKey='eventCalculate'
                         onPress={handleCalculate}
                         busy={isCalculating}
+                        disabled={activity?.disableReason ? true : false}
                     />
                     {activity &&
                         <ModifyActivity eventId={activity.eventId} activity={activity} />
@@ -69,9 +81,9 @@ function Activity() {
             }
             <LogoutButton />
         </View>
-    ), [isAdmin, activity, isCalculating]);
+    ), [isAdmin, activity, isCalculating, isEnabling, isDisabling]);
     const navBar = useMemo(() => ({
-        title: isActivityFetching ? t('loading') : t('activityNavTitle'),
+        title: (isActivityFetching || isEnabling || isDisabling) ? t('loading') : t('activityNavTitle'),
         headerRight: navBarActions
     }), [t, isActivityFetching, navBarActions]);
     // RENDER
@@ -106,12 +118,11 @@ function Activity() {
                         }
                     </View>
                     {activity.disableReason &&
-                        <>
-                            <Text variant='titleLarge' style={{ color: theme.colors.error }}>
-                                {activity.disableReason}
+                        <View style={styles.disableReason}>
+                            <Text variant='titleMedium' style={{ color: theme.colors.error }}>
+                                {t(`activityDisableReason${activity.disableReason}`)}
                             </Text>
-                            <Divider style={styles.divider} />
-                        </>
+                        </View>
                     }
                 </View>
                 <Divider style={styles.divider} />
@@ -213,5 +224,8 @@ const styles = StyleSheet.create({
     },
     type: {
         fontWeight: 'bold'
+    },
+    disableReason: {
+        alignItems: 'center'
     }
 });

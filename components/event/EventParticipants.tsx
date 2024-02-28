@@ -6,7 +6,7 @@ import { useParticipantJoinEventMutation, useParticipantLeaveEventMutation } fro
 import { selectAuthINaturalist } from '../../state/redux/auth/authSlice';
 import { useAppSelector } from '../../state/redux/hooks';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
-import AutocompleteINatUser from '../ui/AutocompleteINatUser';
+import AutoCompleteINatUser from '../ui/AutoCompleteINatUser';
 
 type Props = {
     eventId: string;
@@ -120,7 +120,7 @@ function EventParticipants({ eventId, isAdmin, participants }: Readonly<Props>) 
                     <Text variant='bodyMedium'>
                         {t('eventParticipantJoinMessage')}
                     </Text>
-                    <AutocompleteINatUser
+                    <AutoCompleteINatUser
                         value={participantName}
                         onChange={setParticipantName}
                         autoFocus

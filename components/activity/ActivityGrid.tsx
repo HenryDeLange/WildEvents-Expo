@@ -55,15 +55,14 @@ function ActivityGrid({ eventId }: Readonly<Props>) {
                                                 {format(activity.calculated, 'yyyy-MM-dd HH:mm')}
                                             </Text>
                                         }
+                                        {activity.disableReason &&
+                                            <>
+                                                <Text style={{ color: theme.colors.error }}>
+                                                    {t(`activityDisableReason${activity.disableReason}`)}
+                                                </Text>
+                                            </>
+                                        }
                                     </View>
-                                    {activity.disableReason &&
-                                        <>
-                                            <Text style={{ color: theme.colors.error }}>
-                                                {activity.disableReason}
-                                            </Text>
-                                            <Divider style={styles.divider} />
-                                        </>
-                                    }
                                     <Divider style={styles.divider} />
                                     <ScrollView style={styles.description}>
                                         <Markdown>
