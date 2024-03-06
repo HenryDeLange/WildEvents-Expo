@@ -22,9 +22,9 @@ export default {
         aboutClient: 'Client',
         aboutServer: 'Server',
 
-        registerButton: 'Register',
-        registerNavTitle: 'Register a new User',
-        registerCardTitle: 'New WildEvents Account',
+        registerButton: 'Sign Up',
+        registerNavTitle: 'WildEvents Sign Up',
+        registerCardTitle: 'Create a new WildEvents Account',
         registerCardINatName: 'iNaturalist',
         registerCardINatNameHelp: 'iNaturalist Username',
         registerCardINatNameError: 'Must be at least 3 characters long.',
@@ -39,18 +39,19 @@ export default {
         registerCardConfirmPasswordError: 'Must match the password field.',
         registerCardFailed: 'Failed to register the user!',
 
-        loginButton: 'Login',
-        loginNavTitle: 'WildEvents Login',
-        loginCardTitle: 'WildEvents Login',
+        loginButton: 'Sign In',
+        loginNavTitle: 'WildEvents Sign In',
+        loginCardTitle: 'Sign in to WildEvents',
         loginCardUsername: 'Username',
         loginCardUsernameHelp: 'Account Username',
         loginCardPassword: 'Password',
         loginCardPasswordHelp: 'Account Password',
-        loginCardFailed: 'Failed to login!',
-        logoutButton: 'Logout',
+        loginCardFailed: 'Failed to sign in!',
+
+        logoutButton: 'Sign Out',
 
         welcomeTitle: 'Welcome to Wild Events!',
-        welcomeSubTitle: 'Here you can take part in fun events that centers around exploring nature through the use of the iNaturalist website.',
+        welcomeSubTitle: 'Here you can take part in fun events that centers around exploring nature by making iNaturalist observations.',
         welcomeAction: 'View and join existing events, or create your own!',
 
         eventNavTitle: 'Event',

@@ -33,6 +33,7 @@
     "markdown-to-jsx": "^7.4.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.51.0",
     "react-i18next": "^14.0.5",
     "react-native": "0.73.4",
     "react-native-paper": "^5.12.3",

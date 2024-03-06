@@ -18,10 +18,8 @@ import { store } from '../state/redux/store';
 import dark from '../theme/dark.json';
 import light from '../theme/light.json';
 
-export {
-    // Catch any errors thrown by the Layout component.
-    ErrorBoundary
-} from 'expo-router';
+// Catch any errors thrown by the Layout component.
+export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = {
     initialRouteName: 'index',
@@ -56,9 +54,9 @@ const currentLanguage = (Localization.getLocales() && Localization.getLocales().
     : defaultLang;
 i18n.use(initReactI18next) // Passes i18n down to react-i18next
     .init({
+        compatibilityJSON: 'v3', // For Android
         resources: { en },
         lng: currentLanguage,
-        // lng: Localization.locale,
         fallbackLng: defaultLang,
         interpolation: {
             // React already safes from xss, see https://www.i18next.com/translation-function/interpolation#unescape
@@ -72,7 +70,7 @@ function RootLayoutNav() {
     document.title = t('app');
     return (
         <ReduxProvider store={store}>
-            <RefreshProvider>
+            <RefreshTokenProvider>
                 <PaperProvider theme={colorScheme === 'dark' ? { ...MD3LightTheme, ...dark } : { ...MD3LightTheme, ...light }}>
                     {/* React Navigation uses it's own theme, for now I just configure it manually, 
                     but there are ways to merge it with the React Native Paper theme.
@@ -89,7 +87,7 @@ function RootLayoutNav() {
                         </Stack>
                     </ThemeProvider>
                 </PaperProvider>
-            </RefreshProvider>
+            </RefreshTokenProvider>
         </ReduxProvider>
     );
 }
@@ -98,7 +96,7 @@ type Props = {
     children: ReactNode;
 }
 
-function RefreshProvider({ children }: Props) {
+function RefreshTokenProvider({ children }: Readonly<Props>) {
     const dispatch = useAppDispatch();
     const { getItem } = useAsyncStorage(REFRESH_TOKEN);
     getItem().then(value => dispatch(setRefreshToken(value ? value.trim().length > 0 ? value : null : null)));

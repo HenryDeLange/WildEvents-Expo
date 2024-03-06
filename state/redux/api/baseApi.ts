@@ -21,7 +21,7 @@ const rawBaseQuery = fetchBaseQuery({
     }
 });
 
-// Change the baseUrl (root URL of the backend is) based on config
+// Change the baseUrl of the backend based on config
 const dynamicUrlBaseQuery: BaseQueryFn<
     string | FetchArgs,
     unknown,
@@ -34,7 +34,7 @@ const dynamicUrlBaseQuery: BaseQueryFn<
             error: {
                 status: 400,
                 statusText: 'Bad Request',
-                data: 'No baseUrl configured!'
+                data: 'No Base URL configured!'
             }
         };
     }

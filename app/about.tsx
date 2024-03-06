@@ -11,8 +11,8 @@ import { useMemo } from 'react';
 
 export default function About() {
     const { t } = useTranslation();
-    const { data, isFetching } = useGetVersionQuery();
     const isMobile = useIsMobile();
+    const { data, isFetching } = useGetVersionQuery();
     const cardStyle: ViewStyle = useMemo(() => ({
         width: isMobile ? '90%' : '80%',
         maxWidth: isMobile ? undefined : 500
@@ -24,7 +24,7 @@ export default function About() {
             }} />
             <Image source={require('../assets/images/logo.png')} style={styles.image} />
             <Card style={cardStyle}>
-                <Card.Title title={t('aboutTitle')} titleVariant='titleLarge' />
+                <Card.Title titleVariant='titleLarge' title={t('aboutTitle')} />
                 <Card.Content>
                     <Text>
                         {t('aboutDetails')}
@@ -40,7 +40,7 @@ export default function About() {
                 </Card.Actions>
             </Card>
             <Card style={cardStyle}>
-                <Card.Title title={t('aboutClient')} titleVariant='titleLarge' />
+                <Card.Title titleVariant='titleLarge' title={t('aboutClient')} />
                 <Card.Content>
                     <Text>
                         {Constants.expoConfig?.version}
@@ -48,7 +48,7 @@ export default function About() {
                 </Card.Content>
             </Card>
             <Card style={cardStyle}>
-                <Card.Title title={t('aboutServer')} titleVariant='titleLarge' />
+                <Card.Title titleVariant='titleLarge' title={t('aboutServer')} />
                 <Card.Content>
                     <Text>
                         {isFetching ? t('loading') : data?.appVersion}
@@ -60,11 +60,11 @@ export default function About() {
 }
 
 const styles = StyleSheet.create({
+    cardSpacer: {
+        gap: 15
+    },
     image: {
         width: 100,
         height: 100
-    },
-    cardSpacer: {
-        gap: 15
     }
 });

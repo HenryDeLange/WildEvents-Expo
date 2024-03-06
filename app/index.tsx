@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import HomeCard from '../components/HomeCard';
+import HomeCard from '../components/home/HomeCard';
 import HeaderLinkButton from '../components/ui/HeaderLinkButton';
 import PageContainer from '../components/ui/PageContainer';
 

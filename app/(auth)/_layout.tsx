@@ -5,7 +5,7 @@ import { Redirect, Slot, Stack } from 'expo-router';
 
 export default memo(function () {
     const refreshToken = useAppSelector(selectAuthRefreshToken);
-    // Only require authentication within the layouts nested under "(auth)""
+    // Only require authentication within the layouts nested under "(auth)"
     if (!refreshToken) {
         // On web, static rendering will stop here as the user is not authenticated
         // in the headless Node process that the pages are rendered in.
