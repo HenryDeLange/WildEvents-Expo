@@ -1,10 +1,10 @@
 import { BaseQueryFn, FetchArgs, FetchBaseQueryError, createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 import { Mutex } from 'async-mutex';
-import { doLogout, doRefresh, replaceAccessToken } from '../auth/authSlice';
+import i18next from 'i18next';
+import { authLogout, authRefresh, authReplaceAccessToken } from '../auth/authSlice';
+import { REFRESH_TOKEN, saveData } from '../auth/authStorage';
 import { RootState } from '../store';
 import { Tokens } from './wildEventsApi';
-import i18next from 'i18next';
-import { REFRESH_TOKEN, saveData } from '../auth/authStorage';
 
 // Add the token and language to the request header
 const rawBaseQuery = fetchBaseQuery({
@@ -62,12 +62,12 @@ const baseQueryWithReauth: BaseQueryFn<
             const release = await mutex.acquire();
             // Try to get a new token
             try {
-                api.dispatch(replaceAccessToken((api.getState() as RootState).auth.refreshToken));
+                api.dispatch(authReplaceAccessToken((api.getState() as RootState).auth.refreshToken));
                 const refreshResult = await dynamicUrlBaseQuery({ url: '/users/refresh', method: 'post' }, api, extraOptions);
                 const tokens = refreshResult.data as Tokens;
                 if (tokens) {
                     // Store the new token
-                    api.dispatch(doRefresh({
+                    api.dispatch(authRefresh({
                         username: tokens.username,
                         inaturalist: tokens.inaturalist,
                         accessToken: tokens.accessToken,
@@ -79,7 +79,7 @@ const baseQueryWithReauth: BaseQueryFn<
                 }
                 else {
                     // Logout (clear the tokens)
-                    api.dispatch(doLogout());
+                    api.dispatch(authLogout());
                     saveData(REFRESH_TOKEN, '');
                 }
             }

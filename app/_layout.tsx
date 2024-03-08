@@ -11,7 +11,7 @@ import { useColorScheme } from 'react-native';
 import { MD3LightTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Provider as ReduxProvider } from 'react-redux';
 import en from '../i18n/en';
-import { setRefreshToken } from '../state/redux/auth/authSlice';
+import { authSetRefreshToken } from '../state/redux/auth/authSlice';
 import { REFRESH_TOKEN } from '../state/redux/auth/authStorage';
 import { useAppDispatch } from '../state/redux/hooks';
 import { store } from '../state/redux/store';
@@ -99,6 +99,6 @@ type Props = {
 function RefreshTokenProvider({ children }: Readonly<Props>) {
     const dispatch = useAppDispatch();
     const { getItem } = useAsyncStorage(REFRESH_TOKEN);
-    getItem().then(value => dispatch(setRefreshToken(value ? value.trim().length > 0 ? value : null : null)));
+    getItem().then(value => dispatch(authSetRefreshToken(value ? value.trim().length > 0 ? value : null : null)));
     return children;
 }

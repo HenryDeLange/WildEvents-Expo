@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { Image, NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View } from 'react-native';
 import { Avatar, HelperText, Menu, Text, TextInput, TouchableRipple } from 'react-native-paper';
 import { useDebounce } from 'use-debounce';
-import { User, useUsersAutocompleteQuery } from '../../../state/redux/api/inatApi';
-import { RegisterUser } from './userTypes';
+import { User as inatUser, useUsersAutocompleteQuery } from '../../../state/redux/api/inatApi';
+import { User } from '../../../state/redux/api/wildEventsApi';
 
 type Props = {
-    control: Control<RegisterUser, any> | Control<any, any>;
+    control: Control<User, any> | Control<any, any>;
     isLoading?: boolean;
     autoFocus?: boolean;
     onEnterKeyPress?: () => void;
@@ -19,7 +19,7 @@ function Inaturalist({ control, isLoading, autoFocus, onEnterKeyPress }: Readonl
     const { t } = useTranslation();
     // State
     const [textValue, setTextValue] = useState('');
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [selectedUser, setSelectedUser] = useState<inatUser | null>(null);
     const [menuVisibility, setMenuVisibility] = useState(false);
     const showMenu = useCallback(() => setMenuVisibility(true), []);
     const hideMenu = useCallback(() => setMenuVisibility(false), []);
@@ -41,7 +41,7 @@ function Inaturalist({ control, isLoading, autoFocus, onEnterKeyPress }: Readonl
         setTextValue(text);
         setSelectedUser(null);
     }, [setTextValue, setSelectedUser]);
-    const handleMenuSelection = useCallback((onChange: (...event: any[]) => void, user: User) => () => {
+    const handleMenuSelection = useCallback((onChange: (...event: any[]) => void, user: inatUser) => () => {
         onChange(user.login);
         setTextValue(user.login);
         setSelectedUser(user);
@@ -64,15 +64,15 @@ function Inaturalist({ control, isLoading, autoFocus, onEnterKeyPress }: Readonl
             name='inaturalist'
             disabled={isLoading}
             rules={{
-                required: t('registerCardINatNameError'),
+                required: t('inatNameError'),
                 onChange: (event) => setTextValue(event.target.value)
             }}
             render={({ field: { onBlur, onChange, value, disabled }, fieldState: { error } }) => (
                 <View>
                     <View ref={inatRef as any}>
                         <TextInput
-                            label={t('registerCardINatName')}
-                            placeholder={t('registerCardINatNameHelp')}
+                            label={t('inatName')}
+                            placeholder={t('inatNameHelp')}
                             left={
                                 <TextInput.Icon focusable={false} disabled={true}
                                     icon={({ size, color }) => (
@@ -92,7 +92,7 @@ function Inaturalist({ control, isLoading, autoFocus, onEnterKeyPress }: Readonl
                             spellCheck={false}
                             disabled={disabled}
                             error={!!error}
-                            value={value}
+                            value={value ?? ''}
                             onChangeText={handleTextChange(onChange)}
                             onBlur={onBlur}
                             autoFocus={autoFocus}

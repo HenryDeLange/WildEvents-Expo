@@ -19,34 +19,34 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        doLogin: (state, action: PayloadAction<AuthFullState>) => {
+        authLogin: (state, action: PayloadAction<AuthFullState>) => {
             state.username = action.payload.username;
             state.inaturalist = action.payload.inaturalist;
             state.accessToken = action.payload.accessToken;
             state.refreshToken = action.payload.refreshToken;
         },
-        doRefresh: (state, action: PayloadAction<AuthFullState>) => {
+        authRefresh: (state, action: PayloadAction<AuthFullState>) => {
             state.username = action.payload.username;
             state.inaturalist = action.payload.inaturalist;
             state.accessToken = action.payload.accessToken;
             state.refreshToken = action.payload.refreshToken;
         },
-        doLogout: () => initialState,
-        replaceAccessToken: (state, action: PayloadAction<string | null>) => {
+        authLogout: () => initialState,
+        authReplaceAccessToken: (state, action: PayloadAction<string | null>) => {
             state.accessToken = action.payload;
         },
-        setRefreshToken: (state, action: PayloadAction<string | null>) => {
+        authSetRefreshToken: (state, action: PayloadAction<string | null>) => {
             state.refreshToken = action.payload;
         }
     }
 });
 
 export const {
-    doLogin,
-    doRefresh,
-    doLogout,
-    replaceAccessToken,
-    setRefreshToken
+    authLogin,
+    authRefresh,
+    authLogout,
+    authReplaceAccessToken,
+    authSetRefreshToken
 } = authSlice.actions;
 
 export const selectAuth = (state: RootState) => state.auth;
