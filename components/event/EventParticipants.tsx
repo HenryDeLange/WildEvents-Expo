@@ -6,7 +6,6 @@ import { useParticipantJoinEventMutation, useParticipantLeaveEventMutation } fro
 import { selectAuthINaturalist } from '../../state/redux/auth/authSlice';
 import { useAppSelector } from '../../state/redux/hooks';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
-import InatAutoCompleteUser from '../ui/InatAutoCompleteUser';
 
 type Props = {
     eventId: string;
@@ -120,13 +119,13 @@ function EventParticipants({ eventId, isAdmin, participants }: Readonly<Props>) 
                     <Text variant='bodyMedium'>
                         {t('eventParticipantJoinMessage')}
                     </Text>
-                    <InatAutoCompleteUser
+                    {/* <InatAutoCompleteUser
                         value={participantName}
                         onChange={setParticipantName}
                         autoFocus
                         disabled={!isAdmin || isJoining}
                         onEnterKeyPress={isJoining ? undefined : handleJoin}
-                    />
+                    /> */}
                     <View style={styles.buttonWrapper}>
                         <Button mode='contained' style={styles.button} uppercase
                             icon={isJoining ? undefined : 'check'}

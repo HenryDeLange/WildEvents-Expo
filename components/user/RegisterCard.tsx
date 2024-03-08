@@ -1,17 +1,22 @@
 import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View, ViewStyle } from 'react-native';
-import { ActivityIndicator, Button, Card, HelperText, TextInput } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, HelperText } from 'react-native-paper';
 import { useRegisterMutation } from '../../state/redux/api/wildEventsApi';
 import { doLogin } from '../../state/redux/auth/authSlice';
 import { REFRESH_TOKEN, saveData } from '../../state/redux/auth/authStorage';
 import { useAppDispatch } from '../../state/redux/hooks';
 import { useIsMobile } from '../ui/utils';
-import InatAutoCompleteUser from '../ui/InatAutoCompleteUser';
+import Inaturalist from './fields/Inaturalist';
+import Password from './fields/Password';
+import PasswordConfirm from './fields/PasswordConfirm';
+import Username from './fields/Username';
+import { RegisterUser } from './fields/userTypes';
 
-export default memo(function () {
+function RegisterCard() {
     // UI
     const isMobile = useIsMobile();
     const cardStyle: ViewStyle = useMemo(() => ({
@@ -20,106 +25,49 @@ export default memo(function () {
     }), [isMobile]);
     // Translation
     const { t } = useTranslation();
-    // State
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const toggleShowPassword = useCallback(() => setShowPassword(!showPassword), [showPassword]);
-    const [inaturalist, setInaturalist] = useState('');
+    // Router
+    const router = useRouter();
+    // Form
+    const { control, handleSubmit, formState: { errors } } = useForm<RegisterUser>();
     // Redux
     const dispatch = useAppDispatch();
-    const [register, { isLoading, isError }] = useRegisterMutation();
+    const [doRegister, { data: registerResponse, isLoading, isSuccess, isError }] = useRegisterMutation();
     // Actions
-    const router = useRouter();
-    const handleRegister = useCallback(async () => {
-        try {
-            const digest = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA512, password);
-            await register({ user: { inaturalist, username, password: digest } })
-                .unwrap()
-                .then((login) => {
-                    dispatch(doLogin({
-                        username: login.username,
-                        inaturalist: login.inaturalist,
-                        accessToken: login.accessToken,
-                        refreshToken: login.refreshToken
-                    }));
-                    saveData(REFRESH_TOKEN, login.refreshToken);
-                    router.replace('/(auth)/events');
-                });
+    const handleRegister = useCallback<SubmitHandler<RegisterUser>>(async (data) => {
+        const digest = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA512, data.password);
+        doRegister({
+            user: {
+                ...data,
+                password: digest
+            }
+        });
+    }, [doRegister, dispatch, router]);
+    useEffect(() => {
+        if (isSuccess && registerResponse) {
+            dispatch(doLogin({
+                username: registerResponse.username,
+                inaturalist: registerResponse.inaturalist,
+                accessToken: registerResponse.accessToken,
+                refreshToken: registerResponse.refreshToken
+            }));
+            saveData(REFRESH_TOKEN, registerResponse.refreshToken);
+            router.replace('/(auth)/events');
         }
-        catch (err) {
-            console.error('Register failed!', err);
-        }
-    }, [register, dispatch, router, inaturalist, username, password]);
-    // Validation
-    const inatNameError = inaturalist.length < 3;
-    const usernameError = username.length < 3;
-    const passwordError = password.length < 8;
-    const confirmPasswordError = confirmPassword !== password;
+    }, [dispatch, doLogin, saveData, router, registerResponse, isSuccess]);
     // RENDER
     return (
         <Card elevation={4} style={cardStyle}>
             <Card.Title title={t('registerCardTitle')} titleVariant='titleLarge' />
             <Card.Content style={styles.content}>
-                <TextInput
-                    mode='outlined'
-                    label={t('registerCardUsername')}
-                    placeholder={t('registerCardUsernameHelp')}
-                    value={username}
-                    onChangeText={setUsername}
-                    left={<TextInput.Icon icon='account-circle' focusable={false} disabled />}
-                    autoFocus
-                />
-                {(username.length > 0 && usernameError) &&
-                    <HelperText type='error' >
-                        {t('registerCardUsernameError')}
-                    </HelperText>
-                }
-                <TextInput
-                    mode='outlined'
-                    label={t('registerCardPassword')}
-                    placeholder={t('registerCardPasswordHelp')}
-                    value={password}
-                    onChangeText={setPassword}
-                    left={<TextInput.Icon icon='key' focusable={false} disabled />}
-                    right={<TextInput.Icon icon={showPassword ? 'eye-off' : 'eye'} onPress={toggleShowPassword} />}
-                    secureTextEntry={!showPassword}
-                />
-                {(password.length > 0 && passwordError) &&
-                    <HelperText type='error'>
-                        {t('registerCardPasswordError')}
-                    </HelperText>
-                }
-                <TextInput
-                    mode='outlined'
-                    label={t('registerCardConfirmPassword')}
-                    placeholder={t('registerCardConfirmPasswordHelp')}
-                    value={confirmPassword}
-                    onChangeText={setConfirmPassword}
-                    left={<TextInput.Icon icon='key' focusable={false} disabled />}
-                    right={<TextInput.Icon icon={showPassword ? 'eye-off' : 'eye'} onPress={toggleShowPassword} />}
-                    secureTextEntry={!showPassword}
-                />
-                {(confirmPassword.length > 0 && confirmPasswordError) &&
-                    <HelperText type='error' >
-                        {t('registerCardConfirmPasswordError')}
-                    </HelperText>
-                }
-                <InatAutoCompleteUser
-                    value={inaturalist}
-                    onChange={setInaturalist}
-                />
-                {(inaturalist.length > 0 && inatNameError) &&
-                    <HelperText type='error'>
-                        {t('registerCardINatNameError')}
-                    </HelperText>
-                }
+                <Username control={control} isLoading={isLoading} />
+                <Password control={control} isLoading={isLoading} />
+                <PasswordConfirm control={control} isLoading={isLoading} />
+                <Inaturalist control={control} isLoading={isLoading} />
                 <View style={styles.buttonWrapper}>
                     <Button mode='contained' style={styles.button} uppercase
                         icon={isLoading ? undefined : 'account-plus'}
-                        disabled={isLoading || inatNameError || usernameError || passwordError || confirmPasswordError}
-                        onPress={handleRegister}
+                        disabled={isLoading || Object.keys(errors).length > 0}
+                        onPress={handleSubmit(handleRegister)}
                     >
                         {isLoading ? <ActivityIndicator animating={true} /> : t('registerButton')}
                     </Button>
@@ -132,11 +80,13 @@ export default memo(function () {
             </Card.Content>
         </Card>
     );
-});
+}
+
+export default RegisterCard;
 
 const styles = StyleSheet.create({
     content: {
-        gap: 15
+        gap: 12
     },
     buttonWrapper: {
         alignItems: 'center'

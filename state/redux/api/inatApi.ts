@@ -38,19 +38,19 @@ export const {
     useTaxaAutocompleteQuery
 } = inatApi;
 
-type UserAutocompleteArgs = {
+export type UserAutocompleteArgs = {
     q: string;
     per_page?: number;
 }
 
-type UserAutocomplete = {
+export type UserAutocomplete = {
     total_results: number;
     page: number; // Starts at 1
     per_page: number;
     results: User[];
 }
 
-type User = {
+export type User = {
     id: number;
     login: string;
     name: string;
@@ -62,7 +62,7 @@ type User = {
     species_count: number;
 }
 
-type TaxaAutocompleteArgs = {
+export type TaxaAutocompleteArgs = {
     q: string;
     is_active?: boolean;
     taxon_id?: string[];
@@ -74,7 +74,7 @@ type TaxaAutocompleteArgs = {
     all_names?: boolean;
 }
 
-type TaxaAutocomplete = {
+export type TaxaAutocomplete = {
     total_results: number;
     page: number; // Starts at 1
     per_page: number;
