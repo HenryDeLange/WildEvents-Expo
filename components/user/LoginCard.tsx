@@ -60,7 +60,7 @@ export default memo(function () {
                 />
                 <View style={styles.buttonWrapper}>
                     <Button mode='contained' style={styles.button} uppercase
-                        icon={'login-variant'}
+                        icon='login-variant'
                         disabled={isLoading || !isValid}
                         loading={isLoading}
                         onPress={submit}

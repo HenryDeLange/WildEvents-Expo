@@ -12,7 +12,7 @@ import { useIsEventAdmin } from '../../../components/event/utils/hooks';
 import HeaderActionButton from '../../../components/ui/HeaderActionButton';
 import ResponsiveCardWrapper from '../../../components/ui/ResponsiveCardWrapper';
 import ThemedSafeAreaView from '../../../components/ui/ThemedSafeAreaView';
-import LogoutButton from '../../../components/user/LogoutButton';
+import LogoutButton from '../../../components/user/buttons/LogoutButton';
 import { useCalculateActivityMutation, useDeleteActivityMutation, useDisableActivityMutation, useEnableActivityMutation, useFindActivityQuery } from '../../../state/redux/api/wildEventsApi';
 
 function Activity() {

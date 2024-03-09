@@ -1,7 +1,7 @@
+import { Redirect, Stack } from 'expo-router';
 import { memo } from 'react';
-import { useAppSelector } from '../../state/redux/hooks';
 import { selectAuthRefreshToken } from '../../state/redux/auth/authSlice';
-import { Redirect, Slot, Stack } from 'expo-router';
+import { useAppSelector } from '../../state/redux/hooks';
 
 export default memo(function () {
     const refreshToken = useAppSelector(selectAuthRefreshToken);

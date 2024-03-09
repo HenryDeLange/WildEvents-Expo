@@ -14,9 +14,10 @@ import { useIsEventAdmin } from '../../../components/event/utils/hooks';
 import HeaderActionButton from '../../../components/ui/HeaderActionButton';
 import ResponsiveCardWrapper from '../../../components/ui/ResponsiveCardWrapper';
 import ThemedSafeAreaView from '../../../components/ui/ThemedSafeAreaView';
-import LogoutButton from '../../../components/user/LogoutButton';
+import LogoutButton from '../../../components/user/buttons/LogoutButton';
 import { useCalculateEventMutation, useDeleteEventMutation, useFindEventQuery, wildEventsApi } from '../../../state/redux/api/wildEventsApi';
 import { useAppDispatch } from '../../../state/redux/hooks';
+import EditEventButton from '../../../components/event/buttons/EditEventButton';
 
 function Event() {
     // Translation
@@ -61,7 +62,7 @@ function Event() {
                         onPress={handleCalculateEvent}
                         busy={isCalculating}
                     />
-                    <ModifyEvent event={event} />
+                    <EditEventButton eventId={eventId} disabled={isDeleting} />
                     <HeaderActionButton
                         textKey='delete'
                         icon='trash-can-outline'
@@ -91,7 +92,7 @@ function Event() {
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
                 <Stack.Screen options={navBar} />
                 <Text variant='headlineLarge'>
-                    {event.name}
+                    {event.name} {event.visibility}
                 </Text>
                 <Divider style={styles.divider} />
                 <EventDates event={event} />

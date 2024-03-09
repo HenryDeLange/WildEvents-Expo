@@ -54,7 +54,7 @@ function RegisterCard() {
                 <Inaturalist control={control} isLoading={isLoading} />
                 <View style={styles.buttonWrapper}>
                     <Button mode='contained' style={styles.button} uppercase
-                        icon={'account-plus'}
+                        icon='account-plus'
                         disabled={isLoading || !isValid}
                         loading={isLoading}
                         onPress={handleSubmit(handleRegister)}

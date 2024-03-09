@@ -1,8 +1,8 @@
 import { memo, useCallback } from 'react';
-import { authLogout } from '../../state/redux/auth/authSlice';
-import { REFRESH_TOKEN, saveData } from '../../state/redux/auth/authStorage';
-import { useAppDispatch } from '../../state/redux/hooks';
-import HeaderLinkButton from '../ui/HeaderLinkButton';
+import { authLogout } from '../../../state/redux/auth/authSlice';
+import { REFRESH_TOKEN, saveData } from '../../../state/redux/auth/authStorage';
+import { useAppDispatch } from '../../../state/redux/hooks';
+import HeaderLinkButton from '../../ui/HeaderLinkButton';
 
 export default memo(function () {
     const dispatch = useAppDispatch();

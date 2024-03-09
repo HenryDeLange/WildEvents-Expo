@@ -1,34 +1,27 @@
-import { format } from 'date-fns';
-import { Stack, useRouter } from 'expo-router';
-import Markdown from 'markdown-to-jsx';
+import { Stack } from 'expo-router';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, ListRenderItemInfo, RefreshControl, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
-import { ActivityIndicator, Button, Card, Divider, Icon, Text, Tooltip } from 'react-native-paper';
-import ModifyEvent from '../../../components/event/ModifyEvent';
+import { FlatList, ListRenderItemInfo, RefreshControl, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Text } from 'react-native-paper';
+import EventCard from '../../../components/event/EventCard';
+import CreateEventButton from '../../../components/event/buttons/CreateEventButton';
 import ThemedSafeAreaView from '../../../components/ui/ThemedSafeAreaView';
-import LogoutButton from '../../../components/user/LogoutButton';
+import LogoutButton from '../../../components/user/buttons/LogoutButton';
 import { Event, useFindEventsQuery } from '../../../state/redux/api/wildEventsApi';
 
 function Events() {
-    // UI
-    const { width } = useWindowDimensions();
-    // Translation
     const { t } = useTranslation();
-    // Router
-    const router = useRouter();
+    const { width } = useWindowDimensions();
     // State
     const [page, setPage] = useState(0);
     const [fetchedEvents, setFetchedEvents] = useState<Event[]>([]);
-    // TODO: debounce the search filed to prevent too many requests being sent to the backend
-    // const [search, setSearch] = useState('');
     // Redux
-    const { data, isLoading, isFetching } = useFindEventsQuery({ page });
+    const { data: events, isLoading, isFetching } = useFindEventsQuery({ page });
     useEffect(() => {
         // console.log('processing fetched events...', 'page:', page, 'data length:', data?.data?.length, 'events in list:', fetchedEvents.length)
         setFetchedEvents((prevFetchedEvents) => {
             const newFetchedEvents = [...prevFetchedEvents];
-            for (let newEvent of (data?.data ?? [])) {
+            for (let newEvent of (events?.data ?? [])) {
                 let containsAlready = false;
                 for (let oldEvent of prevFetchedEvents) {
                     if (oldEvent.id === newEvent.id) {
@@ -42,19 +35,10 @@ function Events() {
             }
             return newFetchedEvents;
         });
-    }, [data, setFetchedEvents]);
-    // Search
-    // TODO: Search on backend, not frontend
-    const events = fetchedEvents;
-    // const events = !search ? fetchedEvents : fetchedEvents.filter(event =>
-    //     event.name.toLowerCase().includes(search.toLowerCase())
-    //     || event.description?.toLowerCase().includes(search.toLowerCase()));
-    // Actions
-    const handleView = useCallback((event: Event) => () => router.push(`/events/${event.id}`), []);
+    }, [events, setFetchedEvents]);
     // NavBar
     const navBarActions = useCallback(() => (
         <View style={styles.navBar}>
-            {/* <Searchbar value={search} onChangeText={setSearch} placeholder={t('search')} /> */}
             <LogoutButton />
         </View>
     ), []);
@@ -62,7 +46,6 @@ function Events() {
         title: isFetching ? t('loading') : t('eventsNavTitle'),
         headerRight: navBarActions
     }), [t, isFetching, navBarActions]);
-
     // RENDER
     const gridSize = (width > 800) ? (width > 1200) ? 3 : 2 : 1;
     return (
@@ -73,7 +56,7 @@ function Events() {
                     {t('welcomeAction')}
                 </Text>
                 <View style={styles.createWrapper}>
-                    <ModifyEvent />
+                    <CreateEventButton />
                 </View>
             </View>
             {isLoading &&
@@ -93,7 +76,7 @@ function Events() {
                 onEndReachedThreshold={0.3}
                 onEndReached={useCallback(() => {
                     if (!isFetching && !isLoading) {
-                        if (!data?.lastPage && (data && (data.pageSize ?? 0) * page < (data.totalRecords ?? 0))) {
+                        if (!events?.lastPage && (events && (events.pageSize ?? 0) * page < (events.totalRecords ?? 0))) {
                             // console.log('page:', page, 'next:', (page + 1), 'last:', data?.lastPage, 'total:', data.totalRecords)
                             setPage(page + 1);
                         }
@@ -104,49 +87,10 @@ function Events() {
                     // else {
                     //     console.log('already loading new pages')
                     // }
-                }, [page, setPage, isFetching, isLoading, data?.totalRecords])}
-                // getItemCount={() => pagedEvents?.totalRecords ?? 0}
-                data={isLoading ? [] : events}
+                }, [page, setPage, isFetching, isLoading, events?.totalRecords])}
+                data={isLoading ? [] : fetchedEvents}
                 keyExtractor={useCallback((event: Event) => event.id, [])}
-                renderItem={useCallback(({ item: event }: ListRenderItemInfo<Event>) => (
-                    <Card key={event.id} style={styles.card} >
-                        <Text variant='headlineLarge'>
-                            {event.name}
-                        </Text>
-                        <View>
-                            <View style={styles.dates}>
-                                <Tooltip title={t('eventCardStartDate')}>
-                                    <View style={styles.row}>
-                                        <Icon source='calendar-arrow-right' size={20} />
-                                        <Text> {format(event.start, 'yyyy-MM-dd')}</Text>
-                                    </View>
-                                </Tooltip>
-                                <Tooltip title={t('eventCardStopDate')}>
-                                    <View style={styles.row}>
-                                        <Icon source='calendar-arrow-left' size={20} />
-                                        <Text> {format(event.stop, 'yyyy-MM-dd')}</Text>
-                                    </View>
-                                </Tooltip>
-                                <Tooltip title={t('eventCardCloseDate')}>
-                                    <View style={styles.row}>
-                                        <Icon source='calendar-edit' size={20} />
-                                        <Text> {format(event.close, 'yyyy-MM-dd')}</Text>
-                                    </View>
-                                </Tooltip>
-                            </View>
-                            <ScrollView style={styles.description}>
-                                <Markdown>{event.description ?? ''}</Markdown>
-                            </ScrollView>
-                            <Divider style={styles.divider} />
-                            {/* TODO: Justify button to the bottom */}
-                            <Button mode='text' icon='eye' uppercase
-                                onPress={handleView(event)}
-                            >
-                                {t('view')}
-                            </Button>
-                        </View>
-                    </Card>
-                ), [router])}
+                renderItem={useCallback(({ item: event }: ListRenderItemInfo<Event>) => <EventCard event={event} />, [])}
             />
         </ThemedSafeAreaView>
     );
@@ -161,9 +105,6 @@ const styles = StyleSheet.create({
         gap: 25,
         marginHorizontal: 4
     },
-    search: {
-        width: '100%'
-    },
     loading: {
         margin: 30
     },
@@ -171,22 +112,6 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         height: '100%',
         alignItems: 'center'
-    },
-    card: {
-        margin: 10,
-        padding: 12,
-        alignItems: 'center',
-        gap: 6,
-        maxWidth: 400
-    },
-    description: {
-        borderWidth: 1,
-        borderRadius: 4,
-        borderColor: '#ABA',
-        backgroundColor: '#EFD8',
-        paddingHorizontal: 12,
-        paddingTop: 0,
-        paddingBottom: 4
     },
     text: {
         textAlign: 'center',
@@ -204,19 +129,5 @@ const styles = StyleSheet.create({
     },
     list: {
         width: '100%'
-    },
-    dates: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        gap: 12,
-        marginVertical: 8
-    },
-    row: {
-        flexDirection: 'row'
-    },
-    divider: {
-        width: '100%',
-        marginVertical: 8
     }
 });
