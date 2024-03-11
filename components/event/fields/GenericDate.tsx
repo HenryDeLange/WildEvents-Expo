@@ -14,6 +14,7 @@ type Props = {
     control: Control<EventBase, any>;
     isLoading?: boolean;
     name: 'start' | 'stop' | 'close';
+    icon: 'calendar-arrow-right' | 'calendar-arrow-left' | 'calendar-lock',
     label: string;
     requiredMessage: string;
     startYear: number;
@@ -22,7 +23,7 @@ type Props = {
     overlap: (value: string) => string | undefined;
 }
 
-function GenericDate({ control, isLoading, name, label, requiredMessage, startYear, endYear, validRange, overlap }: Readonly<Props>) {
+function GenericDate({ control, isLoading, name, icon, label, requiredMessage, startYear, endYear, validRange, overlap }: Readonly<Props>) {
     const { t } = useTranslation();
     const theme = useTheme();
     const [focussed, setFocussed] = useState(false);
@@ -45,7 +46,7 @@ function GenericDate({ control, isLoading, name, label, requiredMessage, startYe
                 <View>
                     <TextInput
                         label={t(label)}
-                        left={<TextInput.Icon icon='calendar-edit' focusable={false} disabled={true} />}
+                        left={<TextInput.Icon icon={icon} focusable={false} disabled={true} />}
                         right={
                             <TextInput.Icon
                                 icon={focussed ? 'calendar-search' : 'calendar-blank'}
@@ -58,7 +59,7 @@ function GenericDate({ control, isLoading, name, label, requiredMessage, startYe
                         mode='outlined'
                         autoComplete='off'
                         disabled={disabled}
-                        value={value}
+                        value={value ?? ''}
                         readOnly
                         onFocus={useCallback(() => {
                             setFocussed(true)

@@ -92,7 +92,7 @@ function Event() {
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
                 <Stack.Screen options={navBar} />
                 <Text variant='headlineLarge'>
-                    {event.name} {event.visibility}
+                    {event.name}
                 </Text>
                 <Divider style={styles.divider} />
                 <EventDates event={event} />
@@ -107,7 +107,7 @@ function Event() {
                 </View>
                 <Divider style={styles.divider} />
                 <View style={styles.chipsRow}>
-                    <EventParticipants eventId={eventId} isAdmin={isAdmin} participants={event.participants} />
+                    <EventParticipants eventId={eventId} isAdmin={isAdmin} visibility={event.visibility} participants={event.participants} />
                     <EventAdmins eventId={eventId} isAdmin={isAdmin} admins={event.admins} />
                 </View>
                 <Divider style={styles.divider} />
@@ -133,7 +133,6 @@ function Event() {
                 </ResponsiveCardWrapper>
             </ScrollView>
         </ThemedSafeAreaView>
-
     );
 }
 

@@ -1,8 +1,8 @@
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Chip, Dialog, HelperText, Icon, Text, useTheme } from 'react-native-paper';
-import { useParticipantJoinEventMutation, useParticipantLeaveEventMutation } from '../../state/redux/api/wildEventsApi';
+import { ActivityIndicator, Button, Chip, Dialog, HelperText, Icon, Text, Tooltip, useTheme } from 'react-native-paper';
+import { EventBase, useParticipantJoinEventMutation, useParticipantLeaveEventMutation } from '../../state/redux/api/wildEventsApi';
 import { selectAuthINaturalist } from '../../state/redux/auth/authSlice';
 import { useAppSelector } from '../../state/redux/hooks';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
@@ -10,10 +10,11 @@ import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
 type Props = {
     eventId: string;
     isAdmin: boolean;
+    visibility: EventBase['visibility'];
     participants?: string[];
 }
 
-function EventParticipants({ eventId, isAdmin, participants }: Readonly<Props>) {
+function EventParticipants({ eventId, isAdmin, visibility, participants }: Readonly<Props>) {
     const { t } = useTranslation();
     const theme = useTheme();
 
@@ -70,9 +71,19 @@ function EventParticipants({ eventId, isAdmin, participants }: Readonly<Props>) 
     return (
         <View style={styles.wrapper}>
             {/* Participant Chips */}
-            <Text variant='titleMedium' style={styles.title}>
-                {t('eventParticipants')}
-            </Text>
+            <View style={styles.row}>
+                <Text variant='titleMedium' style={styles.title}>
+                    {t('eventParticipants')}
+                </Text>
+                {visibility === 'PRIVATE' &&
+                    <View style={styles.lockWrapper}>
+                        <Tooltip title={t(`eventVisibilityPRIVATE`)}>
+                            <Icon source='lock' size={18} />
+                        </Tooltip>
+                    </View>
+                }
+            </View>
+
             <View style={styles.chipWrapper}>
                 {participants?.map(participant =>
                     <Chip key={participant} mode='outlined'
@@ -170,6 +181,13 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: 'bold'
+    },
+    row: {
+        flexDirection: 'row'
+    },
+    lockWrapper: {
+        marginLeft: 8,
+        justifyContent: 'center'
     }
 });
 

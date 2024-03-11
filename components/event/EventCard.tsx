@@ -17,26 +17,35 @@ function EventCard({ event }: Readonly<Props>) {
     const handleView = useCallback((event: Event) => () => router.push(`/events/${event.id}`), []);
     return (
         <Card key={event.id} style={styles.card}>
-            <Text variant='headlineLarge'>
-                {event.name}
-            </Text>
+            <View style={styles.row}>
+                <Text variant='headlineLarge'>
+                    {event.name}
+                </Text>
+                {event.visibility === 'PRIVATE' &&
+                    <View style={styles.lockWrapper}>
+                        <Tooltip title={t(`eventVisibilityPRIVATE`)}>
+                            <Icon source='lock' size={24} />
+                        </Tooltip>
+                    </View>
+                }
+            </View>
             <View>
                 <View style={styles.dates}>
-                    <Tooltip title={t('eventCardStartDate')}>
+                    <Tooltip title={t('eventStartDate')}>
                         <View style={styles.row}>
                             <Icon source='calendar-arrow-right' size={20} />
                             <Text>{format(event.start, 'yyyy-MM-dd')}</Text>
                         </View>
                     </Tooltip>
-                    <Tooltip title={t('eventCardStopDate')}>
+                    <Tooltip title={t('eventStopDate')}>
                         <View style={styles.row}>
                             <Icon source='calendar-arrow-left' size={20} />
                             <Text>{format(event.stop, 'yyyy-MM-dd')}</Text>
                         </View>
                     </Tooltip>
-                    <Tooltip title={t('eventCardCloseDate')}>
+                    <Tooltip title={t('eventCloseDate')}>
                         <View style={styles.row}>
-                            <Icon source='calendar-edit' size={20} />
+                            <Icon source='calendar-lock' size={20} />
                             <Text>{format(event.close, 'yyyy-MM-dd')}</Text>
                         </View>
                     </Tooltip>
@@ -88,5 +97,9 @@ const styles = StyleSheet.create({
     divider: {
         width: '100%',
         marginVertical: 8
+    },
+    lockWrapper: {
+        marginLeft: 'auto',
+        justifyContent: 'center'
     }
 });

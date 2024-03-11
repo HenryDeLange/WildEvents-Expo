@@ -21,13 +21,16 @@ function StartDate({ control, isLoading }: Readonly<Props>) {
             control={control}
             isLoading={isLoading}
             name='start'
+            icon='calendar-arrow-right'
             label='eventStartDate'
             requiredMessage='eventStartDateRequired'
             startYear={getYear(subDays(now, 14))}
             endYear={getYear(addMonths(now, 3))}
-            validRange={{ startDate: subDays(now, 14), endDate: addMonths(now, 3) }} // TODO: Also factor in the stop date (if present)
+            validRange={{
+                startDate: subDays(now, 14),
+                endDate: stopDate ? subDays(stopDate, 1) : addMonths(now, 3)
+            }}
             overlap={(value: string) => (value && stopDate && !isAfter(stopDate, value)) ? t('eventStartDateError') : undefined}
-
         />
     );
 }

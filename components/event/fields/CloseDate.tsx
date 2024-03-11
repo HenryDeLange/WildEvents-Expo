@@ -18,11 +18,15 @@ function CloseDate({ control, isLoading }: Readonly<Props>) {
             control={control}
             isLoading={isLoading}
             name='close'
+            icon='calendar-lock'
             label='eventCloseDate'
             requiredMessage='eventCloseDateRequired'
             startYear={getYear(addDays(stopDate ?? '', 1))}
             endYear={getYear(addMonths(stopDate ?? '', 2))}
-            validRange={{ startDate: addDays(stopDate ?? '', 1), endDate: addMonths(stopDate ?? '', 2) }}
+            validRange={{
+                startDate: addDays(stopDate ?? '', 1),
+                endDate: addMonths(stopDate ?? '', 2)
+            }}
             overlap={() => undefined}
         />
     );

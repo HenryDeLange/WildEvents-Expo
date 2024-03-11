@@ -58,7 +58,9 @@ function ModifyEvent({ modalVisible, hideModal, eventId }: Readonly<Props>) {
         <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={dismissModal}>
             <Card.Title titleVariant='titleLarge'
                 title={eventId ? t('eventCardEditTitle') : t('eventCardCreateTitle')}
-                right={() => <Visibility control={control} isLoading={isBusyModifying} />}
+                right={() =>
+                    <Visibility control={control} isLoading={isBusyModifying} />
+                }
             />
             <Card.Content style={styles.content}>
                 <Name control={control} isLoading={isBusyModifying} />

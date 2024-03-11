@@ -16,7 +16,7 @@ function EventDates({ event }: Readonly<Props>) {
             <View style={styles.row}>
                 <Icon source='calendar-arrow-right' size={20} />
                 <Text variant='bodyMedium' style={styles.text}>
-                    {t('eventCardStartDate')}
+                    {t('eventStartDate')}
                 </Text>
                 <Text variant='bodyMedium'>
                     {format(event.start, 'yyyy-MM-dd')}
@@ -25,16 +25,16 @@ function EventDates({ event }: Readonly<Props>) {
             <View style={styles.row}>
                 <Icon source='calendar-arrow-left' size={20} />
                 <Text variant='bodyMedium' style={styles.text}>
-                    {t('eventCardStopDate')}
+                    {t('eventStopDate')}
                 </Text>
                 <Text variant='bodyMedium'>
                     {format(event.stop, 'yyyy-MM-dd')}
                 </Text>
             </View>
             <View style={styles.row}>
-                <Icon source='calendar-edit' size={20} />
+                <Icon source='calendar-lock' size={20} />
                 <Text variant='bodyMedium' style={styles.text}>
-                    {t('eventCardCloseDate')}
+                    {t('eventCloseDate')}
                 </Text>
                 <Text variant='bodyMedium'>
                     {format(event.close, 'yyyy-MM-dd')}

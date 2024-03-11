@@ -100,7 +100,7 @@ const baseQueryWithReauth: BaseQueryFn<
 // Retry requests
 const staggeredBaseQuery = retry(
     baseQueryWithReauth,
-    { maxRetries: 3 }
+    { maxRetries: 2 }
 );
 
 // The empty API service that will be used to inject the auto-generated endpoints into
