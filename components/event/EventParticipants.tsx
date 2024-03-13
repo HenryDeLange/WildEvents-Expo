@@ -163,6 +163,8 @@ function EventParticipants({ eventId, isAdmin, visibility, participants }: Reado
     );
 }
 
+export default memo(EventParticipants);
+
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
@@ -196,5 +198,3 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     }
 });
-
-export default memo(EventParticipants);

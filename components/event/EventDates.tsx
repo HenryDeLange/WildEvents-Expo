@@ -2,49 +2,76 @@ import { format } from 'date-fns';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { Icon, Text } from 'react-native-paper';
+import { Icon, Text, Tooltip } from 'react-native-paper';
 import { Event } from '../../state/redux/api/wildEventsApi';
 
 type Props = {
     event: Event;
+    tooltip?: boolean;
 }
 
-function EventDates({ event }: Readonly<Props>) {
-    const { t } = useTranslation();
+function EventDates({ event, tooltip }: Readonly<Props>) {
     return (
         <View style={styles.wrapper}>
-            <View style={styles.row}>
-                <Icon source='calendar-arrow-right' size={20} />
-                <Text variant='bodyMedium' style={styles.text}>
-                    {t('eventStartDate')}
-                </Text>
-                <Text variant='bodyMedium'>
-                    {format(event.start, 'yyyy-MM-dd')}
-                </Text>
-            </View>
-            <View style={styles.row}>
-                <Icon source='calendar-arrow-left' size={20} />
-                <Text variant='bodyMedium' style={styles.text}>
-                    {t('eventStopDate')}
-                </Text>
-                <Text variant='bodyMedium'>
-                    {format(event.stop, 'yyyy-MM-dd')}
-                </Text>
-            </View>
-            <View style={styles.row}>
-                <Icon source='calendar-lock' size={20} />
-                <Text variant='bodyMedium' style={styles.text}>
-                    {t('eventCloseDate')}
-                </Text>
-                <Text variant='bodyMedium'>
-                    {format(event.close, 'yyyy-MM-dd')}
-                </Text>
-            </View>
+            <DateInfo
+                date={event.start}
+                icon='calendar-arrow-right'
+                label='eventStartDate'
+                tooltip={tooltip}
+            />
+            <DateInfo
+                date={event.stop}
+                icon='calendar-arrow-left'
+                label='eventStopDate'
+                tooltip={tooltip}
+            />
+            <DateInfo
+                date={event.close}
+                icon='calendar-lock'
+                label='eventCloseDate'
+                tooltip={tooltip}
+            />
         </View>
     );
 }
 
 export default memo(EventDates);
+
+type DateProps = {
+    date: string;
+    icon: 'calendar-arrow-left' | 'calendar-arrow-right' | 'calendar-lock';
+    label: string;
+    tooltip?: boolean;
+}
+
+function DateInfo({ date, icon, label, tooltip }: Readonly<DateProps>) {
+    const { t } = useTranslation();
+    return (
+        <View style={styles.row}>
+            {tooltip &&
+                <Tooltip title={t(label)}>
+                    <View style={styles.row}>
+                        <Icon source={icon} size={18} />
+                        <Text variant='bodySmall' style={styles.date}>
+                            {format(date, 'yyyy-MM-dd')}
+                        </Text>
+                    </View>
+                </Tooltip>
+            }
+            {!tooltip &&
+                <>
+                    <Icon source={icon} size={20} />
+                    <Text variant='bodyMedium' style={styles.label}>
+                        {t(label)}
+                    </Text>
+                    <Text variant='bodyMedium' style={styles.date}>
+                        {format(date, 'yyyy-MM-dd')}
+                    </Text>
+                </>
+            }
+        </View>
+    );
+}
 
 const styles = StyleSheet.create({
     wrapper: {
@@ -58,9 +85,11 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row'
     },
-    text: {
+    label: {
         fontWeight: 'bold',
-        marginLeft: 5,
-        marginRight: 10
+        marginLeft: 4
+    },
+    date: {
+        marginLeft: 4
     }
 });

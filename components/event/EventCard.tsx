@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Card, Divider, Icon, Text, Tooltip } from 'react-native-paper';
 import { Event } from '../../state/redux/api/wildEventsApi';
+import EventDates from './EventDates';
 
 type Props = {
     event: Event;
@@ -30,26 +31,7 @@ function EventCard({ event }: Readonly<Props>) {
                 }
             </View>
             <View>
-                <View style={styles.dates}>
-                    <Tooltip title={t('eventStartDate')}>
-                        <View style={styles.row}>
-                            <Icon source='calendar-arrow-right' size={20} />
-                            <Text>{format(event.start, 'yyyy-MM-dd')}</Text>
-                        </View>
-                    </Tooltip>
-                    <Tooltip title={t('eventStopDate')}>
-                        <View style={styles.row}>
-                            <Icon source='calendar-arrow-left' size={20} />
-                            <Text>{format(event.stop, 'yyyy-MM-dd')}</Text>
-                        </View>
-                    </Tooltip>
-                    <Tooltip title={t('eventCloseDate')}>
-                        <View style={styles.row}>
-                            <Icon source='calendar-lock' size={20} />
-                            <Text>{format(event.close, 'yyyy-MM-dd')}</Text>
-                        </View>
-                    </Tooltip>
-                </View>
+                <EventDates event={event} tooltip />
                 <ScrollView style={styles.description}>
                     <Markdown>{event.description ?? ''}</Markdown>
                 </ScrollView>
@@ -82,13 +64,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingTop: 0,
         paddingBottom: 4
-    },
-    dates: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        gap: 12,
-        marginVertical: 8
     },
     row: {
         flexDirection: 'row',

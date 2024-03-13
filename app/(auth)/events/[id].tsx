@@ -3,13 +3,13 @@ import Markdown from 'markdown-to-jsx';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Dialog, Divider, Text } from 'react-native-paper';
+import { ActivityIndicator, Button, Dialog, Divider, Icon, Text, Tooltip } from 'react-native-paper';
 import ActivityEventTotals from '../../../components/activity/ActivityEventTotals';
 import ActivityGrid from '../../../components/activity/ActivityGrid';
 import EventAdmins from '../../../components/event/EventAdmins';
 import EventDates from '../../../components/event/EventDates';
 import EventParticipants from '../../../components/event/EventParticipants';
-import ModifyEvent from '../../../components/event/ModifyEvent';
+import EditEventButton from '../../../components/event/buttons/EditEventButton';
 import { useIsEventAdmin } from '../../../components/event/utils/hooks';
 import HeaderActionButton from '../../../components/ui/HeaderActionButton';
 import ResponsiveCardWrapper from '../../../components/ui/ResponsiveCardWrapper';
@@ -17,7 +17,6 @@ import ThemedSafeAreaView from '../../../components/ui/ThemedSafeAreaView';
 import LogoutButton from '../../../components/user/buttons/LogoutButton';
 import { useCalculateEventMutation, useDeleteEventMutation, useFindEventQuery, wildEventsApi } from '../../../state/redux/api/wildEventsApi';
 import { useAppDispatch } from '../../../state/redux/hooks';
-import EditEventButton from '../../../components/event/buttons/EditEventButton';
 
 function Event() {
     // Translation
@@ -53,7 +52,7 @@ function Event() {
     }, [isDeleted, router]);
     // NavBar
     const navBarActions = useCallback(() => (
-        <View style={styles.actions}>
+        <View style={styles.row}>
             {isAdmin &&
                 <>
                     <HeaderActionButton
@@ -91,9 +90,18 @@ function Event() {
         <ThemedSafeAreaView style={styles.container}>
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
                 <Stack.Screen options={navBar} />
-                <Text variant='headlineLarge'>
-                    {event.name}
-                </Text>
+                <View style={styles.row}>
+                    {event.visibility === 'PRIVATE' &&
+                        <View style={styles.lockWrapper}>
+                            <Tooltip title={t(`eventVisibilityPRIVATE`)}>
+                                <Icon source='lock' size={24} />
+                            </Tooltip>
+                        </View>
+                    }
+                    <Text variant='headlineLarge'>
+                        {event.name}
+                    </Text>
+                </View>
                 <Divider style={styles.divider} />
                 <EventDates event={event} />
                 <Divider style={styles.divider} />
@@ -185,7 +193,7 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         marginBottom: 16
     },
-    actions: {
+    row: {
         flexDirection: 'row'
     },
     buttonWrapper: {
@@ -195,5 +203,9 @@ const styles = StyleSheet.create({
     button: {
         marginTop: 10,
         width: '80%'
+    },
+    lockWrapper: {
+        marginRight: 12,
+        justifyContent: 'center'
     }
 });

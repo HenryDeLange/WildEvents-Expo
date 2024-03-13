@@ -145,6 +145,8 @@ function EventAdmins({ eventId, isAdmin, admins }: Readonly<Props>) {
     );
 }
 
+export default memo(EventAdmins);
+
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
@@ -172,5 +174,3 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     }
 });
-
-export default memo(EventAdmins);
