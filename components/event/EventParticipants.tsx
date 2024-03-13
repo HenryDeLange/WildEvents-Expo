@@ -1,11 +1,13 @@
 import { memo, useCallback, useEffect, useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Chip, Dialog, HelperText, Icon, Text, Tooltip, useTheme } from 'react-native-paper';
-import { EventBase, useParticipantJoinEventMutation, useParticipantLeaveEventMutation } from '../../state/redux/api/wildEventsApi';
+import { EventBase, User, useParticipantJoinEventMutation, useParticipantLeaveEventMutation } from '../../state/redux/api/wildEventsApi';
 import { selectAuthINaturalist } from '../../state/redux/auth/authSlice';
 import { useAppSelector } from '../../state/redux/hooks';
 import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
+import Inaturalist from '../user/fields/Inaturalist';
 
 type Props = {
     eventId: string;
@@ -56,16 +58,22 @@ function EventParticipants({ eventId, isAdmin, visibility, participants }: Reado
         setParticipantName('');
         setShowJoinDialog(true);
     }, []);
-    const handleJoin = useCallback(() => {
+    const handleJoin = useCallback((data: User) => {
         doJoin({
             eventId: eventId,
-            iNatId: participantName
+            iNatId: data.inaturalist
         });
     }, [participantName]);
     useEffect(() => {
         if (isJoined && !isJoinError)
             setShowJoinDialog(false);
     }, [isJoined, isJoinError]);
+
+    const { control, handleSubmit } = useForm<User>();
+    const inaturalistInput = useWatch({ control, name: 'inaturalist' });
+    useEffect(() => {
+        setParticipantName(inaturalistInput);
+    }, [inaturalistInput, setParticipantName]);
 
     // RENDER
     return (
@@ -83,7 +91,6 @@ function EventParticipants({ eventId, isAdmin, visibility, participants }: Reado
                     </View>
                 }
             </View>
-
             <View style={styles.chipWrapper}>
                 {participants?.map(participant =>
                     <Chip key={participant} mode='outlined'
@@ -130,18 +137,17 @@ function EventParticipants({ eventId, isAdmin, visibility, participants }: Reado
                     <Text variant='bodyMedium'>
                         {t('eventParticipantJoinMessage')}
                     </Text>
-                    {/* <InatAutoCompleteUser
-                        value={participantName}
-                        onChange={setParticipantName}
+                    <Inaturalist
+                        control={control}
+                        isLoading={!isAdmin || isJoining}
                         autoFocus
-                        disabled={!isAdmin || isJoining}
-                        onEnterKeyPress={isJoining ? undefined : handleJoin}
-                    /> */}
+                        onEnterKeyPress={isJoining ? undefined : handleSubmit(handleJoin)}
+                    />
                     <View style={styles.buttonWrapper}>
                         <Button mode='contained' style={styles.button} uppercase
                             icon={isJoining ? undefined : 'check'}
                             disabled={isJoining || !participantName || participantName.trim().length === 0}
-                            onPress={handleJoin}
+                            onPress={handleSubmit(handleJoin)}
                         >
                             {isJoining ? <ActivityIndicator animating={true} /> : t('confirm')}
                         </Button>

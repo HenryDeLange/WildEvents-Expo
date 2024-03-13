@@ -8,7 +8,7 @@ import { User as inatUser, useUsersAutocompleteQuery } from '../../../state/redu
 import { User } from '../../../state/redux/api/wildEventsApi';
 
 type Props = {
-    control: Control<User, any> | Control<any, any>;
+    control: Control<User, any>;
     isLoading?: boolean;
     autoFocus?: boolean;
     onEnterKeyPress?: () => void;
