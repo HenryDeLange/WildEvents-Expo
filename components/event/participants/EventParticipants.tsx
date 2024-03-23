@@ -38,7 +38,7 @@ function EventParticipants({ eventId, isAdmin, visibility, participants }: Reado
     const handleShowJoinDialog = useCallback(() => {
         setParticipantName(isAdmin ? '' : currentUserInaturalistName)
         setJoinModalVisible(true);
-    }, [setParticipantName, setJoinModalVisible]);
+    }, [isAdmin, currentUserInaturalistName]);
     // RENDER
     const userIsParticipant = participants && participants.indexOf(currentUserInaturalistName) >= 0;
     return (

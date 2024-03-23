@@ -1,16 +1,22 @@
+import { useCallback } from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { NativeSyntheticEvent, TextInputKeyPressEventData, View } from 'react-native';
 import { HelperText, TextInput } from 'react-native-paper';
 import { User, UserLogin } from '../../../state/redux/api/wildEventsApi';
 
 type Props = {
     control: Control<User, any> | Control<UserLogin, any>;
     isLoading?: boolean;
+    onEnterKeyPress?: () => void;
 }
 
-function Username({ control, isLoading }: Readonly<Props>) {
+function Username({ control, isLoading, onEnterKeyPress }: Readonly<Props>) {
     const { t } = useTranslation();
+    const handleEnterKey = useCallback((event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+        if (onEnterKeyPress && event.nativeEvent.key === 'Enter')
+            onEnterKeyPress();
+    }, [onEnterKeyPress]);
     return (
         <Controller control={control as Control<any, any>}
             name='username'
@@ -37,6 +43,7 @@ function Username({ control, isLoading }: Readonly<Props>) {
                         onChangeText={onChange}
                         onBlur={onBlur}
                         autoFocus
+                        onKeyPress={handleEnterKey}
                     />
                     {!!error &&
                         <HelperText type='error'>

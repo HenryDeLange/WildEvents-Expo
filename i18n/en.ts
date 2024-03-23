@@ -72,7 +72,6 @@ export default {
         eventAdminLeaveError: 'Failed to remove the administrator from the event!',
         eventAdminJoinTitle: 'Add Administrator',
         eventAdminJoinMessage: 'Please specify the username of the WildEvents user to add as an administrator to this event.',
-        eventAdminJoinInput: 'Administrator Name',
         eventAdminJoinError: 'Failed to add the administrator to the event!',
         
         eventParticipants: 'Participants',
