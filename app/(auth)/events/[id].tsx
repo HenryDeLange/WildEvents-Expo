@@ -1,78 +1,41 @@
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Button, Dialog, Divider, Icon, Text, Tooltip } from 'react-native-paper';
+import { ActivityIndicator, Divider, Icon, Text, Tooltip } from 'react-native-paper';
 import ActivityEventTotals from '../../../components/activity/ActivityEventTotals';
 import ActivityGrid from '../../../components/activity/ActivityGrid';
-import EventAdmins from '../../../components/event/EventAdmins';
 import EventDates from '../../../components/event/EventDates';
-import EventParticipants from '../../../components/event/EventParticipants';
+import EventAdmins from '../../../components/event/admins/EventAdmins';
+import CalculateEventButton from '../../../components/event/buttons/CalculateEventButton';
+import DeleteEventButton from '../../../components/event/buttons/DeleteEventButton';
 import EditEventButton from '../../../components/event/buttons/EditEventButton';
+import EventParticipants from '../../../components/event/participants/EventParticipants';
 import { useIsEventAdmin } from '../../../components/event/utils/hooks';
-import HeaderActionButton from '../../../components/ui/HeaderActionButton';
-import ResponsiveCardWrapper from '../../../components/ui/ResponsiveCardWrapper';
 import ThemedSafeAreaView from '../../../components/ui/ThemedSafeAreaView';
 import LogoutButton from '../../../components/user/buttons/LogoutButton';
-import { useCalculateEventMutation, useDeleteEventMutation, useFindEventQuery, wildEventsApi } from '../../../state/redux/api/wildEventsApi';
-import { useAppDispatch } from '../../../state/redux/hooks';
+import { useFindEventQuery } from '../../../state/redux/api/wildEventsApi';
 
 function Event() {
-    // Translation
     const { t } = useTranslation();
-    // Router
     const { id } = useLocalSearchParams();
     const eventId = id.toString();
-    const router = useRouter();
-    // Redux
-    const dispatch = useAppDispatch();
     const { data: event, isLoading: isEventLoading, isFetching: isEventFetching } = useFindEventQuery({ eventId });
-    const [doCalculateEvent, { isLoading: isCalculating }] = useCalculateEventMutation();
-    const [doDelete, { isLoading: isDeleting, isSuccess: isDeleted }] = useDeleteEventMutation();
-    // State
-    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-    // Permissions
     const isAdmin = useIsEventAdmin(eventId);
-    // Actions
-    const handleCalculateEvent = useCallback(() => {
-        doCalculateEvent({ eventId });
-        dispatch(wildEventsApi.util.invalidateTags(['Activities']));
-    }, [eventId, dispatch]);
-    const handleDeleteButton = useCallback(() => setShowDeleteDialog(true), [eventId]);
-    const handleDelete = useCallback(() => doDelete({ eventId }), [eventId]);
-    const handleHideDeleteDialog = useCallback(() => {
-        if (!isDeleting)
-            setShowDeleteDialog(false);
-    }, [isDeleting]);
-    // Effects
-    useEffect(() => {
-        if (isDeleted)
-            router.navigate('/events');
-    }, [isDeleted, router]);
     // NavBar
     const navBarActions = useCallback(() => (
         <View style={styles.row}>
             {isAdmin &&
                 <>
-                    <HeaderActionButton
-                        textKey='eventCalculate'
-                        icon='calculator-variant-outline'
-                        onPress={handleCalculateEvent}
-                        busy={isCalculating}
-                    />
-                    <EditEventButton eventId={eventId} disabled={isDeleting} />
-                    <HeaderActionButton
-                        textKey='delete'
-                        icon='trash-can-outline'
-                        onPress={handleDeleteButton}
-                        busy={isDeleting}
-                    />
+                    <CalculateEventButton eventId={eventId} />
+                    <EditEventButton eventId={eventId} />
+                    <DeleteEventButton eventId={eventId} />
                 </>
             }
             <LogoutButton />
         </View>
-    ), [isAdmin, event, isCalculating]);
+    ), [isAdmin, eventId]);
     const navBar = useMemo(() => ({
         title: isEventFetching ? t('loading') : t('eventNavTitle'),
         headerRight: navBarActions
@@ -120,25 +83,6 @@ function Event() {
                 </View>
                 <Divider style={styles.divider} />
                 <ActivityGrid eventId={eventId} />
-                {/* Delete Dialog */}
-                <ResponsiveCardWrapper modalVisible={showDeleteDialog} hideModal={handleHideDeleteDialog}>
-                    <Dialog.Title>{t('eventDeleteTitle')}</Dialog.Title>
-                    <Dialog.Content>
-                        <Text variant='bodyMedium'>
-                            {t('eventDeleteMessage', { name: event.name })}
-                        </Text>
-                        <View style={styles.buttonWrapper}>
-                            <Button mode='contained' style={styles.button} uppercase
-                                icon={'trash-can-outline'}
-                                loading={isDeleting}
-                                disabled={isDeleting}
-                                onPress={handleDelete}
-                            >
-                                {t('delete')}
-                            </Button>
-                        </View>
-                    </Dialog.Content>
-                </ResponsiveCardWrapper>
             </ScrollView>
         </ThemedSafeAreaView>
     );
@@ -195,14 +139,6 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: 'row'
-    },
-    buttonWrapper: {
-        marginTop: 10,
-        alignItems: 'center'
-    },
-    button: {
-        marginTop: 10,
-        width: '80%'
     },
     lockWrapper: {
         marginRight: 12,

@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import { Button, Card, HelperText } from 'react-native-paper';
-import { User, useRegisterMutation } from '../../state/redux/api/wildEventsApi';
+import { User, addTagTypes, useRegisterMutation, wildEventsApi } from '../../state/redux/api/wildEventsApi';
 import { authLogin } from '../../state/redux/auth/authSlice';
 import { REFRESH_TOKEN, saveData } from '../../state/redux/auth/authStorage';
 import { useAppDispatch } from '../../state/redux/hooks';
@@ -41,6 +41,9 @@ function RegisterCard() {
                 refreshToken: registerResponse.refreshToken
             }));
             saveData(REFRESH_TOKEN, registerResponse.refreshToken);
+            for (let tag of addTagTypes) {
+                dispatch(wildEventsApi.util.invalidateTags([tag]));
+            }
             router.replace('/(auth)/events');
         }
     }, [dispatch, saveData, router, registerResponse, isSuccess]);

@@ -3,6 +3,7 @@ import { UnknownAsyncThunkRejectedWithValueAction } from '@reduxjs/toolkit/dist/
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { inatApi } from './api/inatApi';
 import { wildEventsApi } from './api/wildEventsApi';
+import appReducer from './app/appSlice';
 import authReducer from './auth/authSlice';
 import errorReducer, { addError } from './error/errorSlice';
 
@@ -40,6 +41,7 @@ export const rtkQueryErrorLogger: Middleware = (api: MiddlewareAPI) => (next) =>
 
 export const store = configureStore({
     reducer: {
+        app: appReducer,
         auth: authReducer,
         error: errorReducer,
         [wildEventsApi.reducerPath]: wildEventsApi.reducer,

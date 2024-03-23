@@ -1,13 +1,15 @@
 import { memo, useCallback, useState } from 'react';
+import { selectEventIsDeleting } from '../../../state/redux/app/appSlice';
+import { useAppSelector } from '../../../state/redux/hooks';
 import HeaderActionButton from '../../ui/HeaderActionButton';
 import ModifyEvent from '../ModifyEvent';
 
 type Props = {
     eventId: string;
-    disabled?: boolean;
 }
 
-function EditEventButton({ eventId, disabled }: Readonly<Props>) {
+function EditEventButton({ eventId }: Readonly<Props>) {
+    const isDeleting = useAppSelector(selectEventIsDeleting);
     const [modalVisible, setModalVisible] = useState(false);
     const showModal = useCallback(() => setModalVisible(true), []);
     const hideModal = useCallback(() => setModalVisible(false), []);
@@ -17,7 +19,7 @@ function EditEventButton({ eventId, disabled }: Readonly<Props>) {
                 mode='text'
                 textKey='edit'
                 icon='pencil'
-                busy={disabled}
+                busy={isDeleting}
                 onPress={showModal}
             />
             {modalVisible &&

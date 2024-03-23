@@ -2,8 +2,8 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View } from 'react-native';
 import { ActivityIndicator, Button, Chip, Dialog, HelperText, Icon, Text, TextInput, useTheme } from 'react-native-paper';
-import { useAdminJoinEventMutation, useAdminLeaveEventMutation } from '../../state/redux/api/wildEventsApi';
-import ResponsiveCardWrapper from '../ui/ResponsiveCardWrapper';
+import { useAdminJoinEventMutation, useAdminLeaveEventMutation } from '../../../state/redux/api/wildEventsApi';
+import ResponsiveCardWrapper from '../../ui/ResponsiveCardWrapper';
 
 type Props = {
     eventId: string;
