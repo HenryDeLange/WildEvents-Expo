@@ -65,9 +65,11 @@ function ModifyEvent({ modalVisible, hideModal, eventId }: Readonly<Props>) {
             <Card.Content style={styles.content}>
                 <Name control={control} isLoading={isBusyModifying} />
                 <Description control={control} isLoading={isBusyModifying} />
-                <StartDate control={control} isLoading={isBusyModifying} />
-                <StopDate control={control} isLoading={isBusyModifying} />
-                <CloseDate control={control} isLoading={isBusyModifying} />
+                <View style={styles.dates}>
+                    <StartDate control={control} isLoading={isBusyModifying} />
+                    <StopDate control={control} isLoading={isBusyModifying} />
+                    <CloseDate control={control} isLoading={isBusyModifying} />
+                </View>
                 <View style={styles.buttonWrapper}>
                     <Button mode='contained' style={styles.button} uppercase
                         icon='check'
@@ -101,5 +103,11 @@ const styles = StyleSheet.create({
     button: {
         marginTop: 10,
         width: '80%'
+    },
+    dates: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        rowGap: 12,
+        columnGap: 28
     }
 });

@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { memo, useCallback, useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { HelperText, TextInput, useTheme } from 'react-native-paper';
 import { DatePickerModal, enGB, registerTranslation } from 'react-native-paper-dates';
 import { CalendarDate, ValidRangeType } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
@@ -45,6 +45,7 @@ function GenericDate({ control, isLoading, name, icon, label, requiredMessage, s
             render={({ field: { onBlur, onChange, value, disabled }, fieldState: { error } }) => (
                 <View>
                     <TextInput
+                        style={styles.input}
                         label={t(label)}
                         left={<TextInput.Icon icon={icon} focusable={false} disabled={true} />}
                         right={
@@ -61,13 +62,11 @@ function GenericDate({ control, isLoading, name, icon, label, requiredMessage, s
                         disabled={disabled}
                         value={value ?? ''}
                         readOnly
-                        onFocus={useCallback(() => {
-                            setFocussed(true)
-                        }, [setFocussed])}
-                        onBlur={useCallback(() => {
+                        onFocus={() => setFocussed(true)}
+                        onBlur={() => {
                             setFocussed(false);
                             onBlur();
-                        }, [setFocussed, onBlur])}
+                        }}
                     />
                     <DatePickerModal
                         locale='en-GB'
@@ -96,3 +95,10 @@ function GenericDate({ control, isLoading, name, icon, label, requiredMessage, s
 }
 
 export default memo(GenericDate);
+
+const styles = StyleSheet.create({
+    input: {
+        minWidth: 225,
+        maxWidth: 300
+    }
+});
