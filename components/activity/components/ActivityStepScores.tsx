@@ -3,9 +3,9 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Card, Text } from 'react-native-paper';
-import { ActivityStep, ActivityStepResult } from '../../state/redux/api/wildEventsApi';
+import { ActivityStep, ActivityStepResult } from '../../../state/redux/api/wildEventsApi';
 import ActivityParticipantScore, { ParticipantScore } from './ActivityParticipantScore';
-import { generateStepScoreList } from './utils';
+import { generateStepScoreList } from '../utils';
 
 type Props = {
     steps?: ActivityStep[];

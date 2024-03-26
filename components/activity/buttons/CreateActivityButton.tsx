@@ -1,9 +1,13 @@
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'react-native-paper';
-import ModifyEvent from '../ModifyEvent';
+import ModifyActivity from '../ModifyActivity';
 
-function CreateEventButton() {
+type Props = {
+    eventId: string;
+}
+
+function CreateActivityButton({ eventId }: Readonly<Props>) {
     const { t } = useTranslation();
     const [modalVisible, setModalVisible] = useState(false);
     const showModal = useCallback(() => setModalVisible(true), []);
@@ -14,15 +18,16 @@ function CreateEventButton() {
                 mode='contained-tonal'
                 uppercase
                 icon='plus'
+                disabled={!eventId}
                 onPress={showModal}
             >
-                {t('eventCardCreateTitle')}
+                {t('activityCardCreateTitle')}
             </Button>
             {modalVisible &&
-                <ModifyEvent modalVisible={modalVisible} hideModal={hideModal} />
+                <ModifyActivity modalVisible={modalVisible} hideModal={hideModal} eventId={eventId} />
             }
         </>
     );
 }
 
-export default memo(CreateEventButton);
+export default memo(CreateActivityButton);

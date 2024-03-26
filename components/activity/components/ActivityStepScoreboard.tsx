@@ -2,9 +2,9 @@ import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { ActivityCalculation, ActivityStepResult } from '../../state/redux/api/wildEventsApi';
+import { ActivityCalculation, ActivityStepResult } from '../../../state/redux/api/wildEventsApi';
 import ActivityParticipantScore, { ParticipantScore } from './ActivityParticipantScore';
-import { generateScoreList, generateScoreMap } from './utils';
+import { generateScoreList, generateScoreMap } from '../utils';
 
 type Props = {
     results?: ActivityStepResult[];

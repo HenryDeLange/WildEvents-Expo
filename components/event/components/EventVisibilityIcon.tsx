@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Icon, Tooltip } from 'react-native-paper';
-import { EventBase } from '../../state/redux/api/wildEventsApi';
+import { EventBase } from '../../../state/redux/api/wildEventsApi';
 
 type Props = {
     visibility: EventBase['visibility'];

@@ -1,9 +1,9 @@
-import { format } from 'date-fns';
+import { format, isAfter } from 'date-fns';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { Icon, Text, Tooltip } from 'react-native-paper';
-import { Event } from '../../state/redux/api/wildEventsApi';
+import { Icon, Text, Tooltip, useTheme } from 'react-native-paper';
+import { Event } from '../../../state/redux/api/wildEventsApi';
 
 type Props = {
     event: Event;
@@ -18,18 +18,21 @@ function EventDates({ event, tooltip }: Readonly<Props>) {
                 icon='calendar-arrow-right'
                 label='eventStartDate'
                 tooltip={tooltip}
+                highlight={!isAfter(format(event.start, 'yyyy-MM-dd'), format(new Date(), 'yyyy-MM-dd'))}
             />
             <DateInfo
                 date={event.stop}
                 icon='calendar-arrow-left'
                 label='eventStopDate'
                 tooltip={tooltip}
+                highlight={!isAfter(format(event.stop, 'yyyy-MM-dd'), format(new Date(), 'yyyy-MM-dd'))}
             />
             <DateInfo
                 date={event.close}
                 icon='calendar-lock'
                 label='eventCloseDate'
                 tooltip={tooltip}
+                highlight={!isAfter(format(event.close, 'yyyy-MM-dd'), format(new Date(), 'yyyy-MM-dd'))}
             />
         </View>
     );
@@ -42,16 +45,18 @@ type DateProps = {
     icon: 'calendar-arrow-left' | 'calendar-arrow-right' | 'calendar-lock';
     label: string;
     tooltip?: boolean;
+    highlight?: boolean;
 }
 
-function DateInfo({ date, icon, label, tooltip }: Readonly<DateProps>) {
+function DateInfo({ date, icon, label, tooltip, highlight }: Readonly<DateProps>) {
     const { t } = useTranslation();
+    const theme = useTheme();
     return (
         <View style={styles.row}>
             {tooltip &&
                 <Tooltip title={t(label)}>
                     <View style={styles.row}>
-                        <Icon source={icon} size={18} />
+                        <Icon source={icon} size={18} color={highlight ? theme.colors.tertiary : undefined} />
                         <Text variant='bodySmall' style={styles.date}>
                             {format(date, 'yyyy-MM-dd')}
                         </Text>
@@ -60,8 +65,8 @@ function DateInfo({ date, icon, label, tooltip }: Readonly<DateProps>) {
             }
             {!tooltip &&
                 <>
-                    <Icon source={icon} size={20} />
-                    <Text variant='bodyMedium' style={styles.label}>
+                    <Icon source={icon} size={20} color={highlight ? theme.colors.tertiary : undefined} />
+                    <Text variant='bodyMedium' style={[styles.label, { color: highlight ? theme.colors.tertiary : undefined }]}>
                         {t(label)}
                     </Text>
                     <Text variant='bodyMedium' style={styles.date}>

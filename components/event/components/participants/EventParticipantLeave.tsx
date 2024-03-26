@@ -2,8 +2,8 @@ import { memo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Button, Dialog, HelperText, Text } from 'react-native-paper';
-import { useParticipantLeaveEventMutation } from '../../../state/redux/api/wildEventsApi';
-import ResponsiveCardWrapper from '../../ui/ResponsiveCardWrapper';
+import { useParticipantLeaveEventMutation } from '../../../../state/redux/api/wildEventsApi';
+import ResponsiveCardWrapper from '../../../ui/ResponsiveCardWrapper';
 
 type Props = {
     eventId: string;

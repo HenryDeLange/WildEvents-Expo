@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { HelperText, TextInput, useTheme } from 'react-native-paper';
 import { DatePickerModal, enGB, registerTranslation } from 'react-native-paper-dates';
 import { CalendarDate, ValidRangeType } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
-import { EventBase } from '../../../state/redux/api/wildEventsApi';
+import { EventBase } from '../../../../state/redux/api/wildEventsApi';
 
 registerTranslation('en-GB', enGB);
 

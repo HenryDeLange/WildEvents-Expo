@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Card, Divider, Icon, Text, Tooltip } from 'react-native-paper';
 import { Event } from '../../state/redux/api/wildEventsApi';
-import EventDates from './EventDates';
+import EventDates from './components/EventDates';
 
 type Props = {
     event: Event;

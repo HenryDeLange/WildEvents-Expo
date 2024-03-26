@@ -4,11 +4,11 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
     "rtk-query:codegen": "npx @rtk-query/codegen-openapi ./openapi-config.json",
-    "svgo:optimize": "svgo -f ./assets -o ./assets -r --multipass"
+    "svgo:optimize": "svgo -f ./assets -o ./assets -r --multipass",
+    "web": "expo start --web",
+    "android": "expo start --android",
+    "ios": "expo start --ios"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",

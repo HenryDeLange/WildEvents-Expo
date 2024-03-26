@@ -1,31 +1,30 @@
-import { Dispatch, SetStateAction, memo, useCallback, useEffect } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Button, Dialog, HelperText, Text } from 'react-native-paper';
-import { User, useParticipantJoinEventMutation } from '../../../state/redux/api/wildEventsApi';
-import ResponsiveCardWrapper from '../../ui/ResponsiveCardWrapper';
-import Inaturalist from '../../user/fields/Inaturalist';
+import { User, useAdminJoinEventMutation } from '../../../../state/redux/api/wildEventsApi';
+import ResponsiveCardWrapper from '../../../ui/ResponsiveCardWrapper';
+import Username from '../../../user/fields/Username';
 
 type Props = {
     eventId: string;
-    participantName: string;
-    setParticipantName: Dispatch<SetStateAction<string>>;
     modalVisible: boolean;
     hideModal: () => void;
     isAdmin: boolean;
-    userIsParticipant: boolean;
 }
 
-function EventParticipantJoin({ eventId, participantName, setParticipantName, modalVisible, hideModal, isAdmin, userIsParticipant }: Readonly<Props>) {
+function EventAdminJoin({ eventId, modalVisible, hideModal, isAdmin }: Readonly<Props>) {
     const { t } = useTranslation();
-    const [doJoin, { isLoading: isJoining, isError: isJoinError, isSuccess: isJoined }] = useParticipantJoinEventMutation();
-    const handleJoin = useCallback((data: User) => {
+    const { control, handleSubmit } = useForm<User>({ defaultValues: { username: '' } });
+    const adminName = useWatch({ control, name: 'username' });
+    const [doJoin, { isLoading: isJoining, isError: isJoinError, isSuccess: isJoined }] = useAdminJoinEventMutation();
+    const handleJoin = useCallback(() => {
         doJoin({
             eventId: eventId,
-            iNatId: participantName
+            adminId: adminName
         });
-    }, [participantName]);
+    }, [adminName]);
     const handleHideModal = useCallback(() => {
         if (!isJoining)
             hideModal();
@@ -34,41 +33,30 @@ function EventParticipantJoin({ eventId, participantName, setParticipantName, mo
         if (isJoined && !isJoinError)
             hideModal();
     }, [isJoined, isJoinError, hideModal]);
-    const { control, handleSubmit } = useForm<User>({ defaultValues: { inaturalist: participantName } });
-    const inaturalist = useWatch({ control: control, name: 'inaturalist' });
-    useEffect(() => {
-        if (isAdmin) {
-            setParticipantName(inaturalist);
-        }
-    }, [setParticipantName, inaturalist, isAdmin]);
     if (!modalVisible)
         return null;
-    if (!isAdmin && userIsParticipant)
+    if (!isAdmin)
         return null;
     return (
         <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={handleHideModal}>
-            <Dialog.Title>{t('eventParticipantJoinTitle')}</Dialog.Title>
+            <Dialog.Title>{t('eventAdminJoinTitle')}</Dialog.Title>
             <Dialog.Content style={styles.content}>
-                {isAdmin
-                    ? <>
+                {isAdmin &&
+                    <>
                         <Text variant='bodyMedium'>
-                            {t('eventParticipantJoinMessage')}
+                            {t('eventAdminJoinMessage')}
                         </Text>
-                        <Inaturalist
+                        <Username
                             control={control}
                             isLoading={!isAdmin || isJoining}
-                            autoFocus
                             onEnterKeyPress={isJoining ? undefined : handleSubmit(handleJoin)}
                         />
                     </>
-                    : <Text variant='bodyMedium'>
-                        {t('eventParticipantJoinSelfMessage', { participant: participantName })}
-                    </Text>
                 }
                 <View style={styles.buttonWrapper}>
                     <Button mode='contained' style={styles.button} uppercase
                         icon='check'
-                        disabled={isJoining || !participantName || participantName.trim().length === 0}
+                        disabled={isJoining || !adminName || adminName.trim().length === 0}
                         loading={isJoining}
                         onPress={handleSubmit(handleJoin)}
                     >
@@ -76,7 +64,7 @@ function EventParticipantJoin({ eventId, participantName, setParticipantName, mo
                     </Button>
                     {isJoinError &&
                         <HelperText type='error' visible={isJoinError} >
-                            {t('eventParticipantJoinError')}
+                            {t('eventAdminJoinError')}
                         </HelperText>
                     }
                 </View>
@@ -85,7 +73,7 @@ function EventParticipantJoin({ eventId, participantName, setParticipantName, mo
     );
 }
 
-export default memo(EventParticipantJoin);
+export default memo(EventAdminJoin);
 
 const styles = StyleSheet.create({
     content: {

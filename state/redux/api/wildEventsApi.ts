@@ -334,7 +334,7 @@ export type Activity = {
   description?: string;
   status?: "PENDING" | "CALCULATING" | "CALCULATED" | "ERROR";
   disableReason?: "FAILED_TO_CALCULATE" | "TOO_MANY_RESULTS" | "ADMIN_DISABLED";
-  steps?: ActivityStep[];
+  steps: ActivityStep[];
   eventId: string;
   type: "RACE" | "HUNT" | "QUIZ" | "EXPLORE";
   id: string;
@@ -346,7 +346,7 @@ export type ActivityBase = {
   description?: string;
   status?: "PENDING" | "CALCULATING" | "CALCULATED" | "ERROR";
   disableReason?: "FAILED_TO_CALCULATE" | "TOO_MANY_RESULTS" | "ADMIN_DISABLED";
-  steps?: ActivityStep[];
+  steps: ActivityStep[];
 };
 export type Tokens = {
   username: string;
@@ -377,7 +377,7 @@ export type ActivityCreate = {
   description?: string;
   status?: "PENDING" | "CALCULATING" | "CALCULATED" | "ERROR";
   disableReason?: "FAILED_TO_CALCULATE" | "TOO_MANY_RESULTS" | "ADMIN_DISABLED";
-  steps?: ActivityStep[];
+  steps: ActivityStep[];
   eventId: string;
   type: "RACE" | "HUNT" | "QUIZ" | "EXPLORE";
 };

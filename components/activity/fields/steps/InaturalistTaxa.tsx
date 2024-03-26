@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Image, NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View } from 'react-native';
 import { Avatar, Menu, Text, TextInput, TouchableRipple } from 'react-native-paper';
 import { useDebounce } from 'use-debounce';
-import { Taxon, useTaxaAutocompleteQuery } from '../../state/redux/api/inatApi';
+import { Taxon, useTaxaAutocompleteQuery } from '../../../../state/redux/api/inatApi';
 
 type Props = {
     value: string;
@@ -15,7 +15,7 @@ type Props = {
 
 // TODO: Make this multi-selectable (using chips, similar to participants)
 
-function InatAutocompleteTaxa({ value, onChange, autoFocus, disabled, onEnterKeyPress }: Readonly<Props>) {
+function InaturalistTaxa({ value, onChange, autoFocus, disabled, onEnterKeyPress }: Readonly<Props>) {
     // Translation
     const { t } = useTranslation();
     // State
@@ -70,7 +70,7 @@ function InatAutocompleteTaxa({ value, onChange, autoFocus, disabled, onEnterKey
                             disabled
                             icon={({ size, color }) => (
                                 <Image
-                                    source={require('../../assets/images/inaturalist/logo.png')}
+                                    source={require('../../../../assets/images/inaturalist/logo.png')}
                                     style={{ width: size, height: size }}
                                 />
                             )}
@@ -102,7 +102,7 @@ function InatAutocompleteTaxa({ value, onChange, autoFocus, disabled, onEnterKey
                             <Avatar.Image
                                 source={(taxon.default_photo && taxon.default_photo.square_url)
                                     ? { uri: taxon.default_photo.square_url }
-                                    : require('../../assets/images/inaturalist/logo.png')}
+                                    : require('../../../../assets/images/inaturalist/logo.png')}
                                 size={32}
                                 style={styles.menuItemAvatar}
                             />
@@ -122,7 +122,7 @@ function InatAutocompleteTaxa({ value, onChange, autoFocus, disabled, onEnterKey
     );
 }
 
-export default memo(InatAutocompleteTaxa);
+export default memo(InaturalistTaxa);
 
 const styles = StyleSheet.create({
     menuItemWrapper: {

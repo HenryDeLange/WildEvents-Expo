@@ -5,9 +5,9 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, Button, Dialog, Divider, Text, useTheme } from 'react-native-paper';
-import ActivityStepScores from '../../../components/activity/ActivityStepScores';
-import ActivityStepTotalScores from '../../../components/activity/ActivityStepTotalScores';
-import ModifyActivity from '../../../components/activity/ModifyActivity';
+import ActivityStepScores from '../../../components/activity/components/ActivityStepScores';
+import ActivityStepTotalScores from '../../../components/activity/components/ActivityStepTotalScores';
+import EditActivityButton from '../../../components/activity/buttons/EditActivityButton';
 import { useIsEventAdmin } from '../../../components/event/utils/hooks';
 import HeaderActionButton from '../../../components/ui/HeaderActionButton';
 import ResponsiveCardWrapper from '../../../components/ui/ResponsiveCardWrapper';
@@ -69,7 +69,7 @@ function Activity() {
                         disabled={activity?.disableReason ? true : false}
                     />
                     {activity &&
-                        <ModifyActivity eventId={activity.eventId} activity={activity} />
+                        <EditActivityButton eventId={activity.eventId} activityId={activityId} />
                     }
                     <HeaderActionButton
                         icon='trash-can-outline'

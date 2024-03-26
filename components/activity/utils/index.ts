@@ -1,5 +1,5 @@
 import { ActivityCalculation, ActivityStepResult } from "../../../state/redux/api/wildEventsApi";
-import { ParticipantScore } from "../ActivityParticipantScore";
+import { ParticipantScore } from "../components/ActivityParticipantScore";
 
 export function generateScoreMap(map: Map<string, ActivityCalculation>, results?: ActivityStepResult[]) {
     for (let result of results ?? []) {

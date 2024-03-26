@@ -2,7 +2,7 @@ import { addDays, addMonths, getYear, isAfter, subDays } from 'date-fns';
 import { Control, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { enGB, registerTranslation } from 'react-native-paper-dates';
-import { EventBase } from '../../../state/redux/api/wildEventsApi';
+import { EventBase } from '../../../../state/redux/api/wildEventsApi';
 import GenericDate from './GenericDate';
 
 registerTranslation('en-GB', enGB);
