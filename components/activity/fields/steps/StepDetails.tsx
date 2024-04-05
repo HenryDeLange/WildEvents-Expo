@@ -1,19 +1,21 @@
 import { Dispatch, SetStateAction, memo, useCallback } from 'react';
+import { FieldError } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { IconButton, Text, TextInput, Tooltip } from 'react-native-paper';
+import { HelperText, IconButton, Text, TextInput, Tooltip } from 'react-native-paper';
 import { ActivityStep } from '../../../../state/redux/api/wildEventsApi';
 import InaturalistTaxa from './InaturalistTaxa';
 
 type Props = {
     steps: ActivityStep[];
     onChange: (...event: any[]) => void;
+    error: FieldError | undefined;
     selectedStep: string;
     setSelectedStep: Dispatch<SetStateAction<string>>;
     disabled?: boolean;
 }
 
-function StepDetails({ steps, onChange, selectedStep, setSelectedStep, disabled }: Readonly<Props>) {
+function StepDetails({ steps, onChange, error, selectedStep, setSelectedStep, disabled }: Readonly<Props>) {
     const { t } = useTranslation();
     // Handle removing the step
     const handleStepRemove = useCallback(() => {
@@ -89,6 +91,11 @@ function StepDetails({ steps, onChange, selectedStep, setSelectedStep, disabled 
                     />
                 </Tooltip>
             </View>
+            {!!error &&
+                <HelperText type='error'>
+                    {error.message}
+                </HelperText>
+            }
             <View style={styles.activityContent}>
                 <TextInput
                     key='description'

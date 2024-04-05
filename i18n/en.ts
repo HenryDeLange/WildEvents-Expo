@@ -134,11 +134,13 @@ export default {
 
         activitySteps: 'Steps',
         activityCardStepDescription: 'Step Description',
+        activityCardStepDescriptionRequired: 'Description for step {{step}} is required',
         activityCardStepCount: 'Step {{step}}',
         activityCardStepAdd: 'Add',
         activityCardStepRemove: 'Remove step',
         activityCardStepDetails: 'Activity Step Details',
 
+        activityCardStepCriteriaRequired: 'Criteria for step {{step}} is required',
         activityCriteria_taxon_name: 'Taxon',
         activityCriteriaHelp_taxon_name: 'iNaturalist Taxonomic Name',
         activityCriteria_lat: 'Latitude',

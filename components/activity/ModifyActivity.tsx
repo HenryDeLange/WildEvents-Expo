@@ -25,7 +25,7 @@ function ModifyActivity({ modalVisible, hideModal, eventId, activityId }: Readon
     const [doUpdate, { isLoading: isUpdating, isError: isErrorUpdate, isSuccess: isSuccessUpdate }] = useUpdateActivityMutation();
     const isBusyModifying = isCreating || isUpdating;
     // Form
-    const { control, handleSubmit, formState: { isValid }, setValue } = useForm<ActivityCreate>({
+    const { control, handleSubmit, formState: { isValid }, trigger, setValue } = useForm<ActivityCreate>({
         mode: 'onChange',
         defaultValues: {
             eventId,
@@ -71,8 +71,18 @@ function ModifyActivity({ modalVisible, hideModal, eventId, activityId }: Readon
             <Card.Content style={styles.content}>
                 <Name control={control} loading={isBusyModifying} />
                 <Description control={control} loading={isBusyModifying} />
-                <Type control={control} loading={isBusyModifying} disabled={isBusyModifying || !!activity} />
-                <Steps control={control} loading={isBusyModifying} setValue={setValue} initialType={activity?.type} />
+                <Type
+                    control={control}
+                    loading={isBusyModifying}
+                    disabled={isBusyModifying || !!activity}
+                />
+                <Steps
+                    control={control}
+                    setValue={setValue}
+                    trigger={trigger}
+                    loading={isBusyModifying}
+                    initialType={activity?.type}
+                />
                 <View style={styles.buttonWrapper}>
                     <Button mode='contained' style={styles.button} uppercase
                         icon='check'
