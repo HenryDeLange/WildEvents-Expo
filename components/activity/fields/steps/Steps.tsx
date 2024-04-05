@@ -93,7 +93,9 @@ function Steps({ control, setValue, initialType, loading }: Readonly<Props>) {
             }
         }
     }, [type, steps, addNewStep, stepCount]);
+
     // TODO: Implement validation rules
+    
     // Validation
     // let stepError = false;
     // for (let tempStep of (steps ?? [])) {

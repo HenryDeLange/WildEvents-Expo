@@ -7,6 +7,8 @@ import { useDebounce } from 'use-debounce';
 import { User as inatUser, useUsersAutocompleteQuery } from '../../../state/redux/api/inatApi';
 import { User } from '../../../state/redux/api/wildEventsApi';
 
+// TODO: Left icon click should open the iNat page for the user
+
 type Props = {
     control: Control<User, any>;
     isLoading?: boolean;
@@ -25,16 +27,17 @@ function Inaturalist({ control, isLoading, autoFocus, onEnterKeyPress }: Readonl
     const hideMenu = useCallback(() => setMenuVisibility(false), []);
     // Debounce
     const [debouncedValue, debounce] = useDebounce(textValue, 500);
+    const isPending = debounce.isPending();
     // Redux
     const { data: inaturalistUsers, isFetching, isSuccess } = useUsersAutocompleteQuery(
         { q: debouncedValue, per_page: 4 },
-        { skip: debouncedValue.length < 3 || textValue === selectedUser?.login || debounce.isPending() }
+        { skip: debouncedValue.length < 3 || textValue === selectedUser?.login || isPending }
     );
     // Effects
     useEffect(() => {
-        if (!isFetching && isSuccess && !debounce.isPending())
+        if (!isFetching && isSuccess && !isPending)
             showMenu();
-    }, [isFetching, isSuccess]);
+    }, [isFetching, isSuccess, isPending]);
     // Callbacks
     const handleTextChange = useCallback((onChange: (text: string) => void) => (text: string) => {
         onChange(text);
@@ -105,23 +108,24 @@ function Inaturalist({ control, isLoading, autoFocus, onEnterKeyPress }: Readonl
                         anchorPosition='bottom'
                         anchor={menuPosition}
                     >
-                        {!disabled && inaturalistUsers?.results.map((user) => (
-                            <TouchableRipple key={user.id} style={styles.menuItemWrapper}
-                                onPress={handleMenuSelection(onChange, user)}
-                            >
-                                <>
-                                    <Avatar.Image source={{ uri: user.icon }} size={32} style={styles.menuItemAvatar} />
-                                    <View style={{ width: menuPosition.width }}>
-                                        <Text variant='labelLarge'>
-                                            {(user.name && user.name.trim().length > 0) ? user.name : user.login}
-                                        </Text>
-                                        <Text variant='labelSmall'>
-                                            {user.login}
-                                        </Text>
-                                    </View>
-                                </>
-                            </TouchableRipple>
-                        ))
+                        {!disabled &&
+                            inaturalistUsers?.results.map((user) => (
+                                <TouchableRipple key={user.id} style={styles.menuItemWrapper}
+                                    onPress={handleMenuSelection(onChange, user)}
+                                >
+                                    <>
+                                        <Avatar.Image source={{ uri: user.icon }} size={32} style={styles.menuItemAvatar} />
+                                        <View style={{ width: menuPosition.width }}>
+                                            <Text variant='labelLarge'>
+                                                {(user.name && user.name.trim().length > 0) ? user.name : user.login}
+                                            </Text>
+                                            <Text variant='labelSmall'>
+                                                {user.login}
+                                            </Text>
+                                        </View>
+                                    </>
+                                </TouchableRipple>
+                            ))
                         }
                     </Menu>
                     {!!error &&

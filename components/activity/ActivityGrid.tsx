@@ -34,7 +34,7 @@ function ActivityGrid({ eventId }: Readonly<Props>) {
             {!isActivitiesFetching &&
                 <View style={styles.grid}>
                     {activities?.map(activity =>
-                        <ActivityCard activity={activity} />
+                        <ActivityCard key={activity.id} activity={activity} />
                     )}
                 </View>
             }

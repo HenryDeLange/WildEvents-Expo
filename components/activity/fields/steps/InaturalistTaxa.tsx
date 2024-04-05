@@ -1,52 +1,73 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { Avatar, Menu, Text, TextInput, TouchableRipple } from 'react-native-paper';
 import { useDebounce } from 'use-debounce';
 import { Taxon, useTaxaAutocompleteQuery } from '../../../../state/redux/api/inatApi';
 
+// TODO: Make this multi-selectable (using chips, similar to participants)
+
+// TODO: Left icon click should open the iNat page for the taxon
+
+// TODO: Add the locale for the common names in the useTaxaAutocompleteQuery
+
 type Props = {
     value: string;
     onChange: (text: string) => void;
-    autoFocus?: boolean;
     disabled?: boolean;
-    onEnterKeyPress?: () => void;
 }
 
-// TODO: Make this multi-selectable (using chips, similar to participants)
-
-function InaturalistTaxa({ value, onChange, autoFocus, disabled, onEnterKeyPress }: Readonly<Props>) {
+function InaturalistTaxa({ value, onChange, disabled }: Readonly<Props>) {
     // Translation
     const { t } = useTranslation();
     // State
-    const [selectedValue, setSelectedValue] = useState(value);
+    const [touched, setTouched] = useState(false);
+    const [textValue, setTextValue] = useState(value);
+    const [selectedTaxon, setSelectedTaxon] = useState<Taxon | null>(null);
     const [menuVisibility, setMenuVisibility] = useState(false);
-    const showMenu = useCallback(() => setMenuVisibility(true), []);
-    const hideMenu = useCallback(() => setMenuVisibility(false), []);
+    const showMenu = useCallback(() => {
+        setMenuVisibility(true);
+    }, []);
+    const hideMenu = useCallback(() => {
+        setMenuVisibility(false);
+    }, []);
     // Debounce
-    const [debouncedValue] = useDebounce(value, 500);
+    const [debouncedValue, debounce] = useDebounce(textValue, 500);
+    const isPending = debounce.isPending();
     // Redux
     const { data: inaturalistTaxa, isFetching, isSuccess } = useTaxaAutocompleteQuery(
-        // TODO: add locale
         { q: debouncedValue, per_page: 4 },
-        { skip: disabled || debouncedValue.length <= 3 || value === selectedValue }
+        { skip: (debouncedValue.length < 3 || textValue === selectedTaxon?.name || isPending) }
     );
     // Effects
     useEffect(() => {
-        if (!isFetching && isSuccess && value !== selectedValue) {
+        if (touched && !isFetching && isSuccess && !isPending)
             showMenu();
+    }, [isFetching, isSuccess, isPending, showMenu, touched]);
+    useEffect(() => {
+        if (inaturalistTaxa?.total_results === 1) {
+            setSelectedTaxon(inaturalistTaxa.results[0]);
+            hideMenu();
         }
-    }, [isFetching, isSuccess, selectedValue]);
+    }, [inaturalistTaxa, setSelectedTaxon, hideMenu]);
+    useEffect(() => {
+        setTouched(false);
+    }, [setTouched]);
     // Callbacks
-    const handleMenuSelection = useCallback((text: Taxon) => () => {
-        onChange(text.name);
-        setSelectedValue(text.name);
+    const handleTextChange = useCallback((onChange: (text: string) => void) => (text: string) => {
+        onChange(text);
+        setTextValue(text);
+        setSelectedTaxon(null);
+    }, [onChange, setTextValue, setSelectedTaxon]);
+    const handleMenuSelection = useCallback((onChange: (...event: any[]) => void, taxon: Taxon) => () => {
+        onChange(taxon.name);
+        setTextValue(taxon.name);
+        setSelectedTaxon(taxon);
         hideMenu();
-    }, [onChange]);
-    const handleJoinEnterKey = useCallback((event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-        if (onEnterKeyPress && event.nativeEvent.key === 'Enter')
-            onEnterKeyPress();
-    }, [onEnterKeyPress]);
+    }, [onChange, setTextValue, setSelectedTaxon, hideMenu]);
+    const handleTouched = useCallback(() => {
+        setTouched(true)
+    }, [setTouched]);
     // Position Ref
     const inatRef = useRef<any>();
     const [menuPosition, setMenuPosition] = useState<{ x: number; y: number; width: number; }>({ x: 0, y: 0, width: 0 });
@@ -54,70 +75,74 @@ function InaturalistTaxa({ value, onChange, autoFocus, disabled, onEnterKeyPress
         inatRef.current?.measure((x: any, y: any, width: any, height: any, pageX: any, pageY: any) => {
             setMenuPosition({ x: pageX, y: pageY + height, width: width / 2 });
         }), [inatRef.current]);
+    useEffect(() => {
+        if (!(menuPosition.x > 0 && menuPosition.y > 0))
+            hideMenu();
+    }, [menuPosition, hideMenu]);
     // RENDER
     return (
         <>
             <View ref={inatRef as any}>
                 <TextInput
-                    mode='outlined'
                     label={t('activityCriteria_taxon_name')}
                     placeholder={t('activityCriteriaHelp_taxon_name')}
-                    value={value}
-                    onChangeText={onChange}
                     left={
-                        <TextInput.Icon
-                            focusable={false}
-                            disabled
+                        <TextInput.Icon focusable={false} disabled={true}
                             icon={({ size, color }) => (
                                 <Image
-                                    source={require('../../../../assets/images/inaturalist/logo.png')}
+                                    source={selectedTaxon?.default_photo?.url
+                                        ? { uri: selectedTaxon?.default_photo?.url }
+                                        : require('../../../../assets/images/inaturalist/logo.png')}
                                     style={{ width: size, height: size }}
                                 />
                             )}
                         />
                     }
-                    right={
-                        <TextInput.Icon
-                            icon={isFetching ? 'progress-clock' : 'menu-down'}
-                            onPress={showMenu}
-                            disabled={isFetching || !isSuccess || (inaturalistTaxa.results.length <= 0)}
-                        />
-                    }
-                    autoFocus={autoFocus}
+                    right={<TextInput.Icon icon={isFetching ? 'progress-clock' : 'menu-down'} onPress={showMenu} />}
+                    mode='outlined'
+                    autoCapitalize='none'
+                    autoComplete='off'
+                    spellCheck={false}
                     disabled={disabled}
-                    onKeyPress={handleJoinEnterKey}
+                    value={value ?? ''}
+                    onChangeText={handleTextChange(onChange)}
+                    onFocus={handleTouched}
                 />
             </View>
-            <Menu
-                visible={menuVisibility}
-                onDismiss={hideMenu}
-                anchorPosition='bottom'
-                anchor={menuPosition}
-            >
-                {!disabled && inaturalistTaxa?.results.map((taxon) => (
-                    <TouchableRipple key={taxon.id} style={styles.menuItemWrapper}
-                        onPress={handleMenuSelection(taxon)}
-                    >
-                        <>
-                            <Avatar.Image
-                                source={(taxon.default_photo && taxon.default_photo.square_url)
-                                    ? { uri: taxon.default_photo.square_url }
-                                    : require('../../../../assets/images/inaturalist/logo.png')}
-                                size={32}
-                                style={styles.menuItemAvatar}
-                            />
-                            <View style={{ width: menuPosition.width }}>
-                                <Text variant='labelLarge'>
-                                    {taxon.preferred_common_name}
-                                </Text>
-                                <Text variant='labelSmall'>
-                                    {taxon.name}
-                                </Text>
-                            </View>
-                        </>
-                    </TouchableRipple>
-                ))}
-            </Menu>
+            {(menuPosition.x > 0 && menuPosition.y > 0) &&
+                <Menu
+                    visible={menuVisibility}
+                    onDismiss={hideMenu}
+                    anchorPosition='bottom'
+                    anchor={menuPosition}
+                >
+                    {!disabled &&
+                        inaturalistTaxa?.results.map((taxon) => (
+                            <TouchableRipple key={taxon.id} style={styles.menuItemWrapper}
+                                onPress={handleMenuSelection(onChange, taxon)}
+                            >
+                                <>
+                                    <Avatar.Image
+                                        style={styles.menuItemAvatar}
+                                        source={taxon?.default_photo?.url
+                                            ? { uri: taxon?.default_photo?.url }
+                                            : require('../../../../assets/images/inaturalist/logo.png')}
+                                        size={32}
+                                    />
+                                    <View style={{ width: menuPosition.width }}>
+                                        <Text variant='labelLarge'>
+                                            {`${taxon.name} (${taxon.rank})`}
+                                        </Text>
+                                        <Text variant='labelSmall'>
+                                            {taxon.preferred_common_name}
+                                        </Text>
+                                    </View>
+                                </>
+                            </TouchableRipple>
+                        ))
+                    }
+                </Menu>
+            }
         </>
     );
 }

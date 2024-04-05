@@ -1,10 +1,9 @@
 import { Dispatch, SetStateAction, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, IconButton, Text, TextInput, Tooltip } from 'react-native-paper';
+import { IconButton, Text, TextInput, Tooltip } from 'react-native-paper';
 import { ActivityStep } from '../../../../state/redux/api/wildEventsApi';
 import InaturalistTaxa from './InaturalistTaxa';
-import { ADD_STEP } from './StepButtons';
 
 type Props = {
     steps: ActivityStep[];
@@ -45,7 +44,7 @@ function StepDetails({ steps, onChange, selectedStep, setSelectedStep, disabled 
     }, [steps, selectedStep, onChange]);
     // Edit Criteria
     const handleStepCriteriaValue = useCallback((key: string) => (text: string) => {
-        let filteredText = text;
+        let filteredText;
         switch (key) {
             case 'taxon_name':
                 filteredText = text.replace(/\d+/g, '');
@@ -109,7 +108,8 @@ function StepDetails({ steps, onChange, selectedStep, setSelectedStep, disabled 
                             return (
                                 <InaturalistTaxa
                                     key={`step${selectedStep}Criterion${index}`}
-                                    value={(activeStep?.criteria && activeStep.criteria[key]) ?? ''}
+                                    disabled={disabled}
+                                    value={(activeStep?.criteria && activeStep?.criteria[key]) ?? ''}
                                     onChange={handleStepCriteriaValue(key)}
                                 />
                             );
