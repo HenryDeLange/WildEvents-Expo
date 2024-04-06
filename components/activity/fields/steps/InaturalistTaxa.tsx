@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, StyleSheet, View } from 'react-native';
-import { Avatar, Menu, Text, TextInput, TouchableRipple } from 'react-native-paper';
+import { Avatar, Menu, Text, TextInput, TouchableRipple, useTheme } from 'react-native-paper';
 import { useDebounce } from 'use-debounce';
 import { Taxon, useTaxaAutocompleteQuery } from '../../../../state/redux/api/inatApi';
 
@@ -18,6 +18,7 @@ type Props = {
 }
 
 function InaturalistTaxa({ value, onChange, disabled }: Readonly<Props>) {
+    const theme = useTheme();
     // Translation
     const { t } = useTranslation();
     // State
@@ -115,6 +116,8 @@ function InaturalistTaxa({ value, onChange, disabled }: Readonly<Props>) {
                     onDismiss={hideMenu}
                     anchorPosition='bottom'
                     anchor={menuPosition}
+                    contentStyle={{ backgroundColor: theme.colors.background }}
+                    elevation={1}
                 >
                     {!disabled &&
                         inaturalistTaxa?.results.map((taxon) => (

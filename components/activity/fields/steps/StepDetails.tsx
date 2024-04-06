@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, memo, useCallback } from 'react';
 import { FieldError } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { HelperText, IconButton, Text, TextInput, Tooltip } from 'react-native-paper';
+import { HelperText, Icon, IconButton, Text, TextInput, Tooltip } from 'react-native-paper';
 import { ActivityStep } from '../../../../state/redux/api/wildEventsApi';
 import InaturalistTaxa from './InaturalistTaxa';
 
@@ -82,14 +82,16 @@ function StepDetails({ steps, onChange, error, selectedStep, setSelectedStep, di
                 <Text variant='titleMedium'>
                     {t(`activityCardStepDetails`)}
                 </Text>
-                <Tooltip title={t('activityCardStepRemove')}>
-                    <IconButton
-                        icon='trash-can-outline'
-                        disabled={disabled || (steps.length <= 1)}
-                        animated
-                        onPress={handleStepRemove}
-                    />
-                </Tooltip>
+                {(!disabled && steps.length > 1) &&
+                    <Tooltip title={t('activityCardStepRemove')}>
+                        <IconButton
+                            icon='trash-can-outline'
+                            disabled={disabled || (steps.length <= 1)}
+                            animated
+                            onPress={handleStepRemove}
+                        />
+                    </Tooltip>
+                }
             </View>
             {!!error &&
                 <HelperText type='error'>
@@ -105,7 +107,7 @@ function StepDetails({ steps, onChange, error, selectedStep, setSelectedStep, di
                     disabled={disabled}
                     value={activeStep?.description ?? ''}
                     onChangeText={handleStepDescription}
-                    left={<TextInput.Icon icon='information' focusable={false} disabled />}
+                    left={<TextInput.Icon icon={({ size, color }) => <Icon source='information-outline' size={size} />} focusable={false} disabled={true} />}
                     multiline
                     numberOfLines={3}
                 />

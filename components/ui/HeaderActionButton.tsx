@@ -1,7 +1,7 @@
-import { memo, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
-import { Button, ButtonProps } from 'react-native-paper';
+import { Button, ButtonProps, Icon } from 'react-native-paper';
 import { useIsMobile } from './utils';
 
 type Props = Omit<ButtonProps, 'children'> & {
@@ -19,12 +19,16 @@ export default memo(function (props: Props) {
             loading={props.busy}
             disabled={props.busy}
             {...props}
+            icon={useCallback(({ size, color }: any) => <Icon source={props.icon} color={color} size={isMobile ? size * 1.75 : size * 1.4} />, [])}
             style={[
                 styles.button,
                 useMemo(() => ({ minWidth: isMobile ? 30 : undefined }), [isMobile]),
                 props.style
             ]}
-            labelStyle={useMemo(() => ({ margin: isMobile ? 10 : undefined }), [isMobile])}
+            labelStyle={[
+                styles.label,
+                useMemo(() => ({ margin: isMobile ? 10 : undefined }), [isMobile])
+            ]}
             contentStyle={useMemo(() => ({ width: isMobile ? 30 : undefined, marginHorizontal: isMobile ? 4 : undefined }), [isMobile])}
         >
             {!isMobile && t(props.textKey)}
@@ -35,5 +39,9 @@ export default memo(function (props: Props) {
 const styles = StyleSheet.create({
     button: {
         justifyContent: 'center'
+    },
+    label: {
+        fontWeight: 'bold',
+        fontSize: 16
     }
 });

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Image, NativeSyntheticEvent, StyleSheet, TextInputKeyPressEventData, View } from 'react-native';
-import { Avatar, HelperText, Menu, Text, TextInput, TouchableRipple } from 'react-native-paper';
+import { Avatar, HelperText, Menu, Text, TextInput, TouchableRipple, useTheme } from 'react-native-paper';
 import { useDebounce } from 'use-debounce';
 import { User as inatUser, useUsersAutocompleteQuery } from '../../../state/redux/api/inatApi';
 import { User } from '../../../state/redux/api/wildEventsApi';
@@ -17,6 +17,7 @@ type Props = {
 }
 
 function Inaturalist({ control, isLoading, autoFocus, onEnterKeyPress }: Readonly<Props>) {
+    const theme = useTheme();
     // Translation
     const { t } = useTranslation();
     // State
@@ -107,6 +108,8 @@ function Inaturalist({ control, isLoading, autoFocus, onEnterKeyPress }: Readonl
                         onDismiss={hideMenu}
                         anchorPosition='bottom'
                         anchor={menuPosition}
+                        contentStyle={{ backgroundColor: theme.colors.background }}
+                        elevation={1}
                     >
                         {!disabled &&
                             inaturalistUsers?.results.map((user) => (

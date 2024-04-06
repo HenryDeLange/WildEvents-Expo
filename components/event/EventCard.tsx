@@ -1,10 +1,9 @@
-import { format } from 'date-fns';
 import { useRouter } from 'expo-router';
 import Markdown from 'markdown-to-jsx';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Button, Card, Divider, Icon, Text, Tooltip } from 'react-native-paper';
+import { Button, Card, Icon, Text, Tooltip } from 'react-native-paper';
 import { Event } from '../../state/redux/api/wildEventsApi';
 import EventDates from './components/EventDates';
 
@@ -30,12 +29,11 @@ function EventCard({ event }: Readonly<Props>) {
                     </View>
                 }
             </View>
-            <View>
+            <View style={styles.wrapper}>
                 <EventDates event={event} tooltip />
                 <ScrollView style={styles.description}>
                     <Markdown>{event.description ?? ''}</Markdown>
                 </ScrollView>
-                <Divider style={styles.divider} />
                 <Button mode='text' icon='eye' uppercase
                     onPress={handleView(event)}
                 >
@@ -54,27 +52,28 @@ const styles = StyleSheet.create({
         padding: 12,
         alignItems: 'center',
         gap: 6,
-        maxWidth: 400
+        maxWidth: 420
     },
     description: {
         borderWidth: 1,
         borderRadius: 4,
         borderColor: '#ABA',
         backgroundColor: '#EFD8',
-        paddingHorizontal: 12,
-        paddingTop: 0,
-        paddingBottom: 4
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        height: 160
     },
     row: {
         flexDirection: 'row',
-        gap: 4
-    },
-    divider: {
-        width: '100%',
-        marginVertical: 8
+        gap: 4,
+        marginBottom: 8,
+        justifyContent: 'center'
     },
     lockWrapper: {
-        marginLeft: 'auto',
+        marginLeft: 4,
         justifyContent: 'center'
+    },
+    wrapper: {
+        gap: 12
     }
 });

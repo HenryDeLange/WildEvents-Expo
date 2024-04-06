@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { NativeSyntheticEvent, TextInputKeyPressEventData, View } from 'react-native';
-import { HelperText, TextInput } from 'react-native-paper';
+import { HelperText, Icon, TextInput } from 'react-native-paper';
 import { User, UserLogin } from '../../../state/redux/api/wildEventsApi';
 
 type Props = {
@@ -35,7 +35,7 @@ function Password({ control, isLoading, onEnterKeyPress }: Readonly<Props>) {
                     <TextInput
                         label={t('password')}
                         placeholder={t('passwordHelp')}
-                        left={<TextInput.Icon icon='key' focusable={false} disabled={true} />}
+                        left={<TextInput.Icon icon={({ size, color }) => <Icon source='key' size={size} />} focusable={false} disabled={true} />}
                         right={<TextInput.Icon icon={showPassword ? 'eye-off' : 'eye'} onPress={toggleShowPassword} />}
                         mode='outlined'
                         autoCapitalize='none'

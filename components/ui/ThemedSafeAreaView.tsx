@@ -5,7 +5,7 @@ import { SafeAreaViewProps } from "react-native-safe-area-context";
 
 function ThemedSafeAreaView(props: Readonly<SafeAreaViewProps>) {
     const theme = useTheme();
-    const themedStyle = useMemo<SafeAreaViewProps['style']>(() => ({ backgroundColor: theme.colors.background }), [theme]);
+    const themedStyle = useMemo<SafeAreaViewProps['style']>(() => ({ backgroundColor: theme.colors.surfaceVariant }), [theme.colors.surfaceVariant]);
     return <SafeAreaView {...props} style={[props.style, themedStyle]} />;
 }
 

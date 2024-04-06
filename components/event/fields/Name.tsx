@@ -1,7 +1,7 @@
 import { Control, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import { HelperText, TextInput } from 'react-native-paper';
+import { HelperText, Icon, TextInput } from 'react-native-paper';
 import { EventBase } from '../../../state/redux/api/wildEventsApi';
 
 type Props = {
@@ -22,7 +22,7 @@ function Name({ control, isLoading }: Readonly<Props>) {
                 <View>
                     <TextInput
                         label={t('eventName')}
-                        left={<TextInput.Icon icon='tag' focusable={false} disabled={true} />}
+                        left={<TextInput.Icon icon={({ size, color }) => <Icon source='tag' size={size} />} focusable={false} disabled={true} />}
                         mode='outlined'
                         autoCapitalize='none'
                         autoComplete='off'

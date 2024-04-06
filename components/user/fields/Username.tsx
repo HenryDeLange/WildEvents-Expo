@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { NativeSyntheticEvent, TextInputKeyPressEventData, View } from 'react-native';
-import { HelperText, TextInput } from 'react-native-paper';
+import { HelperText, Icon, TextInput } from 'react-native-paper';
 import { User, UserLogin } from '../../../state/redux/api/wildEventsApi';
 
 type Props = {
@@ -33,7 +33,7 @@ function Username({ control, isLoading, onEnterKeyPress }: Readonly<Props>) {
                     <TextInput
                         label={t('username')}
                         placeholder={t('usernameHelp')}
-                        left={<TextInput.Icon icon='account-circle' focusable={false} disabled={true} />}
+                        left={<TextInput.Icon icon={({ size, color }) => <Icon source='account-circle' size={size} />} focusable={false} disabled={true} />}
                         mode='outlined'
                         autoCapitalize='none'
                         autoComplete='username'

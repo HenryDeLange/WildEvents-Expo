@@ -6,7 +6,7 @@ export default memo(function (props: Readonly<ViewProps>) {
     const theme = useTheme();
     return (
         <ScrollView
-            style={{ backgroundColor: theme.colors.background }}
+            style={{ backgroundColor: theme.colors.surfaceVariant }}
             contentContainerStyle={styles.container}
         >
             <View

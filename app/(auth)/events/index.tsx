@@ -47,7 +47,7 @@ function Events() {
         headerRight: navBarActions
     }), [t, isFetching, navBarActions]);
     // RENDER
-    const gridSize = (width > 800) ? (width > 1200) ? 3 : 2 : 1;
+    const gridSize = (width > 880) ? (width > 1300) ? 3 : 2 : 1;
     return (
         <ThemedSafeAreaView style={styles.container}>
             <Stack.Screen options={navBar} />

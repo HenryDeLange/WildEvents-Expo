@@ -25,8 +25,7 @@ function Activity() {
     const activityId = id.toString();
     const router = useRouter();
     // Redux
-    const { data: activity, isLoading: isActivityLoading, isFetching: isActivityFetching } =
-        useFindActivityQuery({ activityId }, {});
+    const { data: activity, isLoading: isActivityLoading, isFetching: isActivityFetching } = useFindActivityQuery({ activityId }, {});
     const [doCalculate, { isLoading: isCalculating }] = useCalculateActivityMutation();
     const [doEnable, { isLoading: isEnabling }] = useEnableActivityMutation();
     const [doDisable, { isLoading: isDisabling }] = useDisableActivityMutation();

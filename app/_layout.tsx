@@ -8,7 +8,7 @@ import i18n from 'i18next';
 import { ReactNode, useEffect } from 'react';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import { useColorScheme } from 'react-native';
-import { MD3LightTheme, Provider as PaperProvider } from 'react-native-paper';
+import { MD3LightTheme, MD3DarkTheme, Provider as PaperProvider } from 'react-native-paper';
 import { Provider as ReduxProvider } from 'react-redux';
 import en from '../i18n/en';
 import { authSetRefreshToken } from '../state/redux/auth/authSlice';
@@ -68,10 +68,11 @@ function RootLayoutNav() {
     const colorScheme = useColorScheme();
     const { t } = useTranslation();
     document.title = t('app');
+    DarkTheme.colors.card = dark.colors.backdrop;
     return (
         <ReduxProvider store={store}>
             <RefreshTokenProvider>
-                <PaperProvider theme={colorScheme === 'dark' ? { ...MD3LightTheme, ...dark } : { ...MD3LightTheme, ...light }}>
+                <PaperProvider theme={colorScheme === 'dark' ? { ...MD3DarkTheme, ...dark } : { ...MD3LightTheme, ...light }}>
                     {/* React Navigation uses it's own theme, for now I just configure it manually, 
                     but there are ways to merge it with the React Native Paper theme.
                     See https://callstack.github.io/react-native-paper/docs/guides/theming-with-react-navigation */}

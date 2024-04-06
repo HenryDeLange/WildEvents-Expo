@@ -3,7 +3,7 @@ import { memo, useCallback, useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { HelperText, TextInput, useTheme } from 'react-native-paper';
+import { HelperText, Icon, TextInput, useTheme } from 'react-native-paper';
 import { DatePickerModal, enGB, registerTranslation } from 'react-native-paper-dates';
 import { CalendarDate, ValidRangeType } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import { EventBase } from '../../../../state/redux/api/wildEventsApi';
@@ -47,7 +47,7 @@ function GenericDate({ control, isLoading, name, icon, label, requiredMessage, s
                     <TextInput
                         style={styles.input}
                         label={t(label)}
-                        left={<TextInput.Icon icon={icon} focusable={false} disabled={true} />}
+                        left={<TextInput.Icon icon={({ size, color }) => <Icon source={icon} size={size} />} focusable={false} disabled={true} />}
                         right={
                             <TextInput.Icon
                                 icon={focussed ? 'calendar-search' : 'calendar-blank'}
