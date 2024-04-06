@@ -3,29 +3,30 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Button, Dialog, Text } from 'react-native-paper';
-import { useDeleteEventMutation, useFindEventQuery } from '../../../state/redux/api/wildEventsApi';
-import { setEventIsDeleting } from '../../../state/redux/app/appSlice';
+import { useDeleteActivityMutation, useFindActivityQuery } from '../../../state/redux/api/wildEventsApi';
+import { setActivityIsDeleting } from '../../../state/redux/app/appSlice';
 import { useAppDispatch } from '../../../state/redux/hooks';
 import HeaderActionButton from '../../ui/HeaderActionButton';
 import ResponsiveCardWrapper from '../../ui/ResponsiveCardWrapper';
 
 type Props = {
     eventId: string;
+    activityId: string;
 }
 
-function DeleteEventButton({ eventId }: Readonly<Props>) {
+function DeleteActivityButton({ eventId, activityId }: Readonly<Props>) {
     const { t } = useTranslation();
     const router = useRouter();
     const dispatch = useAppDispatch();
     // Redux
-    const [doDelete, { isLoading: isDeleting, isSuccess: isDeleted }] = useDeleteEventMutation();
-    const { eventName } = useFindEventQuery({ eventId }, {
-        selectFromResult: ({ data }) => ({ eventName: data?.name })
+    const [doDelete, { isLoading: isDeleting, isSuccess: isDeleted }] = useDeleteActivityMutation();
+    const { activityName } = useFindActivityQuery({ activityId }, {
+        selectFromResult: ({ data }) => ({ activityName: data?.name })
     });
-    const handleDelete = useCallback(() => doDelete({ eventId }), [eventId]);
+    const handleDelete = useCallback(() => doDelete({ activityId }), [activityId]);
     // Modal
     const [modalVisible, setModalVisible] = useState(false);
-    const showModal = useCallback(() => setModalVisible(true), [eventId]);
+    const showModal = useCallback(() => setModalVisible(true), [activityId]);
     const hideModal = useCallback(() => {
         if (!isDeleting)
             setModalVisible(false);
@@ -33,10 +34,10 @@ function DeleteEventButton({ eventId }: Readonly<Props>) {
     // Effects
     useEffect(() => {
         if (isDeleted)
-            router.navigate('/events');
+            router.navigate(`/events/${eventId}`);
     }, [isDeleted, router]);
     useEffect(() => {
-        dispatch(setEventIsDeleting(isDeleting));
+        dispatch(setActivityIsDeleting(isDeleting));
     }, [dispatch, isDeleting]);
     // RENDER
     return (
@@ -45,14 +46,14 @@ function DeleteEventButton({ eventId }: Readonly<Props>) {
                 textKey='delete'
                 icon='trash-can-outline'
                 onPress={showModal}
-                busy={isDeleting || !eventName}
+                busy={isDeleting || !activityName}
             />
-            {(modalVisible && eventName) &&
+            {(modalVisible && activityName) &&
                 <ResponsiveCardWrapper modalVisible={modalVisible} hideModal={hideModal}>
-                    <Dialog.Title>{t('eventDeleteTitle')}</Dialog.Title>
+                    <Dialog.Title>{t('activityDeleteTitle')}</Dialog.Title>
                     <Dialog.Content>
                         <Text variant='bodyMedium'>
-                            {t('eventDeleteMessage', { name: eventName })}
+                            {t('activityDeleteMessage', { name: activityName })}
                         </Text>
                         <View style={styles.buttonWrapper}>
                             <Button mode='contained' style={styles.button} uppercase
@@ -71,7 +72,7 @@ function DeleteEventButton({ eventId }: Readonly<Props>) {
     );
 }
 
-export default memo(DeleteEventButton);
+export default memo(DeleteActivityButton);
 
 const styles = StyleSheet.create({
     buttonWrapper: {

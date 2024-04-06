@@ -91,12 +91,13 @@ const styles = StyleSheet.create({
     description: {
         borderWidth: 1,
         borderRadius: 4,
-        borderColor: '#ABA',
-        backgroundColor: '#EFD8',
+        borderColor: '#5559',
+        backgroundColor: '#DDD8',
         paddingHorizontal: 12,
         paddingTop: 0,
         paddingBottom: 4,
-        flex: 1
+        flex: 1,
+        minHeight: 120
     },
     statusWrapper: {
         flexDirection: 'row',

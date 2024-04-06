@@ -99,6 +99,7 @@ export default {
         activityNavTitle: 'Activity',
         activitiesNavTitle: 'Activities',
         activityTotalScores: 'Total Scores',
+        activityScores: 'Activity Scores',
 
         activityStatusNEW: 'New Activity',
         activityStatusPENDING: 'Calculation Pending',
@@ -126,6 +127,8 @@ export default {
         activityCardCreateTitle: 'New Activity',
         activityCardCreateFailed: 'Failed to create the activity!',
         activityCardEditTitle: 'Edit Activity',
+        activityCalculate: 'Calculate',
+
         activityCardName: 'Activity Name',
         activityCardNameRequired: 'Activity name is required.',
         activityCardDescription: 'Activity Description',

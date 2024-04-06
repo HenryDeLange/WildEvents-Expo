@@ -57,11 +57,11 @@ const styles = StyleSheet.create({
     description: {
         borderWidth: 1,
         borderRadius: 4,
-        borderColor: '#ABA',
-        backgroundColor: '#EFD8',
+        borderColor: '#5559',
+        backgroundColor: '#DDD8',
         paddingHorizontal: 8,
         paddingVertical: 4,
-        height: 160
+        height: 140
     },
     row: {
         flexDirection: 'row',

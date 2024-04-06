@@ -12,7 +12,7 @@ type Props = {
     results?: ActivityStepResult[];
 }
 
-function ActivityStepScores({ steps, results }: Props) {
+function ActivityStepScores({ steps, results }: Readonly<Props>) {
     const { t } = useTranslation();
     const finalStepResults = new Map<string, ParticipantScore[]>();
     for (let step of steps ?? []) {
@@ -30,7 +30,7 @@ function ActivityStepScores({ steps, results }: Props) {
             </Text>
             <View style={{ flexDirection: 'row', gap: 24, flexWrap: 'wrap', marginHorizontal: 32, flex: 1, width: '100%', justifyContent: 'center' }}>
                 {steps?.map((step, index) => (
-                    <Card key={index} style={styles.card}>
+                    <Card key={step.id} style={styles.card}>
                         <Text variant='titleMedium' style={styles.stepTitle}>
                             {t('activityCardStepCount', { step: index + 1 })}
                         </Text>
@@ -39,9 +39,15 @@ function ActivityStepScores({ steps, results }: Props) {
                                 {step.description ?? ''}
                             </Markdown>
                         </ScrollView>
-                        <Text variant='titleSmall' style={{ marginVertical: 4 }}>
-                            Scores
+                        xxx
+                        TODO: SHOW CRITERIA
+                        xxx
+                        <Text variant='titleMedium' style={{ marginVertical: 4 }}>
+                            {t('activityScores')}
                         </Text>
+                        {finalStepResults.size <= 0 &&
+                            <Text>{t('eventTotalCalculateScores')}</Text>
+                        }
                         <ScrollView style={styles.scoresScroll}>
                             {finalStepResults.get(step.id)?.map(participantScore => (
                                 <ActivityParticipantScore key={participantScore.name} participant={participantScore} />
@@ -71,15 +77,17 @@ const styles = StyleSheet.create({
     },
     stepTitle: {
         alignSelf: 'center',
-        marginBottom: 8
+        marginBottom: 8,
+        fontWeight: 'bold'
     },
     description: {
         borderWidth: 1,
         borderRadius: 4,
-        borderColor: '#ABA',
-        backgroundColor: '#EFD8',
-        paddingHorizontal: 12,
-        paddingVertical: 6
+        borderColor: '#5559',
+        backgroundColor: '#DDD8',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        minHeight: 120
     },
     scoresScroll: {
         maxHeight: 200

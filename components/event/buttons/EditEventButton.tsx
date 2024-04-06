@@ -19,7 +19,7 @@ function EditEventButton({ eventId }: Readonly<Props>) {
                 mode='text'
                 textKey='edit'
                 icon='pencil'
-                busy={isDeleting}
+                disabled={isDeleting}
                 onPress={showModal}
             />
             {modalVisible &&

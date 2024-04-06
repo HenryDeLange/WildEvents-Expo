@@ -113,14 +113,15 @@ const styles = StyleSheet.create({
     description: {
         borderWidth: 1,
         borderRadius: 4,
-        borderColor: '#ABA',
-        backgroundColor: '#EFD8',
+        borderColor: '#5559',
+        backgroundColor: '#DDD8',
         paddingHorizontal: 12,
-        paddingTop: 0,
-        paddingBottom: 4,
+        paddingVertical: 6,
         flex: 1,
-        minWidth: '60%',
-        flexGrow: 1
+        flexGrow: 1,
+        minWidth: '80%',
+        height: '100%',
+        minHeight: 180
     },
     descriptionRow: {
         flexDirection: 'row',
