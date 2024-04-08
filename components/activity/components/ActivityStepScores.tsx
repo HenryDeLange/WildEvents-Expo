@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Card, Text } from 'react-native-paper';
 import { ActivityStep, ActivityStepResult } from '../../../state/redux/api/wildEventsApi';
-import ActivityParticipantScore, { ParticipantScore } from './ActivityParticipantScore';
 import { generateStepScoreList } from '../utils';
+import ActivityParticipantScore, { ParticipantScore } from './ActivityParticipantScore';
 
 type Props = {
     steps?: ActivityStep[];
@@ -28,7 +28,7 @@ function ActivityStepScores({ steps, results }: Readonly<Props>) {
             <Text variant='titleLarge' style={styles.title}>
                 {t('activitySteps')}
             </Text>
-            <View style={{ flexDirection: 'row', gap: 24, flexWrap: 'wrap', marginHorizontal: 32, flex: 1, width: '100%', justifyContent: 'center' }}>
+            <View style={styles.cardGrid}>
                 {steps?.map((step, index) => (
                     <Card key={step.id} style={styles.card}>
                         <Text variant='titleMedium' style={styles.stepTitle}>
@@ -39,11 +39,22 @@ function ActivityStepScores({ steps, results }: Readonly<Props>) {
                                 {step.description ?? ''}
                             </Markdown>
                         </ScrollView>
-                        xxx
-                        TODO: SHOW CRITERIA
-                        xxx
-                        <Text variant='titleMedium' style={{ marginVertical: 4 }}>
-                            {t('activityScores')}
+                        <Text variant='titleMedium' style={styles.heading}>
+                            {t('activityCardStepDetails')}
+                        </Text>
+                        {Object.entries(step.criteria ?? {}).map((entry) => (
+                            <View key={entry[0]} style={styles.row}>
+                                <Text variant='bodyMedium'>
+                                    {t(`activityCriteria_${entry[0]}`, { defaultValue: t('activityCriteria_custom') })}:
+                                </Text>
+                                <Text variant='bodyMedium'>
+                                    {entry[1]}
+                                    {entry[0] === 'radius' && ' km'}
+                                </Text>
+                            </View>
+                        ))}
+                        <Text variant='titleMedium' style={styles.heading}>
+                            {t('activityCriteriaScores')}
                         </Text>
                         {finalStepResults.size <= 0 &&
                             <Text>{t('eventTotalCalculateScores')}</Text>
@@ -63,6 +74,19 @@ function ActivityStepScores({ steps, results }: Readonly<Props>) {
 export default memo(ActivityStepScores);
 
 const styles = StyleSheet.create({
+    title: {
+        marginBottom: 12
+    },
+    cardGrid: {
+        flexDirection: 'row',
+        gap: 24,
+        flexWrap: 'wrap',
+        marginHorizontal: 32,
+        paddingHorizontal: 16,
+        flex: 1,
+        width: '100%',
+        justifyContent: 'center'
+    },
     card: {
         flex: 1,
         paddingHorizontal: 16,
@@ -72,8 +96,8 @@ const styles = StyleSheet.create({
         maxWidth: 350,
         marginHorizontal: 8
     },
-    title: {
-        marginBottom: 12
+    heading: {
+        marginTop: 8
     },
     stepTitle: {
         alignSelf: 'center',
@@ -91,5 +115,10 @@ const styles = StyleSheet.create({
     },
     scoresScroll: {
         maxHeight: 200
+    },
+    row: {
+        flexDirection: 'row',
+        gap: 4,
+        marginLeft: 24
     }
 });

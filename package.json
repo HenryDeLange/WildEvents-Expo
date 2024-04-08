@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "rtk-query:codegen": "npx @rtk-query/codegen-openapi ./openapi-config.json",
+    "rtk-query:codegen": "npx @rtk-query/codegen-openapi@latest ./openapi-config.json",
     "svgo:optimize": "svgo -f ./assets -o ./assets -r --multipass",
     "web": "expo start --web",
     "android": "expo start --android",

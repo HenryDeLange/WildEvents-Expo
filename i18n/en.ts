@@ -144,6 +144,8 @@ export default {
         activityCardStepDetails: 'Activity Step Details',
 
         activityCardStepCriteriaRequired: 'Criteria for step {{step}} is required',
+        activityCriteriaScores: "Activity Step Scores",
+
         activityCriteria_taxon_name: 'Taxon',
         activityCriteriaHelp_taxon_name: 'iNaturalist Taxonomic Name',
         activityCriteria_lat: 'Latitude',
