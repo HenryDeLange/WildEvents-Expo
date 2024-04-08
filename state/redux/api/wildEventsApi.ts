@@ -99,6 +99,7 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/events`,
           params: {
+            onlyActive: queryArg.onlyActive,
             page: queryArg.page,
             requestContinuation: queryArg.requestContinuation,
           },
@@ -248,6 +249,7 @@ export type LoginApiArg = {
 };
 export type FindEventsApiResponse = /** status 200 OK */ PagedEvent;
 export type FindEventsApiArg = {
+  onlyActive?: boolean;
   page?: number;
   requestContinuation?: string;
 };
@@ -332,11 +334,11 @@ export type ActivityStepResult = {
 export type Activity = {
   name: string;
   description?: string;
+  type: "RACE" | "HUNT" | "QUIZ" | "EXPLORE";
   status?: "PENDING" | "CALCULATING" | "CALCULATED" | "ERROR";
   disableReason?: "FAILED_TO_CALCULATE" | "TOO_MANY_RESULTS" | "ADMIN_DISABLED";
   steps: ActivityStep[];
   eventId: string;
-  type: "RACE" | "HUNT" | "QUIZ" | "EXPLORE";
   id: string;
   calculated?: string;
   results?: ActivityStepResult[];
@@ -344,6 +346,7 @@ export type Activity = {
 export type ActivityBase = {
   name: string;
   description?: string;
+  type: "RACE" | "HUNT" | "QUIZ" | "EXPLORE";
   status?: "PENDING" | "CALCULATING" | "CALCULATED" | "ERROR";
   disableReason?: "FAILED_TO_CALCULATE" | "TOO_MANY_RESULTS" | "ADMIN_DISABLED";
   steps: ActivityStep[];
@@ -375,11 +378,11 @@ export type PagedEvent = {
 export type ActivityCreate = {
   name: string;
   description?: string;
+  type: "RACE" | "HUNT" | "QUIZ" | "EXPLORE";
   status?: "PENDING" | "CALCULATING" | "CALCULATED" | "ERROR";
   disableReason?: "FAILED_TO_CALCULATE" | "TOO_MANY_RESULTS" | "ADMIN_DISABLED";
   steps: ActivityStep[];
   eventId: string;
-  type: "RACE" | "HUNT" | "QUIZ" | "EXPLORE";
 };
 export type Version = {
   appVersion: string;

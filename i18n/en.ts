@@ -52,6 +52,11 @@ export default {
         welcomeSubTitle: 'Here you can take part in fun events that centers around exploring nature by making iNaturalist observations.',
         welcomeAction: 'View and join existing events, or create your own!',
 
+        eventsOnlyActive: 'Show Active Events',
+        eventsOnlyActiveMobile: 'Active',
+        eventsAll: "Show All Events",
+        eventsAllMobile: "All",
+
         eventNavTitle: 'Event',
         eventsNavTitle: 'Events',
         eventVisibilityPUBLIC: 'Public Event',

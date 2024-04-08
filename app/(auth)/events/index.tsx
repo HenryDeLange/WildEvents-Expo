@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FlatList, ListRenderItemInfo, RefreshControl, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import EventCard from '../../../components/event/EventCard';
+import ActiveOrAllEventButton from '../../../components/event/buttons/ActiveOrAllEventButton';
 import CreateEventButton from '../../../components/event/buttons/CreateEventButton';
 import ThemedSafeAreaView from '../../../components/ui/ThemedSafeAreaView';
 import LogoutButton from '../../../components/user/buttons/LogoutButton';
@@ -14,9 +15,14 @@ function Events() {
     const { width } = useWindowDimensions();
     // State
     const [page, setPage] = useState(0);
+    const [onlyActive, setOnlyActive] = useState(true);
     const [fetchedEvents, setFetchedEvents] = useState<Event[]>([]);
+    useEffect(() => {
+        setPage(0);
+        setFetchedEvents([]);
+    }, [onlyActive, setPage, setFetchedEvents]);
     // Redux
-    const { data: events, isLoading, isFetching } = useFindEventsQuery({ page });
+    const { data: events, isLoading, isFetching } = useFindEventsQuery({ page, onlyActive });
     useEffect(() => {
         // console.log('processing fetched events...', 'page:', page, 'data length:', data?.data?.length, 'events in list:', fetchedEvents.length)
         setFetchedEvents((prevFetchedEvents) => {
@@ -39,9 +45,10 @@ function Events() {
     // NavBar
     const navBarActions = useCallback(() => (
         <View style={styles.navBar}>
+            <ActiveOrAllEventButton onlyActive={onlyActive} setOnlyActive={setOnlyActive} />
             <LogoutButton />
         </View>
-    ), []);
+    ), [onlyActive, setOnlyActive]);
     const navBar = useMemo(() => ({
         title: isFetching ? t('loading') : t('eventsNavTitle'),
         headerRight: navBarActions
