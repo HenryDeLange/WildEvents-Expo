@@ -67,7 +67,7 @@ function DateInfo({ date, icon, label, tooltip, highlight }: Readonly<DateProps>
                 <>
                     <Icon source={icon} size={20} color={highlight ? theme.colors.secondary : undefined} />
                     <Text variant='bodyMedium' style={[styles.label, { color: highlight ? theme.colors.secondary : undefined }]}>
-                        {t(label)}sss
+                        {t(label)}
                     </Text>
                     <Text variant='bodyMedium' style={styles.date}>
                         {format(date, 'yyyy-MM-dd')}

@@ -18,7 +18,7 @@ export default memo(function ({ href, icon, textKey, onPress }: Props) {
     return (
         <Link href={href} asChild>
             <Button
-                icon={useCallback(({ size, color }: any) => <Icon source={icon} color={color} size={isMobile ? size * 1.75 : size * 1.4} />, [])}
+                icon={useCallback(({ size, color }: any) => <Icon source={icon} color={color} size={isMobile ? size * 1.75 : size * 1.4} />, [icon])}
                 uppercase
                 style={useMemo(() => ({
                     ...styles.button,

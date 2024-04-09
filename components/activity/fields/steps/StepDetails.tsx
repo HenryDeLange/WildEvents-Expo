@@ -48,8 +48,8 @@ function StepDetails({ steps, onChange, error, selectedStep, setSelectedStep, di
     const handleStepCriteriaValue = useCallback((key: string) => (text: string) => {
         let filteredText;
         switch (key) {
-            case 'taxon_name':
-                filteredText = text.replace(/\d+/g, '');
+            case 'taxon_id':
+                filteredText = text;
                 break;
             case 'radius':
                 filteredText = text.replace(/[^0-9.]/g, '');
@@ -79,7 +79,7 @@ function StepDetails({ steps, onChange, error, selectedStep, setSelectedStep, di
     return (
         <>
             <View style={styles.activityWrapper}>
-                <Text variant='titleMedium'>
+                <Text variant='titleMedium' style={styles.heading}>
                     {t(`activityCardStepDetails`)}
                 </Text>
                 {(!disabled && steps.length > 1) &&
@@ -113,7 +113,7 @@ function StepDetails({ steps, onChange, error, selectedStep, setSelectedStep, di
                 />
                 {Object.keys(activeStep?.criteria ?? {}).map((key, index) => {
                     switch (key) {
-                        case 'taxon_name':
+                        case 'taxon_id':
                             return (
                                 <InaturalistTaxa
                                     key={`step${selectedStep}Criterion${index}`}
@@ -151,6 +151,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginBottom: -8,
         marginLeft: 2
+    },
+    heading: {
+        marginTop: 8,
+        marginBottom: 16
     },
     activityContent: {
         flex: 1,

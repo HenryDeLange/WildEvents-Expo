@@ -74,7 +74,7 @@ function ModifyActivity({ modalVisible, hideModal, eventId, activityId }: Readon
                 <Type
                     control={control}
                     loading={isBusyModifying}
-                    disabled={isBusyModifying || !!activity}
+                    disabled={isBusyModifying}
                 />
                 <Steps
                     control={control}

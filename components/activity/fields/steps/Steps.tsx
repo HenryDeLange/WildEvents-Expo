@@ -32,21 +32,21 @@ function Steps({ control, setValue, trigger, initialType, loading }: Readonly<Pr
                     setValue('steps', [{
                         id: Crypto.randomUUID(),
                         description: '',
-                        criteria: { 'taxon_name': '' }
+                        criteria: { 'taxon_id': '' }
                     }]);
                     break;
                 case 'HUNT':
                     setValue('steps', [{
                         id: Crypto.randomUUID(),
                         description: '',
-                        criteria: { 'taxon_name': '', 'lat': '', 'lng': '', 'radius': '' }
+                        criteria: { 'taxon_id': '', 'lat': '', 'lng': '', 'radius': '' }
                     }]);
                     break;
                 case 'QUIZ':
                     setValue('steps', [{
                         id: Crypto.randomUUID(),
                         description: '',
-                        criteria: { 'taxon_name': '' }
+                        criteria: { 'taxon_id': '' }
                     }]);
                     break;
                 case 'EXPLORE':
@@ -70,21 +70,21 @@ function Steps({ control, setValue, trigger, initialType, loading }: Readonly<Pr
                     setValue('steps', [...steps, {
                         id: Crypto.randomUUID(),
                         description: '',
-                        criteria: { 'taxon_name': '' }
+                        criteria: { 'taxon_id': '' }
                     }]);
                     break;
                 case 'HUNT':
                     setValue('steps', [...steps, {
                         id: Crypto.randomUUID(),
                         description: '',
-                        criteria: { 'taxon_name': '', 'lat': '', 'lng': '', 'radius': '' }
+                        criteria: { 'taxon_id': '', 'lat': '', 'lng': '', 'radius': '' }
                     }]);
                     break;
                 case 'QUIZ':
                     setValue('steps', [...steps, {
                         id: Crypto.randomUUID(),
                         description: '',
-                        criteria: { 'taxon_name': '' }
+                        criteria: { 'taxon_id': '' }
                     }]);
                     break;
                 case 'EXPLORE':

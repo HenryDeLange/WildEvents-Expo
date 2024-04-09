@@ -19,7 +19,7 @@ export default memo(function (props: Props) {
             loading={props.busy}
             disabled={props.busy}
             {...props}
-            icon={useCallback(({ size, color }: any) => <Icon source={props.icon} color={color} size={isMobile ? size * 1.75 : size * 1.4} />, [])}
+            icon={useCallback(({ size, color }: any) => <Icon source={props.icon} color={color} size={isMobile ? size * 1.75 : size * 1.4} />, [props.icon])}
             style={[
                 styles.button,
                 useMemo(() => ({ minWidth: isMobile ? 30 : undefined }), [isMobile]),

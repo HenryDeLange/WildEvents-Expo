@@ -151,8 +151,8 @@ export default {
         activityCardStepCriteriaRequired: 'Criteria for step {{step}} is required',
         activityCriteriaScores: "Activity Step Scores",
 
-        activityCriteria_taxon_name: 'Taxon',
-        activityCriteriaHelp_taxon_name: 'iNaturalist Taxonomic Name',
+        activityCriteria_taxon_id: 'Taxon',
+        activityCriteriaHelp_taxon_id: 'iNaturalist Taxonomic Name',
         activityCriteria_lat: 'Latitude',
         activityCriteriaHelp_lat: 'Latitude (Decimal Degrees)',
         activityCriteria_lng: 'Longitude',

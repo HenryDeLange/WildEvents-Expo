@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     },
     scrollViewContent: {
         alignItems: 'center',
-        paddingBottom: '10%'
+        paddingBottom: '20%'
     },
     divider: {
         height: 2,

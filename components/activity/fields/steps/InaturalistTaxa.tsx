@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, StyleSheet, View } from 'react-native';
-import { Avatar, Menu, Text, TextInput, TouchableRipple, useTheme } from 'react-native-paper';
+import { Avatar, Menu, Text, TextInput, Tooltip, TouchableRipple, useTheme } from 'react-native-paper';
 import { useDebounce } from 'use-debounce';
 import { Taxon, useTaxaAutocompleteQuery } from '../../../../state/redux/api/inatApi';
 
@@ -23,7 +23,7 @@ function InaturalistTaxa({ value, onChange, disabled }: Readonly<Props>) {
     const { t } = useTranslation();
     // State
     const [touched, setTouched] = useState(false);
-    const [textValue, setTextValue] = useState(value);
+    const [textValue, setTextValue] = useState((value && value.indexOf('-') > 0) ? value.split('-')[1] : '');
     const [selectedTaxon, setSelectedTaxon] = useState<Taxon | null>(null);
     const [menuVisibility, setMenuVisibility] = useState(false);
     const showMenu = useCallback(() => {
@@ -55,13 +55,12 @@ function InaturalistTaxa({ value, onChange, disabled }: Readonly<Props>) {
         setTouched(false);
     }, [setTouched]);
     // Callbacks
-    const handleTextChange = useCallback((onChange: (text: string) => void) => (text: string) => {
-        onChange(text);
+    const handleTextChange = useCallback((text: string) => {
         setTextValue(text);
         setSelectedTaxon(null);
-    }, [onChange, setTextValue, setSelectedTaxon]);
-    const handleMenuSelection = useCallback((onChange: (...event: any[]) => void, taxon: Taxon) => () => {
-        onChange(taxon.name);
+    }, [setTextValue, setSelectedTaxon]);
+    const handleMenuSelection = useCallback((taxon: Taxon) => () => {
+        onChange(`${taxon.id}-${taxon.name}`);
         setTextValue(taxon.name);
         setSelectedTaxon(taxon);
         hideMenu();
@@ -84,31 +83,33 @@ function InaturalistTaxa({ value, onChange, disabled }: Readonly<Props>) {
     return (
         <>
             <View ref={inatRef as any}>
-                <TextInput
-                    label={t('activityCriteria_taxon_name')}
-                    placeholder={t('activityCriteriaHelp_taxon_name')}
-                    left={
-                        <TextInput.Icon focusable={false} disabled={true}
-                            icon={({ size, color }) => (
-                                <Image
-                                    source={selectedTaxon?.default_photo?.url
-                                        ? { uri: selectedTaxon?.default_photo?.url }
-                                        : require('../../../../assets/images/inaturalist/logo.png')}
-                                    style={{ width: size, height: size }}
-                                />
-                            )}
-                        />
-                    }
-                    right={<TextInput.Icon icon={isFetching ? 'progress-clock' : 'menu-down'} onPress={showMenu} />}
-                    mode='outlined'
-                    autoCapitalize='none'
-                    autoComplete='off'
-                    spellCheck={false}
-                    disabled={disabled}
-                    value={value ?? ''}
-                    onChangeText={handleTextChange(onChange)}
-                    onFocus={handleTouched}
-                />
+                <Tooltip title={(value && value.trim().length > 0) ? value : t('activityCriteriaHelp_taxon_id')}>
+                    <TextInput
+                        label={t('activityCriteria_taxon_id')}
+                        placeholder={t('activityCriteriaHelp_taxon_id')}
+                        left={
+                            <TextInput.Icon focusable={false} disabled={true}
+                                icon={({ size, color }) => (
+                                    <Image
+                                        source={selectedTaxon?.default_photo?.url
+                                            ? { uri: selectedTaxon?.default_photo?.url }
+                                            : require('../../../../assets/images/inaturalist/logo.png')}
+                                        style={{ width: size, height: size }}
+                                    />
+                                )}
+                            />
+                        }
+                        right={<TextInput.Icon icon={isFetching ? 'progress-clock' : 'menu-down'} onPress={showMenu} />}
+                        mode='outlined'
+                        autoCapitalize='none'
+                        autoComplete='off'
+                        spellCheck={false}
+                        disabled={disabled}
+                        value={textValue}
+                        onChangeText={handleTextChange}
+                        onFocus={handleTouched}
+                    />
+                </Tooltip>
             </View>
             {(menuPosition.x > 0 && menuPosition.y > 0) &&
                 <Menu
@@ -122,7 +123,7 @@ function InaturalistTaxa({ value, onChange, disabled }: Readonly<Props>) {
                     {!disabled &&
                         inaturalistTaxa?.results.map((taxon) => (
                             <TouchableRipple key={taxon.id} style={styles.menuItemWrapper}
-                                onPress={handleMenuSelection(onChange, taxon)}
+                                onPress={handleMenuSelection(taxon)}
                             >
                                 <>
                                     <Avatar.Image

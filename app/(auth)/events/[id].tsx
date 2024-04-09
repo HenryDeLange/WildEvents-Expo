@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         flex: 1,
         flexGrow: 1,
-        minWidth: '80%',
+        minWidth: '60%',
         height: '100%',
         minHeight: 180
     },
